@@ -1,0 +1,353 @@
+---
+title: "Anexo Lista 1 - Análise de Dados Categorizados"
+subtitle: "Textbook: Agresti (2007) - Introduction to Categorical Data Analysis"
+author: "Allan Vieira 14/0128492"
+date: "May 8, 2018"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+
+<!-- incluir no cabecalho: -->
+<!-- always_allow_html: yes  -->
+<!--para quando formos passar para pdf -->
+
+<style>
+body {
+text-align: justify}
+</style>
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+
+<!-- <style> -->
+<!--   .col2 { -->
+<!--     columns: 2 200px;         /* number of columns and width in pixels*/ -->
+<!--     -webkit-columns: 2 200px; /* chrome, safari */ -->
+<!--     -moz-columns: 2 200px;    /* firefox */ -->
+<!--   } -->
+<!--   .col3 { -->
+<!--     columns: 3 100px; -->
+<!--     -webkit-columns: 3 100px; -->
+<!--     -moz-columns: 3 100px; -->
+<!--   } -->
+<!-- </style> -->
+<!-- esse de cima funciona no output do RStudio, mas nao nos browsers -->
+<!-- tb em: https://stackoverflow.com/questions/31753897/2-column-section-in-r-markdown -->
+
+
+---
+
+### Exercício 9 (3.5)
+
+*For Table 3.1 on snoring and heart disease, re-fit the linear probability model for the logistic regression model using the scores (i) (0, 2, 4, 6), (ii) (0, 1, 2, 3),
+(iii) (1, 2, 3, 4). Compare the model parameter estimates under the three choices. Compare the fitted values. What can you conclude about the effect of transformations of scores (called linear) that preserve relative sizes of spacings between scores?*
+
+![](/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte1/lista1/em_html/img/table3.1.png)
+
+---
+
+##### **i) escores (0,2,4,6)**
+
+```{r}
+dados <- c(24, 35, 21, 30, 1355, 603, 192, 224)
+d <- matrix(dados, ncol=2)
+
+# i) scores: {0,2,4,6}
+snoring1<-c(0,2,4,6) # snoring eh uma unica variavel!!!
+colnames(d) <- c("yes", "no")
+logit_model1 <-glm(d~snoring1,
+                family=binomial(link=logit))
+
+# logit_model1
+# logit_model1$fitted.values
+summary(logit_model1)
+
+```
+
+---
+
+#### **ii) escores (0,1,2,3)**
+
+```{r}
+# ii) scores: {0,1,2,3} (linear)
+
+snoring2<-c(0,1,2,3)
+colnames(d) <- c("yes", "no")
+logit_model2 <-glm(d~snoring2,
+                   family=binomial(link=logit))
+# logit_model2
+# logit_model2$fitted.values      
+summary(logit_model2)
+
+```
+ 
+---
+
+#### **iii) escores (1,2,3,4)**
+ 
+```{r}
+
+# iii) scores: {1,2,3,4} (linear)
+snoring3<-c(1,2,3,4)
+colnames(d) <- c("yes", "no")
+logit_model3 <-glm(d~snoring3,
+                   family=binomial(link=logit))
+
+# summary(logit_model3)
+# logit_model3$fitted.values      
+summary(logit_model3)$coefficients
+
+```
+
+---
+
+#### **iv) comparações coeficientes**
+
+```{r}
+df_coef <- data.frame(rbind(
+logit_model1$coefficients,
+logit_model2$coefficients,
+logit_model3$coefficients
+))
+
+rownames(df_coef) <- c("modelo1 scores(0,2,4,6)", "modelo2 scores(0,1,2,3)", "modelo3 socres(1,2,3,4)")
+```
+
+```{r}
+
+tibble::as.tibble(tibble::rownames_to_column(df_coef))
+
+```
+
+Nota-se que o coeficiente $\beta$ não se altera para os casos em que temos scores espaçados em 1 unidade (modelos 2 e 3). Nestes casos, para cada mudança de nível da variável *snoring*, a $log(odds)$ da ocorrência de doença cardiaca sofre uma multiplicação de $~0.6545(x)$. Para o caso do modelo 1, em que o espaçamento entre os escores é de 2 unidades, o $\beta$ é menor, de modo a compensar o efeito de duas unidades no espaçamento. Constata-se, portanto, uma tendência de que o parâmetro $\beta$ diminua conforme o modelo apresente maior o espaçamento entre os escores, o que faz sentido já que o efeito multiplicativo de $\beta$ deve ser menor ao aumentar-se a magnitude dos scores da variavel explicativa.
+
+Já o parâmetro $\alpha$ (intercepto) depende apenas do valor atribuído ao primeiro nível da variável explicativa. Portanto, os modelos apresentam valor igual para os casos em que o score inicial é zero (modelos 1 e 2).
+
+
+#### **v) comparações valores ajustados**
+
+```{r}
+
+df_pred <- data.frame(rbind(
+logit_model1$fitted.values,
+logit_model2$fitted.values,
+logit_model3$fitted.values
+))
+
+rownames(df_pred) <- c("modelo1 scores(0,2,4,6)", "modelo2 scores(0,1,2,3)", "modelo3 socres(1,2,3,4)")
+```
+
+```{r}
+
+tibble::as.tibble(tibble::rownames_to_column(df_pred))
+
+```
+
+
+Constata-se que os valores ajustados são exatamente os mesmos para os ranks dos três modelos.
+
+
+---
+
+---
+
+### Exercício 11 (3.11)
+
+*An experiment analyzes imperfection rates for two processes used to fabricate silicon wafers for computer chips. For treatment A applied to 10 wafers, the numbers of imperfections are 8, 7, 6, 6, 3, 4, 7, 2, 3, 4. Treatment B applied to 10 other wafers has 9, 9, 8, 14, 8, 13, 11, 5, 7, 6 imperfections. Treat the counts as independent Poisson variates having means $\mu_{A}$ and $\mu_{B}$. Consider the model $log(\mu_{a}) = \alpha + \beta x$, where x = 1 for treatment B and x = 0 for treatment A. *
+
+
+(a) *Show that $\beta = log(\mu_B) - log(\mu_A) = log(\mu_B/\mu_A)$ and $e^\beta = \mu_B/\mu_A$.*
+
+(b) *Fit the model. Report the prediction equation and interpret $\beta$.*
+
+(c) *Test $H_0 \space : \mu_A = \mu_B$ by conducting the Wald or likelihood-ratio test of $H_{0} \space : \beta = 0$. Interpret.*
+
+(d) *Construct a 95% confidence interval for $\mu_B/\mu_A$ . [Hint: Construct one for $\beta = log(\mu_B/ \mu_A)$ and then exponentiate.]*
+
+
+---
+
+#### **a)** 
+
+Respondida no caderno.
+
+
+---
+
+#### **b)**
+
+```{r}
+
+freq <- c(8,9,7,9,6,8,6,14,3,8,4,13,7,11,2,5, 3,7,4,6) 
+# essa eh nossa variavel resposta! a contagem!
+
+# estah em pares de tratamento A e B
+treatment <- rep( rep(factor(c("A","B")), 2), 5) 
+# para completar 2 casos para cada wafer
+# ou
+# treatment <- rep( rep(c(0,1), 2), 5)
+
+loglinear_model <- glm(freq ~ treatment, 
+                       family=poisson(link="log")) # ok!
+summary(loglinear_model)
+
+```
+
+A equação de predição é:
+
+$$log(\hat \mu) = 1.6094 + 0.5878x$$
+
+
+Como $\beta = log(\mu_{A}/ \mu_{B})$ e $e^{\hat \beta} = \hat \mu_{A}/ \hat \mu_{B} = 1.8$, isto representa o efeito multiplicativo no número estimado de efeitos com o emprego do tratamento B em relação ao A. Portanto, utilizar o tratamento B aumenta em $80 \%$ o número de imperfeições nas peças.
+
+
+---
+
+#### **c)**
+
+Teste da Razão de Verossimilhanças:
+
+```{r, message=FALSE}
+library(lmtest)
+lrtest(loglinear_model)
+```
+
+Teste de Wald:
+
+```{r}
+
+waldtest(loglinear_model)
+
+```
+
+Tanto o teste da Razão de Verossimilhanças quanto o teste de Wald demonstram haver evidências para se rejeitar $H_{0}$, indicando que o coeficiente $\beta$ é significativo. Em termos práticos, isto indica a existência de regressão loglinear entre $log(\hat \mu)$ e a variável explicativamento *tratamento*.
+
+---
+
+#### **d)**
+
+Intervalos de Confiança para $\beta$ e $e^{\beta}$:
+
+```{r}
+##
+confint.default(loglinear_model)[2,]
+#ou
+# loglinear_model$coefficients[2] + c(-1,1)*qnorm(0.975)*0.1764
+
+exp(confint.default(loglinear_model)[2,])
+
+```
+
+---
+
+---
+
+### Exercício 14 (somente lista)
+
+*Para o problema das abelhas, obter os resultados apresentados utilizando o **R**.*
+
+---
+
+
+Preparação dos dados e construção do modelo:
+
+```{r}
+dados <- c(1.6907, 6, 59, 1.7242, 13, 60, 1.7552, 18, 62, 1.7842, 28, 56,
+             1.8113, 52, 63, 1.8369, 53, 59, 1.8610, 61, 62, 1.8839, 59, 60)
+
+beetles <- matrix(dados, ncol=3, byrow = TRUE)
+
+colnames(beetles) <- c("dose", "killed", "total")
+
+# criando uma coluna do outro resultado: sobreviveu
+beetles <- cbind(beetles, beetles[,"total"] - beetles[,"killed"])
+colnames(beetles)[4] <- c("survived")
+
+resposta <- beetles[,c("killed", "survived")]
+dose <- beetles[,"dose"]
+
+bee_logit_model <- glm(resposta ~ dose, family=binomial(link="logit"))
+
+summary(bee_logit_model)
+```
+
+
+Plot da curva logística/modelo:
+
+```{r}
+# plot:
+# criando um conjunto com varios nros entre 1.65 e 1.9
+xx=1.65 +(0:250)/1000
+predictors=coef(bee_logit_model)[1]+coef(bee_logit_model)[2]*xx
+
+# probabilidades e proporções (para o plot)
+prob=exp(predictors)/(1+exp(predictors))
+
+prop <- beetles[,"killed"]/ beetles[,"total"]
+
+# com ggplot2
+library(ggplot2)
+ggplot()+
+  geom_point(aes(x=dose, y=prop), colour="purple")+
+  geom_line(aes(x=xx, y=prob), colour="blue")+
+  ggtitle( 'Curva Logística Ajustada' )+
+  theme(plot.title = element_text(hjust=0.5))
+```
+
+```{r}
+# ou com plotly:
+library(magrittr)
+# pontos e linhas no mesmo plot:
+# https://plot.ly/r/line-and-scatter/
+p <- plotly::plot_ly(x = ~dose, y = ~prop, name = 'prop', type = 'scatter', mode = 'markers') %>%
+  plotly::add_trace(x= ~xx, y = ~prob, name = 'prob', mode = 'lines') %>%
+  plotly::layout(title = "Curva Logística Ajustada")
+
+p
+```
+
+
+Testes para o parâmetro $\beta$:
+
+```{r}
+# testes para existência de regressão
+
+# 1) razao de verossimilhanças
+library(lmtest)
+lrtest(bee_logit_model) # ok! os resultados batem e sao significativos (rejeita H0)
+
+# 2) teste de Wald
+waldtest(bee_logit_model)
+```
+
+Uma vez que ambos os testes indicam que os $\beta$'s são significantes, há evidências da existência de regressão logística entre a morte de abelhas e a dosagem do produto utilizado.
+
+Intervalos de Confiança:
+
+```{r}
+# IC
+# summary(bee_logit_model)
+# IC_B <- bee_logit_model$coefficients[2] + c(-1,1)*qnorm(0.975)*2.8939
+
+# ou
+confint.default(bee_logit_model)
+```
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---
