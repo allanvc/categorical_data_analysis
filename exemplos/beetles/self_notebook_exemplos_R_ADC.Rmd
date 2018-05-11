@@ -54,7 +54,7 @@ text-align: justify}
 #### **i) ajuste do modelo**
 
 
-Preparação dos dados e construção do modelo:
+**Preparação dos dados**:
 
 ```{r}
 dados <- c(1.6907, 6, 59, 1.7242, 13, 60, 1.7552, 18, 62, 1.7842, 28, 56,
@@ -64,26 +64,50 @@ beetles <- matrix(dados, ncol=3, byrow = TRUE)
 
 colnames(beetles) <- c("dose", "killed", "total")
 
-# criando uma coluna do outro resultado: sobreviveu
+# criando uma coluna do outro resultado: x = 1 (survived); x = 0 (killed)
 beetles <- cbind(beetles, beetles[,"total"] - beetles[,"killed"])
 colnames(beetles)[4] <- c("survived")
 
+tibble::as.tibble(beetles)
+```
+
+\s\s
+
+**Ajuste do modelo**:
+
+```{r}
 resposta <- beetles[,c("killed", "survived")]
 dose <- beetles[,"dose"]
 
 bee_logit_model <- glm(resposta ~ dose, family=binomial(link="logit"))
 
 summary(bee_logit_model)
+
 ```
 
 \s\s
 
-Plot da curva logística/modelo:
+**Model Fit Statistics**:
+
+```{r}
+# AIC - no output do modelo ou via:
+AIC(bee_logit_model)
+
+# -2 Log L
+-2*logLik(bee_logit_model)
+
+```
+
+
+
+
+**Plot da curva logística/modelo:**
 
 ```{r}
 # plot:
 # criando um conjunto com varios nros entre 1.65 e 1.9
-xx=1.65 +(0:250)/1000
+# preenchendo todo o range entre valor max e min dos dados para a curva logística ficar suavizada
+xx=1.65 +(0:250)/1000 
 predictors=coef(bee_logit_model)[1]+coef(bee_logit_model)[2]*xx
 
 # probabilidades e proporções (para o plot)
@@ -100,7 +124,7 @@ prop <- beetles[,"killed"]/ beetles[,"total"]
 #   theme(plot.title = element_text(hjust=0.5))
 ```
 
-```{r}
+```{r, fig.width=9}
 # ou com plotly:
 library(magrittr)
 # pontos e linhas no mesmo plot:
@@ -119,12 +143,12 @@ p1
 
 \s\s
 
-Testes de hipótese:
+**Testes de hipótese:**
 
 ```{r, message=FALSE}
 # testes para existência de regressão
 
-# 1) razao de verossimilhanças
+# 1) razao de verossimilhancas
 library(lmtest)
 lrtest(bee_logit_model) # ok! os resultados batem e sao significativos (rejeita H0)
 
@@ -133,12 +157,15 @@ waldtest(bee_logit_model)
 ```
 
 \s\s
+
 Uma vez que ambos os testes indicam que os $\beta$'s são significantes, há evidências da existência de regressão logística entre a morte de abelhas e a dosagem do produto utilizado.
 
-Intervalos de Confiança:
+**Intervalos de Confiança:**
+
+Para $log(odds)$:
 
 ```{r}
-# IC
+# IC log(odds)
 # summary(bee_logit_model)
 # IC_B <- bee_logit_model$coefficients[2] + c(-1,1)*qnorm(0.975)*2.8939
 
@@ -150,6 +177,15 @@ confint.default(bee_logit_model)
 \s\s
 
 O método *.default* assume normalidade assintótica, por isso é utilizado.
+
+Para *odds ratio*:
+
+```{r}
+# IC (odds ratio)
+
+exp(confint.default(bee_logit_model))
+
+```
 
 
 ---
@@ -168,7 +204,7 @@ summary(bee_logit_model)
 
 \s\s
 
-##### **Deviance:**
+**Deviance:**
 
 Na verdade, o *output* do modelo nos dá duas medidas de *Deviance*: a *null deviance* e a *residual deviance*. Quanto mais baixa for a *deviance* de um modelo, melhor é o seu ajuste aos dados. Dito isso, a *null deviance* nos mostra quão bem a variável resposta é explicada/predita por um modelo logístico contendo somente o intercepto $\alpha$.  Já a *residual deviance* mostra em quanto **reduziu** nossa *deviance* ao introduzirmos a(s) variável(eis) explicativa(s) em nosso modelo. No caso, nota-se que há uma redução de aproximadamente $8.64$ de magnitude na *deviance* em comparação com a deviance do modelo nulo ao custo de $1$ grau de liberdade. Portanto, a introdução da variável *dose* melhororu o ajuste de nosso modelo.
 
@@ -199,66 +235,142 @@ bee_logit_model$residuals
 
 ##### **Teste de Hosmer e Lemeshow**:
 
-Este teste é também serve para avaliar a *goodness of fit* de um modelo. No **R**, podemos empregá-lo da seguinte forma:
+Este teste também serve para avaliar a *goodness of fit* de um modelo. No **R**, podemos empregá-lo de várias formas.
 
-```{r, message=FALSE}
+A primeira delas seria utilizando o modelo a partir do qual ajustamos os dados na forma de tabela de frequências. Mas como nesse caso só temos 8 observações, temos que ajustar o parâmetro `g` (número de classes/intervalos) da função para um valor menor.
+
+```{r, message=FALSE, warning=FALSE}
 library(ResourceSelection)
-hoslem.test(bee_logit_model$y, fitted(bee_logit_model), g=4)
+hoslem.test(bee_logit_model$y, bee_logit_model$fitted.values, g=5)
+
 ```
 
 \s\s
 
-### ESTA CERTO FAZER ESTE TESTE PARA OS DADOS DE FREQUÊNCIA??
+A segunda forma é ajustando um novo modelo com base nos dados expandidos com a variável resposta na forma de zeros e uns (0,1). Assim ganhamos mais graus de liberdade e, consequentemente mais "espaço" para os intervalos. Note que na saída do modelo, temos exatamente os mesmos valores de coeficientes e de p-valor, mas valores diferentes para AIC, *deviance* etc. Essa diferença deve-se justamente ao maior número de observações que temos agora.
 
-O teste de Hosmer e Lemeshow ajusta as observações em categorias utilizando como padrão $n/10$ para cada categoria. No entanto, como só temos oito observações nos dados das abelhas, temos que fornecer via parâmetro `g` um número adequado de categorias para que se calcule os quantis. Como nossos dados tem apenas 8 observações, utilizamos `g=4`. O p-valor alto indica bom ajuste de nosso modelo - ou seja - não diferenças significativas entre os valores preditos pelo modelo e os valores observados nos dados.
+```{r, message=FALSE}
+# antes do teste, eh necessario transformar para zero e uns
+
+# nao evento eh sobreviver
+response_l <- lapply(1:nrow(beetles), function(i){
+  killed <- rep(c(0,1), c(beetles[i,"survived"], beetles[i,"killed"])) # response
+  dose <- rep(beetles[i,"dose"], length(killed)) # variable
+  cbind(dose, killed)
+})
+
+response_m <- Reduce(rbind, response_l)
+
+bee_logit_model2 <- glm(response_m[,2] ~ response_m[,1], family=binomial(link="logit"))
+
+summary(bee_logit_model2) # os deviance, df e AIC diferentes vem devido ao nro de linhas (obs) no modelo expandido
+
+
+```
+
+\s\s
+
+Para o teste, fazemos uma pequena aleração na função *HLfit()* do pacote **modEvA**. O objetivo é replicar os resultados apresentados no output do **SAS**. Os ajustes  são para solucionar um *bug* da função e para fazer com que ela retorne também uma tabela das partições que foram geradas para o teste. Esta função é a única (?) que tem retorno parecido com o do SAS porque permite escolher métodos diferentes para gerar os intervalos. No caso utilizamos `bin.method="quantile"`.
+
+```{r, message=FALSE}
+library(modEvA)
+# alteração da função HLfit:
+HLfit2 <- function (model = NULL, obs = NULL, pred = NULL, bin.method, n.bins = 10, fixed.bin.size = FALSE, min.bin.size = 15, min.prob.interval = 0.1, simplif = FALSE) {
+  # version 1.5 (24 Jun 2015)
+  
+  if (!is.null(model)) {
+    if (!is.null(obs)) message("Argument 'obs' ignored in favour of 'model'.")
+    if (!is.null(pred)) message("Argument 'pred' ignored in favour of 'model'.")
+    obs <- model$y
+    pred <- model$fitted.values
+  }  # end if model
+  
+  stopifnot(
+    length(obs) == length(pred),
+    obs %in% c(0, 1),
+    pred >= 0,
+    pred <= 1
+  )
+  
+  bins <- getBins(obs = obs, pred = pred, bin.method = bin.method, n.bins = n.bins, fixed.bin.size = fixed.bin.size, min.bin.size = min.bin.size, min.prob.interval = min.prob.interval)
+  n.bins <- nrow(bins$bins.table)
+  
+  # next 4 lines: adapted from hosmerlem function in http://www.stat.sc.edu/~hitchcock/diseaseoutbreakRexample704.txt
+  observed <- xtabs(cbind(1 - obs, obs) ~ bins$prob.bin)
+  expected <- xtabs(cbind(1 - pred, pred) ~ bins$prob.bin)
+  chi.sq <- sum((observed - expected) ^ 2 / expected)
+  p.value <- 1 - pchisq(chi.sq, df = n.bins - 2)
+  rmse <- sqrt(mean((observed - expected) ^ 2))
+  
+  if (simplif) return(list(chi.sq = chi.sq, p.value = p.value, RMSE = rmse))
+  
+  # plotting loosely based on calibration.plot function in package PresenceAbsence
+  # no plot -- nosso ajuste!
+  
+  # nosso ajuste: partition table
+  partition <- data.frame(cbind(matrix(observed[,2]), matrix(expected[,2])), 
+                          cbind(matrix(observed[,1]), matrix(expected[,1])))
+  
+  #str(partition)
+  colnames(partition) <- c("Observed_Event", "Expected_Event", "Observed_Nonevent", "Expected_Nonevent")
+  
+  return(list(partition = partition, stats = list(chi.sq = chi.sq, DF = n.bins - 2, p.value = p.value), RMSE = rmse))
+}
+
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+out_HL <- HLfit2(model=bee_logit_model2, bin.method = "quantiles", n.bins = 10) # ok!
+
+tibble::as.tibble(out_HL$partition)
+```
+
+```{r, message=FALSE, warning=FALSE}
+out_HL$stats
+```
+
+\s\s
+
+A título de ilustração, se utilizássemos a primeira função para o modelo expandido, a resposta seria diferente do que a saída do SAS - só teríamos 7 grupos/ intervalos:
+
+```{r}
+library(ResourceSelection)
+help("hoslem.test")
+
+out_HL2 <- hoslem.test(bee_logit_model2$y, bee_logit_model2$fitted.values)
+
+# valores esperados -- ele agrupa os dois primeiros grupos de saida do SAS em um soh
+tibble::as.tibble(cbind(matrix(out_HL2$expected[,2]), matrix(out_HL2$expected[,1]))) %>%
+  tibble::rownames_to_column() %>%
+  magrittr::set_colnames(c("grupo", "Expected_Nonevent", "Expected_Event"))
+  
+
+
+```
+
+
+
+Em todos os testes que empregamos, o p-valor alto indica bom ajuste de nosso modelo - ou seja - não há diferenças significativas entre os valores preditos pelo modelo e os valores observados nos dados.
+
+
+<!-- \s\s -->
+
+<!-- ### ESTA CERTO FAZER ESTE TESTE PARA OS DADOS DE FREQUÊNCIA?? -->
+
+<!-- O teste de Hosmer e Lemeshow ajusta as observações em categorias utilizando como padrão $n/10$ para cada categoria. No entanto, como só temos oito observações nos dados das abelhas, temos que fornecer via parâmetro `g` um número adequado de categorias para que se calcule os quantis. Como nossos dados tem apenas 8 observações, utilizamos `g=4`. O p-valor alto indica bom ajuste de nosso modelo - ou seja - não diferenças significativas entre os valores preditos pelo modelo e os valores observados nos dados. -->
 
 \s\s
 
 ##### **Avaliando os resíduos**:
 
-Plots resíduos vs valores ajustados:
+**Plots resíduos vs valores ajustados:**
 
 
 <!-- para dividir a saida em 2 colunas com css-- eh a unica que funciona no browser!! -->
 <!-- https://stackoverflow.com/questions/31753897/2-column-section-in-r-markdown -->
 <!-- NAO FUNCIONA COM PLOTLY APENAS COM DYGRAPHS!!!! -->
 
-
-
-```{r, message=FALSE}
-# ou com plotly:
-library(dplyr)
-# pontos e linhas no mesmo plot:
-# https://plot.ly/r/line-and-scatter/
-
-p2 <- plotly::plot_ly(x = bee_logit_model$fitted.values, y = residuals(bee_logit_model), 
-                      name = 'prop', type = 'scatter', mode = 'markers', marker = list( color = "blue") ) %>%
-  plotly::layout(title = "Resíduos Deviance", xaxis = list(title="fitted"), yaxis = list(title="resíduos"))
-
-p3 <- plotly::plot_ly(x = bee_logit_model$fitted.values, y = ~bee_logit_model$residuals, 
-                      name = 'prop', type = 'scatter', mode = 'markers', marker = list( color = "orange") )  %>%
-  plotly::layout(title = "Resíduos de Pearson", xaxis = list(title="fitted"), yaxis = list(title="resíduos"))
-  
-# se usarmos ~variavel ele traz os nomes das variaveis nos eixos
-```
-
-
-<div class = "row">
-<div class = "col-md-6">
-
-```{r, fig.height=4, fig.width=4}
-p2
-```
-
-</div>
-<div class = "col-md-6">
-
-```{r, fig.height=4, fig.width=4}
-p3
-```
-
-</div>
-</div>
 
 
 ```{r}
@@ -268,18 +380,10 @@ p3
 ```
 
 
-```{r}
+```{r, fig.width=9}
 # colcando tudo no mesmo gráfico
 
-# plotly::plot_ly(x = 1:nrow(beetles), y = residuals(bee_logit_model), 
-#                       name = 'Deviance', type = 'scatter', mode = 'markers', marker = list( color = "purple") ) %>%
-#   plotly::layout(title = "Resíduos Deviance", xaxis = list(title="índices"), yaxis = list(title="resíduos")) %>%
-#   plotly::add_trace(x = 1:nrow(beetles), y = ~bee_logit_model$residuals, 
-#                       name = 'Pearson', type = 'scatter', mode = 'markers', marker = list( color = "blue")) %>%
-#   plotly::layout(title = "Resíduos de Pearson", xaxis = list(title="índices"), yaxis = list(title="resíduos") )
-
 # se usarmos ~variavel ele traz os nomes das variaveis nos eixos
-
 plotly::plot_ly(x = bee_logit_model$fitted.values, y = residuals(bee_logit_model), 
                       name = 'Deviance', type = 'scatter', mode = 'markers' ) %>%
   # plotly::layout(title = "Resíduos Deviance", xaxis = list(title="fitted"), yaxis = list(title="resíduos")) %>%
@@ -287,12 +391,11 @@ plotly::plot_ly(x = bee_logit_model$fitted.values, y = residuals(bee_logit_model
                       name = 'Pearson', type = 'scatter', mode = 'markers') %>%
   plotly::layout(title = "Resíduos", xaxis = list(title="fitted"), yaxis = list(title="resíduos") )
   
-
-
-
-
 ```
 
+\s\s
+
+Com intervalo de confiança:
 
 ```{r}
 # library(plotly)
@@ -363,6 +466,46 @@ p3
 
 ##### **Medidas (diagnóstico) de influência**
 
+
+**Resíduos vs índices**
+
+```{r, message=FALSE}
+# ou com plotly:
+library(dplyr)
+# pontos e linhas no mesmo plot:
+# https://plot.ly/r/line-and-scatter/
+
+p2 <- plotly::plot_ly(x = 1:length(residuals(bee_logit_model)), y = residuals(bee_logit_model), 
+                      name = 'prop', type = 'scatter', mode = 'markers', marker = list( color = "blue") ) %>%
+  plotly::layout(title = "Resíduos Deviance", xaxis = list(title="índices"), yaxis = list(title="resíduos"))
+
+p3 <- plotly::plot_ly(x = 1:length(residuals(bee_logit_model)), y = ~bee_logit_model$residuals, 
+                      name = 'prop', type = 'scatter', mode = 'markers', marker = list( color = "green") )  %>%
+  plotly::layout(title = "Resíduos de Pearson", xaxis = list(title="índices"), yaxis = list(title="resíduos"))
+  
+# se usarmos ~variavel ele traz os nomes das variaveis nos eixos
+```
+
+
+<div class = "row">
+<div class = "col-md-6">
+
+```{r, fig.height=4, fig.width=4}
+p2
+```
+
+</div>
+<div class = "col-md-6">
+
+```{r, fig.height=4, fig.width=4}
+p3
+```
+
+</div>
+</div>
+
+
+
 ```{r}
 
 medinflu <-influence.measures(bee_logit_model)
@@ -396,27 +539,32 @@ lista <- lapply(1:ncol(inf_measures_sub),
 ```
 
 
+**Gráficos para medidas de Influência:**
+
 <div class = "row">
 <div class = "col-md-6">
 
 ```{r, fig.height=4, fig.width=4.7, warning=FALSE, message=FALSE}
-lista[[1]]
-lista[[3]]
+lista[[1]] %>%
+  plotly::layout(title = "Dfbetas - Dose", xaxis = list(title="índices"), yaxis = list(title="dfbetas"))
+
+lista[[3]] %>%
+  plotly::layout(title = "Cook's Distance", xaxis = list(title="índices"), yaxis = list(title="cook"))
 ```
 
 </div>
 <div class = "col-md-6">
 
 ```{r, fig.height=4, fig.width=4.7, warning=FALSE, message=FALSE}
-lista[[2]]
-lista[[4]]
+lista[[2]] %>%
+  plotly::layout(title = "Dffit", xaxis = list(title="índices"), yaxis = list(title="dffit"))
+
+lista[[4]] %>%
+  plotly::layout(title = "Leverage (hat)", xaxis = list(title="índices"), yaxis = list(title="leverage"))
 ```
 
 </div>
 </div>
-
-### TEM COMO FAZER ESSA ANÁLISE DE INFLUÊNCIA APENAS COM DADOS DE FREQUÊNCIA ???
-
 
 
 ---
