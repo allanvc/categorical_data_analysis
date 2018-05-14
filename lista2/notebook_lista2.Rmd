@@ -1,0 +1,1023 @@
+---
+title: "Lista 2 - Exercícios"
+subtitle: "Análise de Dados Categorizados"
+author: "Allan Vieira 14/0128492"
+date: "May 10, 2018"
+output:
+  html_document:
+    self_contained: false
+    df_print: paged
+  pdf_document: default
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+<!-- incluir no cabecalho: -->
+<!-- always_allow_html: yes  -->
+<!--para quando formos passar para pdf -->
+
+<style>
+body {
+text-align: justify}
+</style>
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+
+<!-- <style> -->
+<!--   .col2 { -->
+<!--     columns: 2 200px;         /* number of columns and width in pixels*/ -->
+<!--     -webkit-columns: 2 200px; /* chrome, safari */ -->
+<!--     -moz-columns: 2 200px;    /* firefox */ -->
+<!--   } -->
+<!--   .col3 { -->
+<!--     columns: 3 100px; -->
+<!--     -webkit-columns: 3 100px; -->
+<!--     -moz-columns: 3 100px; -->
+<!--   } -->
+<!-- </style> -->
+<!-- esse de cima funciona no output do RStudio, mas nao nos browsers -->
+<!-- tb em: https://stackoverflow.com/questions/31753897/2-column-section-in-r-markdown -->
+
+
+---
+
+---
+
+### Problema 17 (4.7)
+
+Hastie and Tibshirani (1990, p. 282) described a study to determine risk factors for kyphosis, which is severe forward flexion of the spine following corrective spinal surgery. The age in months at the time of the operation for the 18 subjects for whom kyphosis was present were 12, 15, 42, 52, 59, 73, 82, 91, 96, 105, 114, 120, 121, 128, 130, 139, 139, 157 and for the 22 subjects for whom kyphosis was absent were 1, 1, 2, 8, 11, 18, 22, 31, 37, 61, 72, 81, 97, 112, 118, 127, 131, 140, 151, 159, 177, 206.
+
+(a) Fit a logistic regression model using age as a predictor of whether kyphosis is present. Test whether age has a significant effect.
+(b) Plot the data. Note the difference in dispersion of age at the two levels of
+kyphosis.
+(c) Fit the model $logit[\pi(x)] = \alpha + \beta_1 x + \beta_2 x^2$ . Test the significance of the squared age term, plot the fit, and interpret. (The final paragraph of Section 4.1.6 is relevant to these results.)
+
+---
+
+#### **item a)**
+
+Preparação dos dados:
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+
+
+age.present <- c(12, 15, 42, 52, 59, 73, 82, 91, 96, 105, 114, 120, 121, 128, 130, 139, 139, 157)
+
+age.absent <- c(1, 1, 2, 8, 11, 18, 22, 31, 37, 61, 72, 81, 97, 112, 118, 127, 131, 140, 151, 159, 177, 206)
+
+age <- c(age.present, age.absent)
+
+kyphosis <- c(rep(1,length(age.present)), rep(0,length(age.absent)) )
+
+dados <- tibble::tibble(kyphosis, age)
+
+dados
+```
+
+\s\s
+
+**Ajuste do modelo:**
+
+```{r}
+
+mod <- glm(data=dados, kyphosis ~ age , family=binomial(link="logit"))
+
+summary(mod)
+
+```
+
+
+
+\s\s
+
+**Testes de hipótese para $\beta = 0$:**
+
+```{r, message=FALSE}
+# testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod)
+
+# 2) teste de Wald
+waldtest(mod)
+```
+
+Os resultados dos testes de Razão de Verossimilhanças e de Wald para $\beta$ (com $\alpha = 0.05$) indicam que não haver evidências de que o parâmetro de regressão seja significante. Portanto, não se rejeita hipótese de não haver regressão logística no caso - ou seja - não há evidências para se rejeitar a hipótese de que a variável *age* **NÃO** exerce qualquer efeito sobre a presença ou não de *kyphosis* - poderíamos estimar $log[\pi(x)]$ apenas com o intercepto. (Ver seção 4.1.6 - explica essa falta de ajuste) **(???)**
+
+\s\s
+
+**Intervalos de Confiança:**
+
+Para *log(odds)*:
+
+```{r}
+# IC log(odds)
+# summary(model)
+# IC_B <- model$coefficients[2] + c(-1,1)*qnorm(0.975)*ASE
+
+# ou
+confint.default(mod)
+
+```
+
+\s\s
+
+O método *.default* assume normalidade assintótica, por isso é utilizado.
+
+Para *odds ratio*:
+
+```{r}
+# IC (odds ratio)
+
+exp(confint.default(mod))
+
+```
+
+Os estimações intervalares (com $\alpha = 0.05$) confirmam os resultados dos testes para $\beta = 0$, pois o intervalo para *log(odds)* contempla o valor 0, ao passo que o intervalo de confiança para *odds ratio* contempla o valor 1 - ambos a um nível de significância de $\alpha = 0.05$.
+
+
+---
+
+##### **item b)**
+
+
+**Plot dos dados**
+
+```{r}
+
+dados %>%
+  plotly::plot_ly(x = ~age, y = ~kyphosis, type="scatter", mode="markers",
+                  split=~kyphosis) %>%
+  plotly::layout(title = "Dispersão de age")
+  
+# poderia usar essa estrutura para fazer o jitter nos graficos de ajuste da curva!!
+
+```
+
+
+Realmente, os valores de *age* para $kyphosis=0$ estão dispersos por quase todas as idades, ao passo que $kyphosis=1$ concentram-se apenas nas idades mais baixas. Isso torna complicado o ajuste de um modelo logístico com variável independente *idade*. **(???)**
+
+
+---
+
+##### **item c)**
+
+
+Preparação dos dados:
+
+```{r, message=FALSE, warning=FALSE}
+# precisamos criar uma nova variavel age^2
+# senao nao aparece na saida do modelo - nao considera o termo quadratico
+
+dados2 <- dados %>%
+  dplyr::mutate(age_sq = age**2)
+
+dados2
+```
+
+
+
+**Ajuste do modelo:**
+
+```{r}
+
+# mod2 <- glm(data=dados, kyphosis ~ age + (age**2) , family=binomial(link="logit")) # se passar assim, ele nao reconhece como variavel diferente
+mod2 <- glm(data=dados2, kyphosis ~ age + age_sq , family=binomial(link="logit"))
+
+summary(mod2)
+
+```
+
+
+\s\s
+
+**Testes de hipótese para $\beta = 0$:**
+
+Como vamos testar um coeficiente $\beta$ específico ($\beta_2$), faremos uso apenas do teste de Wald e não do teste de razão de verossimilhanças, pois este compara, no caso, os preditores do modelo $y \sim \alpha + \beta_1x + \beta_2x^2$ com o preditor de outro modelo que escolhéssemos. Não conseguiríamos, portanto, fazer o teste especificamente para $\beta2$, como faríamos no caso do teste de Wald
+
+```{r, message=FALSE}
+
+# # 1) razao de verossimilhancas
+# library(lmtest)
+# lrtest(mod2, "age_sq")
+# # lrtest(mod2)
+
+
+# 2) Teste de Wald
+library(survey)
+regTermTest(mod2, "age_sq")
+regTermTest(mod2, "age")
+
+#ou
+
+library(lmtest)
+waldtest(mod2, "age_sq") # dah o mesmo resultado que regTermTest
+# waldtest(mod2)
+waldtest(mod2, "age")
+
+```
+
+Pelo Teste de Wald para $\beta_2$ verificamos que o resultado é é significativo, no sentido de rejeitar $H_0$ - há evidências de que a variável *age_sq* exerce influência sobre o resultado de *kyphosis*. Não só isso ocorreu, mas o próprio $\beta_1$ que passou a ser significativo, o que não havia ocorrido no modelo $y \sim \alpha + \beta x$ Isso deve-se ao efeito descrito na seção 4.1.6. Se olharmos para o gráfico apresentado no **item b**, constata-se que as distribuições (que devem ter formato de sino) de $x$ (*age*) para $Y=1$ e $Y=0$ apresentam variância (espalhamento) bem diferente uma da outra (ver figuras abaixo), o que constatamos ainda no item b. Segundo Agresti (2007, p.106) esta situação faz com que um modelo logístico com um termo de 1ª ordem $x$ juntamente com um termo quadrático $x^2$ apresente um bom ajuste aos dados, corroborando exatamente os resultados desta análise. Ao confecionarmos um modelo somente com o termo *age*, o ajuste não foi bom, mas ao construirmos um modelo com *age* e *age_sq*, o ajuste passou a ser bom. 
+
+
+Plots das distribuições de *age*:
+
+
+```{r}
+# library(plotly)
+
+
+# separando em data frames com as densidades
+# densidade sempre terah um componente x e outro y
+# dens_zeros <- data.frame(x = density(age.absent)$x,
+#                    y = density(age.absent)$y)
+# 
+# dens_ones <- data.frame(x = density(age.present)$x,
+#                    y = density(age.present)$y)
+# 
+# 
+# miny <- 0
+# maxy <- max(dens_zeros$y)
+# 
+# plotly::plot_ly() %>% 
+#   # add_histogram(x = age_zeros) %>%
+#   # add_histogram(x = age_ones) %>%
+#   plotly::add_lines(data = dens_zeros, x = ~x, y = ~y, yaxis = "y", 
+#             line = list(width = 1), fill = 'tozeroy', name="zeros",
+#             fillcolor = 'rgba(168, 216, 234, 0.5)') %>% 
+#   plotly::add_lines(data = dens_ones, x = ~x, y = ~y, yaxis = "y1", 
+#             line = list(width = 1), fill = 'tozeroy', name="ones",
+#             fillcolor = 'rgba(255, 212, 96, 0.5)') %>%
+#   plotly::layout(title="Densidade de age|kyphosis", yaxis2 = list(overlaying = "y", 
+#                        side = "right", 
+#                        range = c(miny, maxy),
+#                        showgrid = FALSE, 
+#                        zeroline = TRUE))
+
+
+
+# library(plotly)
+# https://plot.ly/r/filled-area-plots/
+
+# densidade sempre terah um componente x e outro y
+density1 <- density(age.absent)
+density2 <- density(age.present)
+
+plotly::plot_ly(x = ~density1$x, y = ~density1$y, type = 'scatter', mode = 'lines', name = 'age|Y=0', fill = 'tozeroy',
+        fillcolor = 'rgba(168, 216, 234, 0.5)',
+        line = list(width = 0.5)) %>%
+  plotly::add_trace(x = ~density2$x, y = ~density2$y, name= 'age|Y=1', fill = 'tozeroy',
+            fillcolor = 'rgba(255, 212, 96, 0.5)') %>%
+  # plotly::add_trace(x= ~age, y=0, type='scatter', mode='markers', split=~kyphosis ) # para colocar um jitter
+  plotly::layout(title="Densidade de age|kyphosis", xaxis = list(title = 'Age'),
+         yaxis = list(title = 'Density'))
+
+```
+
+
+---
+
+---
+
+### Problema 18 (4.9)
+
+For the horseshoe crab data, fit a logistic regression model for the probability of a satellite, using color alone as the predictor.
+
+(a) Treat color as nominal scale (qualitative). Report the prediction equation, and explain how to interpret the coefficient of the first indicator variable.
+(b) For the model in (a), conduct a likelihood-ratio test of the hypothesis that color has no effect. Interpret.
+(c) Treating color in a quantitative manner, obtain a prediction equation. Interpret the coefficient of color.
+(d) For the model in (c), test the hypothesis that color has no effect. Interpret.
+(e) When we treat color as quantitative instead of qualitative, state an advantage relating to power and a potential disadvantage relating to model lack of fit.
+
+---
+
+#### **item a)**
+
+**Preparação dos dados:**
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+
+crabs <- read_table2("/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/exemplos/crab/crabs.txt", col_names = FALSE)
+
+crabs <- crabs %>%
+  magrittr::set_colnames(c("color", "spine", "width", "satell", "weight")) %>%
+  na.omit() %>%
+  dplyr::mutate(y = dplyr::if_else(satell > 0, 1, 0), # resposta
+                weight = weight/1000, # transformando peso em kg
+                color = color - 1) # para escala de color de 1 a 4 
+
+
+tibble::as.tibble(crabs)
+```
+
+
+```{r}
+
+# soh precisamos tratar color como fator:
+
+crabs2 <- crabs %>%
+  dplyr::mutate(color = factor(color, labels = c("Lt Med", "Medium", "Dk Med", "Dark")))
+
+head(crabs2)
+
+```
+
+
+**Ajuste do modelo:**
+
+```{r}
+mod_nom <- glm(data=crabs, y ~ color, family=binomial(link="logit"))
+
+summary(mod_nom)
+
+```
+
+Equação de predição: $logit[\pi(x)] = \alpha \space + \space \beta_1Color_{Medium} \space + \beta_2Color_{Dk \space Medium} \space + \beta_3Color_{Dark}$ **ou soh um beta (???)**
+
+Interpretação dos coeficientes: os sinais negativos que se intensificam com a também intensificação da cor da fêmea, mostram que quanto mais escura a cor do carangueijo fêmea, menor é a *log(odds)* de haver um macho satelite próximo a ela. 
+
+---
+
+#### **item b)**
+
+**Testes de hipótese para $\beta$:**
+
+```{r, message=FALSE}
+# testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_nom)
+
+# 2) teste de Wald
+# waldtest(mod_nom, "color")
+# waldtest(mod_nom)
+# 
+# library(survey)
+# regTermTest(mod_nom, "color")
+# # regTermTest(mod_nom)
+# # regTermTest(mod2, "color Medium")
+```
+
+O teste de Razão de Verossimilhanças, neste caso, testa o modelo $y \sim \alpha$ contra o modelo completo com *color* na forma nominal. O resultado ( a um nível de significância de $5\%$) indica que o modelo com *color* (da fêmea) exerce influência na variável resposta, qual seja, a probabilidade **(probabilidade ou só a presença (???))** da presença de machos satélites nos ninhos.
+
+<!-- Todos os testes indicam que os $\beta s$ **(??? ou soh beta)** são significativos, ou seja, variável *color* (da fêmea) é importante para descrever a probabilidade de se encontrar machos satélites nos ninhos. -->
+
+
+---
+
+#### **item c)**
+
+**Ajuste do modelo:**
+
+```{r}
+
+
+mod_ord <- glm(data=crabs, y ~ color, family=binomial(link="logit"))
+
+summary(mod_ord)
+
+```
+
+Equação de predição: $logit[\pi(x)] = \alpha \space + \space \beta_1color$.
+
+Interpretação do coeficiente: o sinal negativo indica que a cor da fêmea e  a variável presença **((???) ou log(odds) da presença de machos?)** de machos satélites nos ninhos estão **inversamente** relacionadas. Quanto mais escura é a cor do carangueijo fêmea, menor é a *log(odds)* de haver um macho satélite próximo a ela. 
+
+\s\s
+
+--- 
+
+**item d)**
+
+**Testes de hipótese para $\beta$:**
+
+```{r, message=FALSE}
+# testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_ord)
+
+# 2) teste de Wald
+waldtest(mod_ord, "color")
+waldtest(mod_ord)
+
+library(survey)
+regTermTest(mod_ord, "color")
+# regTermTest(mod_nom)
+# regTermTest(mod2, "color Medium")
+```
+
+O teste de Razão de Verossimilhanças e o de Wald (a um nível de significância de $5\%$) indicam que o modelo com *color* (ordinal) (da fêmea) exerce influência na variável resposta, qual seja, a probabilidade **(probabilidade ou só a presença ou a log(odds) (???))** da presença de machos satélites nos ninhos.
+
+
+--- 
+
+**item e)**
+
+A variável *color* é um preditor ordinal. É vantajoso tratar preditores ordinais de forma quantitativa ao invés de qualitativa porque:
+
+(a) o modelo fica mais simples: $logit[\pi(x)] = \alpha + \beta x$ ao invés de $logit[\pi(x)] = \alpha + \beta_1 c_1 + \beta_2 c_2 + \beta_3 c_3$, em que criamos variáveis *dummies* para $k-1$ níveis da variável;
+
+(b) mais fácil de interpretar já que a variável *color* não é subdividida em variáveis *dummies*;
+
+(c) os testes do efeito do preditor linear são geralmente mais poderesos com 1 parâmetro $\beta$ do que com vários.
+
+
+
+---
+
+---
+
+### Problema 19 (4.15) 
+
+Table 4.12 refers to ratings of agricultural extension agents in North Carolina. In each of five districts, agents were classified by their race and by whether they qualified for a merit pay increase. 
+
+(a) Conduct the Cochran–Mantel–Haenszel test of the hypothesis that the merit pay decision is independent of race, conditional on the district. Interpret.
+(b) Show how you could alternatively test the hypothesis in (a) using a test about a parameter in a logistic regression model.
+(c) What information can you get from a model-based analysis that you do not get from the CMH test?
+
+
+![](/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/lista2/img/table4.12.png){width=500px}
+
+---
+
+#### **item a)**
+
+Preparando os dados:
+
+```{r}
+# criando tabela 2x2x5
+
+counts <- c(24,9,47,12,10,3,45,8,5,4,57,9,16,7,54,10,7,4,59,12)
+
+dados <- array(counts, dim=c(2,2,5), dimnames = list(merit = c("yes", "no"), race = c("blacks", "whites"),  district = c("NC", "NE", "NW", "SE", "SW")))
+
+partial_tables <- as.table(dados)
+
+str(partial_tables)
+
+partial_tables
+
+```
+
+
+Calculando as *odds ratio* condicionais:
+
+```{r}
+library(samplesizeCMH)
+# calculando as odds ratio condicionais
+apply(partial_tables, 3, odds.ratio)
+
+```
+
+As chances dos negros obterem pagamento com base em mérito são menores que a dos brancos em todas os distritos, mas com diferenças sensíveis dependendo da região.
+
+
+Teste de Mantel Haenzel:
+
+```{r}
+# teste para a razão de chances condiconal
+mantelhaen.test(partial_tables)
+```
+
+As chances dos negros conseguirem um pagamento baseado em mérito é menor que a dos brancos, controlando-se a variável distrito.
+
+Calculando *odds ratio* marginal apenas para comparar com a condicional:
+
+```{r}
+# criando a tabela marginal
+marginal_table <- margin.table(partial_tables, margin=c(1,2)) # margin indica para qual dimensao queremos calcular as marginais
+
+# calculando a razão de chances marginal:
+odds.ratio(marginal_table)
+
+
+```
+
+Não há paradoxo de Simpson, pois a chance dos negros continua menor que a dos brancos mesmo com a tabela marginal.
+
+
+---
+
+#### **item b)**
+
+Alternativamente, para testar a hipótese de **(a)**, poderíamos ajustar um modelo de regressão logística em que a variável *merit pay* seria a variável dependente e e a variável *race* seria nossa variável explicativa. Faríamos então um teste de hipóteses para o parâmetro $\beta$ desta regressão que nos diria se a variável raça exerce influência sobre a decisão de *merit pay*. Sabendo que o parâmetro $\beta$ de uma regressão logística é uma *log(odds)*, poderíamos chegar aos mesmos valores da *odds ratio* do exemplo anterior calculando a inversa, ou seja, $e^{\beta}$.
+
+Preparando os dados para regressão logística:
+
+```{r}
+# criando tabela 2x2x5
+
+# counts <- (24,9,47,12,10,3,45,8,5,4,57,9,16,7,54,10,7,4,59,12)
+
+yes <- matrix(c(24,10,5,16,7, 47, 45,57,54,59))
+
+no <- matrix(c(9,3,4,7,4,12,8,9,10,12))
+
+race <- rep(c("black", "white"), each=5) 
+
+district <- rep(c("NC", "NE", "NW", "SE", "SW"), 2) # 2x2x5 = 20
+
+# merit <- rep(rep(c(1, 0), 2), 5) # 2x2x5 = 20
+
+# criando um data frmae no formato long
+
+# tem que ser por model matrix pq temos variaveis nominais
+race.m <- model.matrix(~race-1)
+district.m <- model.matrix(~district-1)
+
+
+
+tibble::as.tibble(cbind(yes, no, race.m[,-2, drop=FALSE], district.m[,-5]))
+
+merit <- tibble::as.tibble(cbind(yes, no, race.m[,-2, drop=FALSE], district.m[,-5])) %>%
+  magrittr::set_colnames(c("yes", "no", "black", "NC", "NE", "NW", "SE"))
+
+merit
+
+```
+
+** Ajustando os modelos:**
+
+```{r}
+
+resposta <- as.matrix(merit %>%
+  dplyr::select(yes, no))
+
+
+
+black <- as.matrix(merit %>%
+  dplyr::select(black))
+
+mod_merit1 <- glm(resposta ~ black, family=binomial(link="logit") )
+mod_merit2 <- glm(resposta ~ black + district, family=binomial(link="logit") )
+
+summary(mod_merit1)
+summary(mod_merit2)
+
+
+```
+
+**Testando o parâmetro $\beta$ para *race*:**
+
+```{r, message=FALSE}
+# testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_merit1)
+lrtest(mod_merit2)
+
+# 2) teste de Wald
+waldtest(mod_merit1)
+waldtest(mod_merit2, "black")
+
+library(survey)
+regTermTest(mod_merit1, "black")
+regTermTest(mod_merit2, "black")
+# regTermTest(mod_nom)
+# regTermTest(mod2, "color Medium")
+```
+
+Os resultados corroboram **(a)** indicando que ser negro influencia negativamente em obter *merit pay*.
+
+
+**Calculando a *odds ratio*:**
+
+```{r}
+
+exp(mod_merit1$coefficients[2])
+
+exp(mod_merit2$coefficients[2])
+
+```
+
+**Portanto, como esperado, $e^\beta$ do modelo com um parâmetro $logit[\pi(x)] = \alpha + \beta race_{black}$ é exatamente a nossa *odds ratio* da tabela marginal - ou seja - sem considerar o efeito da variável *district*. Com o modelo mais complexo, a *odds ratio* não é exatamente igual, mas bastante próxima da estatística do teste CMH e corrobora o resultado.**
+
+#### **item c)
+
+A informação que podemos obter por meio de uma regressão logística mas não pelo teste CMH é a **probabilidade** de um resultado da variável resposta. Na verdade, como o teste CMH não faz modelagem, não temos a diferenciação entre variáveis dependentes/resposta e variável independentes que possuímos na regressão logística. Além disso, a regressão logística nos permite trabalhar também com variáveis continuas, o que não é possível com o teste CMH.
+
+---
+
+---
+
+### Problema 20)
+
+A tabela abaixo é baseada em estudo epidemiológico com 2484 sujeitos para avaliar se ronco (escores 0,2,4,5) é um possível fator de risco para doença do coração.
+
+![](/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/lista2/img/table20.png){width=500px}
+
+Utilize o SAS e/ou R para responder as questões seguintes:
+(a) Ajuste um modelo de regressão logística e obtenha as estimativas dos parâmetros.
+(b) Calcule as probabilidades amostrais de casos de doenças de coração para cada nível de ronco. Obtenha as probabilidades estimadas e indique se o modelo parece ajustar bem os valores amostrados.
+(c) Calcule e interprete o nível efetivo mediano EL 50 = −$\hat {\frac{\alpha}{\beta}}$.
+(d) Calcule o acréscimo na chance de infarto para cada unidade acrescida no ronco.
+(e) Faça um teste para qualidade do ajuste. Indique as hipóteses, estatística do teste, p-valor e
+conclusão.
+(f) Se alterarmos a codificação da variável ronco no programa SAS, as estimativas dos parâmetros
+irão ser diferentes? Justifique?
+
+---
+
+
+####**item a)**
+
+```{r}
+dados <- c(24, 35, 21, 30, 1355, 603, 192, 224)
+d <- matrix(dados, ncol=2)
+
+
+snoring1<-c(0,2,4,5) # snoring eh uma unica variavel!!!
+colnames(d) <- c("yes", "no")
+logit_model1 <-glm(d~snoring1,
+                family=binomial(link=logit))
+
+# logit_model1
+# logit_model1$fitted.values
+summary(logit_model1)
+
+```
+
+---
+
+#### **item b)**
+
+Probabilidades amostrais:
+
+```{r}
+rsums <- rowSums(d)
+probs <- sapply(1:4, function(i){
+  d[i,1]/rsums[i]
+})
+
+probs
+```
+
+
+Probabilidades estimadas:
+
+```{r}
+
+probs_est <- exp(logit_model1$coefficients[1] + logit_model1$coefficients[2]*snoring1) / (1+exp(logit_model1$coefficients[1] + logit_model1$coefficients[2]*snoring1))
+
+
+probs_est
+```
+
+As probabilidades estimadas estão próximas das probabilidades amostrais.
+
+---
+
+####**item c)**
+
+```{r}
+# EL_50
+
+unname(-logit_model1$coefficients[1]/logit_model1$coefficients[2])
+
+```
+
+O nível efetivo mediano indica o valor da variável explicativa *ronco* para o qual a probabilidade de ter doença do coração é $\hat \pi(x) = 0.5$. 
+
+
+---
+
+#### **item d)**
+
+** chance ou probabilidade (???)**
+O acréscimo da chance de infarto para cada unidade acrescida de ronco é dado por $\hat \beta \pi(x)[1-\pi(x)]$:
+
+```{r}
+logit_model1$coefficients[2]*probs_est*(1-probs_est)
+
+
+```
+
+Diferente dos modelos de probabilidade linear, constata-se que o modelo de regressão logística permite que a taxa de variação mude conforme o nível de $x$ varia.
+
+
+#### **item e)**
+
+**Podemos fazer tanto um teste de razão de verossimilhanças entre um modelo mais completo (por exemplo com um termo quadrático) e o modelo que ajustamos, quanto o teste de Hosmer Lemeshow (slides, p.49). O primeiro teste seria mais informativo como teste de lack of fit.**
+
+
+**Teste de Hosmer Lemeshow**
+
+Faremos na abordagem om tabela de contingência e na abordagem com variável resposta com zeros e uns (versão SAS).
+
+
+**(???)**
+As hipóteses do teste de HL são:
+
+$H_0:$ não existem diferenças entre os valores esperados e os valores ajustados
+
+$H_1:$ há diferenças significativas entre os valores esperados e aqueles ajustados pelo modelo
+
+
+Versão 1:
+
+```{r}
+#antes do teste (nos moldes do SAS), eh necessario transformar para zero e uns
+
+# nao evento eh no
+yes <- rep(c(1,0), c(sum(d[,"yes"]), sum(d[,"no"])))
+snor.yes <- rep(snoring1, d[,1])
+snor.no <- rep(snoring1, d[,2])
+
+response_m <- matrix(c(yes, c(snor.yes, snor.no)), ncol=2)
+
+logit_model2 <- glm(response_m[,1] ~ response_m[,2], family=binomial(link="logit"))
+
+# logit_model1 # ok! nao altera os coeficientes
+
+
+library(modEvA)
+# alteração da função HLfit:
+HLfit2 <- function (model = NULL, obs = NULL, pred = NULL, bin.method, n.bins = 10, fixed.bin.size = FALSE, min.bin.size = 15, min.prob.interval = 0.1, simplif = FALSE) {
+  # version 1.5 (24 Jun 2015)
+  
+  if (!is.null(model)) {
+    if (!is.null(obs)) message("Argument 'obs' ignored in favour of 'model'.")
+    if (!is.null(pred)) message("Argument 'pred' ignored in favour of 'model'.")
+    obs <- model$y
+    pred <- model$fitted.values
+  }  # end if model
+  
+  stopifnot(
+    length(obs) == length(pred),
+    obs %in% c(0, 1),
+    pred >= 0,
+    pred <= 1
+  )
+  
+  bins <- getBins(obs = obs, pred = pred, bin.method = bin.method, n.bins = n.bins, fixed.bin.size = fixed.bin.size, min.bin.size = min.bin.size, min.prob.interval = min.prob.interval)
+  n.bins <- nrow(bins$bins.table)
+  
+  # next 4 lines: adapted from hosmerlem function in http://www.stat.sc.edu/~hitchcock/diseaseoutbreakRexample704.txt
+  observed <- xtabs(cbind(1 - obs, obs) ~ bins$prob.bin)
+  expected <- xtabs(cbind(1 - pred, pred) ~ bins$prob.bin)
+  chi.sq <- sum((observed - expected) ^ 2 / expected)
+  p.value <- 1 - pchisq(chi.sq, df = n.bins - 2)
+  rmse <- sqrt(mean((observed - expected) ^ 2))
+  
+  if (simplif) return(list(chi.sq = chi.sq, p.value = p.value, RMSE = rmse))
+  
+  # plotting loosely based on calibration.plot function in package PresenceAbsence
+  # no plot -- nosso ajuste!
+  
+  # nosso ajuste: partition table
+  partition <- data.frame(cbind(matrix(observed[,2]), matrix(expected[,2])), 
+                          cbind(matrix(observed[,1]), matrix(expected[,1])))
+  
+  #str(partition)
+  colnames(partition) <- c("Observed_Event", "Expected_Event", "Observed_Nonevent", "Expected_Nonevent")
+  
+  return(list(partition = partition, stats = list(chi.sq = chi.sq, DF = n.bins - 2, p.value = p.value), RMSE = rmse))
+}
+out_HL <- HLfit2(model=logit_model2, bin.method = "quantiles", n.bins = 10) # ok!
+
+tibble::as.tibble(out_HL$partition)
+
+
+# ou
+library(ResourceSelection)
+hoslem.test(logit_model2$y, logit_model2$fitted.values, g=5)
+
+```
+
+
+Versão 2
+
+```{r, warning=FALSE, message=FALSE}
+library(ResourceSelection)
+# como temos somente 4 niveis (0,2,4,5), nao daha para especificar muitas bins
+hoslem.test(logit_model1$y, logit_model1$fitted.values, g=4)
+
+hoslem.test(logit_model1$y, logit_model1$fitted.values, g=3)
+
+
+
+
+
+```
+
+Em ambos os casos, não há evidências para se rejeitar $H_0$ a um nível alpha de $5\%$. Portanto, o modelo apresenta bom ajuste.
+
+
+**Teste de Razão de Verossimilhanças para avaliar *goodnes of fit* **
+
+Ajustando um modelo mais complexo (quadrático):
+
+
+```{r}
+# modelo de tabela de contingencia
+snoring1_sq <- snoring1^2
+
+mod_sq <- glm(d ~ snoring1 + snoring1_sq, family=binomial(link="logit"))
+
+summary(mod_sq)
+
+
+```
+
+```{r}
+# modelo de tabela de (0,1)
+snor_sq <- response_m[,2]^2
+response_m2 <- cbind(response_m, snor_sq)
+
+mod_sq2 <- glm(response_m2[,1] ~ response_m2[,2] + response_m2[,3], family=binomial(link="logit"))
+
+summary(mod_sq2)
+
+```
+
+Teste de Razão de Verossimilhanças nos dois casos:
+
+```{r}
+library(lmtest)
+
+# caso1
+lrtest(logit_model1, mod_sq)
+
+# caso2
+lrtest(logit_model2, mod_sq2)
+
+
+
+```
+
+**Temos sempre o mesmo resultado que eh o P(Z>z) no summary do modelo. A um nível de significância $\alpha$ de $5\%$, NÃO rejeitamos a hipótese  nula de que o modelo mais simples é adequado e possui um bom *goodness of fit*. **
+
+
+---
+
+#### **item f)**
+
+O parâmetro $\alpha$ do modelo somente se altera, caso alteremos o nível inicial de nossa variável ordinal. Já o parâmetro $\beta$ se altera somente se alterarmos o espaçamento entre os níveis de nossa covariável (ver lista 1).
+
+
+---
+
+### **Problema 21)**
+
+
+Considere o problema Horseshoe Crab visto em aula. Sejam largura (L), cor (C) e espinha (E) as variáveis preditoras e suponha que foi feito um procedimento de eliminação backward. O procedimento foi iniciado com o modelo mais complexo (modelo saturado: C ∗E ∗L). Este modeloo utilizou efeitos simples, interações de dois fatores e de três fatores. A tabela abaixo apresenta o ajuste para este modelo e outros modelos mais simples, na forma hierárquica.
+
+![](/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/lista2/img/tab21.png){width=500px}
+
+
+(a) Faça um teste de razão de verossimilhança comparando o modelo saturado com o modelo mais simples que remove apenas a interação de 3 fatores. O teste sugere que a interação de 3 fatores deve ser removida do modelo?
+(b) Se queremos remover um termo no estágio seguinte, explique porque selecionariamos o modelo C ∗ E + C ∗ L.
+(c) Considerando o modelo 3C, se você tiver de eliminar mais termos e escolher entre os modelos 4A ou 4B, qual modelo seria o escolhido?
+(d) É razoável simplificar o modelo ainda mais? Justifique.
+(e) Dos modelos considerados na tabela, qual seria o escolhido pelo critério AIC?
+
+
+---
+
+
+
+####**item a)**
+
+Preparando os dados:
+
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+
+crabs <- read_table2("/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/exemplos/crab/crabs.txt", col_names = FALSE)
+
+crabs <- crabs %>%
+  magrittr::set_colnames(c("color", "spine", "width", "satell", "weight")) %>%
+  na.omit() %>%
+  dplyr::mutate(y = dplyr::if_else(satell > 0, 1, 0), # resposta
+                L = weight/1000, # transformando peso em kg
+                C = color - 1,
+                E = spine) # para escala de color de 1 a 4 
+
+
+tibble::as.tibble(crabs)
+```
+
+
+Ajustando os modelos:
+
+```{r}
+
+mod_comp <- glm(data=crabs, y ~ C + E + L + C*E + C*L + E*L + C*E*L, family=binomial(link="logit"))
+
+mod_1 <- glm(data=crabs, y ~ C*E*L, family=binomial(link="logit")) # daha na mesma! automaticamente ele faz todas as combinações possíveis
+# soh se tivesse um termo quadratico que nao funcionaria
+summary(mod_1)
+summary(mod_comp)
+
+
+mod_simples <- glm(data=crabs, y ~ C + E + L + C*E + C*L + E*L, family=binomial(link="logit"))
+# ou
+mod_simples <- glm(data=crabs, y ~ C*E + C*L + E*L, family=binomial(link="logit"))
+
+summary(mod_simples)
+
+
+```
+
+
+Comparações - Teste Razão de Verossimilhanças:
+
+
+```{r}
+AIC(mod_1)
+AIC(mod_simples)
+
+library(lmtest)
+lrtest(mod_1, mod_simples)
+
+```
+
+\s\s
+
+Com um p-valor alto, conclui-se que o modelo mais simples $y ~ C*E + C*L +E+L$ possui um ajuste melhor do que o do modelo mais completo.
+
+
+---
+
+#### **item b)**
+
+
+Do estágio 2 para o 3, o modelo selecionado seria $C*E + C*L$, pois ao remover o termo $E*L$, tivemos a maior **redução** de **deviance** e **AIC** se em comparação com os modelos 3B e 3C. Além disso, houve um aumento nos graus de liberdade em relação ao modelo do nível 2.
+
+
+---
+
+#### **item c)**
+
+
+Partindo do modelo 3C para os modelos do nível 4, poderia haver uma certa ambiguidade nos critérios de escolha uma vez que:
+
+(i) o modelo 4A apresenta o menor AIC e mais graus de liberdade;
+(ii) o modelo 4B apresenta a menor deviance;
+(iii) ambos os modelos apresentaram um aumento na deviance em relação ao modelo 3C;
+
+Então, seria mais adequado conversar com o pesquisador sobre a importância de tais variáveis e sobre quais delas poderiam ser mais propícias a interação na prática. Isso poderia ajudar a identificar o melhor modelo entre os dois. Ainda sim, se não houvesse nenhuma informação adicional, compararia qual modelo apresentou a menor aumento percentual em deviance e maior redução percentual em AIC em comparação ao nível 3Não daria muita importância para os números de graus de liberdade são bem altos e não há tanta diferença entre os modelos nesse sentido .
+
+
+```{r}
+# AIC
+# modelo 4A
+(201.6-205.7)/205.7
+# modelo 4B
+(203.6-205.7)/205.7
+
+
+# deviance
+# modelo 4A
+(181.64-173.69)/173.69
+# modelo 4B
+(177.61-173.69)/173.69
+
+```
+
+
+O modelo 4A será o escolhido por mim, pois, apresentou um aumento da deviance apenas de $4\%$, mas com uma queda de $\19%$ no AIC. 
+
+---
+
+#### **item d)**
+
+Em termos de valores de deviance, não seria tão razoável simplificar ainda mais o modelo removendo uma lateração. Embora o AIC cai no último nível, esta queda é bastante pequena se em comparação ao aumento da deviance. Na verdade, seria o modelo com maior deviance entre todos. Por isso não seria razoável simplificar ainda mais o modelo.
+
+
+---
+
+#### **item e)**
+
+Pelo critério AIC, o modelo escolhido seria aquele com menor valor de AIC, qual seja o modelo 5.
+
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---

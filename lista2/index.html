@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira 14/0128492" />
+
+<meta name="date" content="2018-05-10" />
+
+<title>Lista 2 - Exercícios</title>
+
+<script src="notebook_lista2_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="notebook_lista2_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="notebook_lista2_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="notebook_lista2_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="notebook_lista2_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="notebook_lista2_files/navigation-1.1/tabsets.js"></script>
+<link href="notebook_lista2_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="notebook_lista2_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="notebook_lista2_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="notebook_lista2_files/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="notebook_lista2_files/htmlwidgets-1.0/htmlwidgets.js"></script>
+<script src="notebook_lista2_files/plotly-binding-4.7.1/plotly.js"></script>
+<script src="notebook_lista2_files/typedarray-0.1/typedarray.min.js"></script>
+<link href="notebook_lista2_files/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="notebook_lista2_files/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<link href="notebook_lista2_files/plotlyjs-1.29.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="notebook_lista2_files/plotlyjs-1.29.2/plotly-latest.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Lista 2 - Exercícios</h1>
+<h3 class="subtitle"><em>Análise de Dados Categorizados</em></h3>
+<h4 class="author"><em>Allan Vieira 14/0128492</em></h4>
+<h4 class="date"><em>May 10, 2018</em></h4>
+
+</div>
+
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+<!-- incluir no cabecalho: -->
+<!-- always_allow_html: yes  -->
+<!--para quando formos passar para pdf -->
+<style>
+body {
+text-align: justify}
+</style>
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<!-- <style> -->
+<!--   .col2 { -->
+<!--     columns: 2 200px;         /* number of columns and width in pixels*/ -->
+<!--     -webkit-columns: 2 200px; /* chrome, safari */ -->
+<!--     -moz-columns: 2 200px;    /* firefox */ -->
+<!--   } -->
+<!--   .col3 { -->
+<!--     columns: 3 100px; -->
+<!--     -webkit-columns: 3 100px; -->
+<!--     -moz-columns: 3 100px; -->
+<!--   } -->
+<!-- </style> -->
+<!-- esse de cima funciona no output do RStudio, mas nao nos browsers -->
+<!-- tb em: https://stackoverflow.com/questions/31753897/2-column-section-in-r-markdown -->
+<hr />
+<hr />
+<div id="problema-17-4.7" class="section level3">
+<h3>Problema 17 (4.7)</h3>
+<p>Hastie and Tibshirani (1990, p. 282) described a study to determine risk factors for kyphosis, which is severe forward flexion of the spine following corrective spinal surgery. The age in months at the time of the operation for the 18 subjects for whom kyphosis was present were 12, 15, 42, 52, 59, 73, 82, 91, 96, 105, 114, 120, 121, 128, 130, 139, 139, 157 and for the 22 subjects for whom kyphosis was absent were 1, 1, 2, 8, 11, 18, 22, 31, 37, 61, 72, 81, 97, 112, 118, 127, 131, 140, 151, 159, 177, 206.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Fit a logistic regression model using age as a predictor of whether kyphosis is present. Test whether age has a significant effect.</li>
+<li>Plot the data. Note the difference in dispersion of age at the two levels of kyphosis.</li>
+<li>Fit the model <span class="math inline">\(logit[\pi(x)] = \alpha + \beta_1 x + \beta_2 x^2\)</span> . Test the significance of the squared age term, plot the fit, and interpret. (The final paragraph of Section 4.1.6 is relevant to these results.)</li>
+</ol>
+<hr />
+<div id="item-a" class="section level4">
+<h4><strong>item a)</strong></h4>
+<p>Preparação dos dados:</p>
+<pre class="r"><code>library(readr)
+library(dplyr)
+
+
+age.present &lt;- c(12, 15, 42, 52, 59, 73, 82, 91, 96, 105, 114, 120, 121, 128, 130, 139, 139, 157)
+
+age.absent &lt;- c(1, 1, 2, 8, 11, 18, 22, 31, 37, 61, 72, 81, 97, 112, 118, 127, 131, 140, 151, 159, 177, 206)
+
+age &lt;- c(age.present, age.absent)
+
+kyphosis &lt;- c(rep(1,length(age.present)), rep(0,length(age.absent)) )
+
+dados &lt;- tibble::tibble(kyphosis, age)
+
+dados</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["kyphosis"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"12"},{"1":"1","2":"15"},{"1":"1","2":"42"},{"1":"1","2":"52"},{"1":"1","2":"59"},{"1":"1","2":"73"},{"1":"1","2":"82"},{"1":"1","2":"91"},{"1":"1","2":"96"},{"1":"1","2":"105"},{"1":"1","2":"114"},{"1":"1","2":"120"},{"1":"1","2":"121"},{"1":"1","2":"128"},{"1":"1","2":"130"},{"1":"1","2":"139"},{"1":"1","2":"139"},{"1":"1","2":"157"},{"1":"0","2":"1"},{"1":"0","2":"1"},{"1":"0","2":"2"},{"1":"0","2":"8"},{"1":"0","2":"11"},{"1":"0","2":"18"},{"1":"0","2":"22"},{"1":"0","2":"31"},{"1":"0","2":"37"},{"1":"0","2":"61"},{"1":"0","2":"72"},{"1":"0","2":"81"},{"1":"0","2":"97"},{"1":"0","2":"112"},{"1":"0","2":"118"},{"1":"0","2":"127"},{"1":"0","2":"131"},{"1":"0","2":"140"},{"1":"0","2":"151"},{"1":"0","2":"159"},{"1":"0","2":"177"},{"1":"0","2":"206"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p></p>
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code>mod &lt;- glm(data=dados, kyphosis ~ age , family=binomial(link=&quot;logit&quot;))
+
+summary(mod)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = kyphosis ~ age, family = binomial(link = &quot;logit&quot;), 
+##     data = dados)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.3126  -1.0907  -0.9482   1.2170   1.4052  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -0.572693   0.602395  -0.951    0.342
+## age          0.004296   0.005849   0.734    0.463
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 55.051  on 39  degrees of freedom
+## Residual deviance: 54.504  on 38  degrees of freedom
+## AIC: 58.504
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p></p>
+<p><strong>Testes de hipótese para <span class="math inline">\(\beta = 0\)</span>:</strong></p>
+<pre class="r"><code># testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-27.25211","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-27.52555","3":"-1","4":"0.5468867","5":"0.4595926","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 2) teste de Wald
+waldtest(mod)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"38","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"39","2":"-1","3":"0.5393476","4":"0.4672111","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Os resultados dos testes de Razão de Verossimilhanças e de Wald para <span class="math inline">\(\beta\)</span> (com <span class="math inline">\(\alpha = 0.05\)</span>) indicam que não haver evidências de que o parâmetro de regressão seja significante. Portanto, não se rejeita hipótese de não haver regressão logística no caso - ou seja - não há evidências para se rejeitar a hipótese de que a variável <em>age</em> <strong>NÃO</strong> exerce qualquer efeito sobre a presença ou não de <em>kyphosis</em> - poderíamos estimar <span class="math inline">\(log[\pi(x)]\)</span> apenas com o intercepto. (Ver seção 4.1.6 - explica essa falta de ajuste) <strong>(???)</strong></p>
+<p></p>
+<p><strong>Intervalos de Confiança:</strong></p>
+<p>Para <em>log(odds)</em>:</p>
+<pre class="r"><code># IC log(odds)
+# summary(model)
+# IC_B &lt;- model$coefficients[2] + c(-1,1)*qnorm(0.975)*ASE
+
+# ou
+confint.default(mod)</code></pre>
+<pre><code>##                    2.5 %     97.5 %
+## (Intercept) -1.753364768 0.60797856
+## age         -0.007168748 0.01576032</code></pre>
+<p></p>
+<p>O método <em>.default</em> assume normalidade assintótica, por isso é utilizado.</p>
+<p>Para <em>odds ratio</em>:</p>
+<pre class="r"><code># IC (odds ratio)
+
+exp(confint.default(mod))</code></pre>
+<pre><code>##                 2.5 %   97.5 %
+## (Intercept) 0.1731902 1.836715
+## age         0.9928569 1.015885</code></pre>
+<p>Os estimações intervalares (com <span class="math inline">\(\alpha = 0.05\)</span>) confirmam os resultados dos testes para <span class="math inline">\(\beta = 0\)</span>, pois o intervalo para <em>log(odds)</em> contempla o valor 0, ao passo que o intervalo de confiança para <em>odds ratio</em> contempla o valor 1 - ambos a um nível de significância de <span class="math inline">\(\alpha = 0.05\)</span>.</p>
+<hr />
+<div id="item-b" class="section level5">
+<h5><strong>item b)</strong></h5>
+<p><strong>Plot dos dados</strong></p>
+<pre class="r"><code>dados %&gt;%
+  plotly::plot_ly(x = ~age, y = ~kyphosis, type=&quot;scatter&quot;, mode=&quot;markers&quot;,
+                  split=~kyphosis) %&gt;%
+  plotly::layout(title = &quot;Dispersão de age&quot;)</code></pre>
+<div id="272132512439" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="272132512439">{"x":{"visdat":{"272136474825":["function () ","plotlyVisDat"]},"cur_data":"272136474825","attrs":{"272136474825":{"x":{},"y":{},"mode":"markers","split":{},"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Dispersão de age","xaxis":{"domain":[0,1],"title":"age"},"yaxis":{"domain":[0,1],"title":"kyphosis"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[1,1,2,8,11,18,22,31,37,61,72,81,97,112,118,127,131,140,151,159,177,206],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"mode":"markers","type":"scatter","name":"0","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[12,15,42,52,59,73,82,91,96,105,114,120,121,128,130,139,139,157],"y":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"mode":"markers","type":"scatter","name":"1","marker":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code># poderia usar essa estrutura para fazer o jitter nos graficos de ajuste da curva!!</code></pre>
+<p>Realmente, os valores de <em>age</em> para <span class="math inline">\(kyphosis=0\)</span> estão dispersos por quase todas as idades, ao passo que <span class="math inline">\(kyphosis=1\)</span> concentram-se apenas nas idades mais baixas. Isso torna complicado o ajuste de um modelo logístico com variável independente <em>idade</em>. <strong>(???)</strong></p>
+<hr />
+</div>
+<div id="item-c" class="section level5">
+<h5><strong>item c)</strong></h5>
+<p>Preparação dos dados:</p>
+<pre class="r"><code># precisamos criar uma nova variavel age^2
+# senao nao aparece na saida do modelo - nao considera o termo quadratico
+
+dados2 &lt;- dados %&gt;%
+  dplyr::mutate(age_sq = age**2)
+
+dados2</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["kyphosis"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["age"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["age_sq"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"12","3":"144"},{"1":"1","2":"15","3":"225"},{"1":"1","2":"42","3":"1764"},{"1":"1","2":"52","3":"2704"},{"1":"1","2":"59","3":"3481"},{"1":"1","2":"73","3":"5329"},{"1":"1","2":"82","3":"6724"},{"1":"1","2":"91","3":"8281"},{"1":"1","2":"96","3":"9216"},{"1":"1","2":"105","3":"11025"},{"1":"1","2":"114","3":"12996"},{"1":"1","2":"120","3":"14400"},{"1":"1","2":"121","3":"14641"},{"1":"1","2":"128","3":"16384"},{"1":"1","2":"130","3":"16900"},{"1":"1","2":"139","3":"19321"},{"1":"1","2":"139","3":"19321"},{"1":"1","2":"157","3":"24649"},{"1":"0","2":"1","3":"1"},{"1":"0","2":"1","3":"1"},{"1":"0","2":"2","3":"4"},{"1":"0","2":"8","3":"64"},{"1":"0","2":"11","3":"121"},{"1":"0","2":"18","3":"324"},{"1":"0","2":"22","3":"484"},{"1":"0","2":"31","3":"961"},{"1":"0","2":"37","3":"1369"},{"1":"0","2":"61","3":"3721"},{"1":"0","2":"72","3":"5184"},{"1":"0","2":"81","3":"6561"},{"1":"0","2":"97","3":"9409"},{"1":"0","2":"112","3":"12544"},{"1":"0","2":"118","3":"13924"},{"1":"0","2":"127","3":"16129"},{"1":"0","2":"131","3":"17161"},{"1":"0","2":"140","3":"19600"},{"1":"0","2":"151","3":"22801"},{"1":"0","2":"159","3":"25281"},{"1":"0","2":"177","3":"31329"},{"1":"0","2":"206","3":"42436"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code># mod2 &lt;- glm(data=dados, kyphosis ~ age + (age**2) , family=binomial(link=&quot;logit&quot;)) # se passar assim, ele nao reconhece como variavel diferente
+mod2 &lt;- glm(data=dados2, kyphosis ~ age + age_sq , family=binomial(link=&quot;logit&quot;))
+
+summary(mod2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = kyphosis ~ age + age_sq, family = binomial(link = &quot;logit&quot;), 
+##     data = dados2)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.482  -1.009  -0.507   1.012   1.788  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept) -2.0462547  0.9943478  -2.058   0.0396 *
+## age          0.0600398  0.0267808   2.242   0.0250 *
+## age_sq      -0.0003279  0.0001564  -2.097   0.0360 *
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 55.051  on 39  degrees of freedom
+## Residual deviance: 48.228  on 37  degrees of freedom
+## AIC: 54.228
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p></p>
+<p><strong>Testes de hipótese para <span class="math inline">\(\beta = 0\)</span>:</strong></p>
+<p>Como vamos testar um coeficiente <span class="math inline">\(\beta\)</span> específico (<span class="math inline">\(\beta_2\)</span>), faremos uso apenas do teste de Wald e não do teste de razão de verossimilhanças, pois este compara, no caso, os preditores do modelo <span class="math inline">\(y \sim \alpha + \beta_1x + \beta_2x^2\)</span> com o preditor de outro modelo que escolhéssemos. Não conseguiríamos, portanto, fazer o teste especificamente para <span class="math inline">\(\beta2\)</span>, como faríamos no caso do teste de Wald</p>
+<pre class="r"><code># # 1) razao de verossimilhancas
+# library(lmtest)
+# lrtest(mod2, &quot;age_sq&quot;)
+# # lrtest(mod2)
+
+
+# 2) Teste de Wald
+library(survey)
+regTermTest(mod2, &quot;age_sq&quot;)</code></pre>
+<pre><code>## Wald test for age_sq
+##  in glm(formula = kyphosis ~ age + age_sq, family = binomial(link = &quot;logit&quot;), 
+##     data = dados2)
+## F =  4.396152  on  1  and  37  df: p= 0.042915</code></pre>
+<pre class="r"><code>regTermTest(mod2, &quot;age&quot;)</code></pre>
+<pre><code>## Wald test for age
+##  in glm(formula = kyphosis ~ age + age_sq, family = binomial(link = &quot;logit&quot;), 
+##     data = dados2)
+## F =  5.026084  on  1  and  37  df: p= 0.03105</code></pre>
+<pre class="r"><code>#ou
+
+library(lmtest)
+waldtest(mod2, &quot;age_sq&quot;) # dah o mesmo resultado que regTermTest</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"37","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"38","2":"-1","3":"4.396152","4":"0.04291456","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># waldtest(mod2)
+waldtest(mod2, &quot;age&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"37","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"38","2":"-1","3":"5.026084","4":"0.03104975","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Pelo Teste de Wald para <span class="math inline">\(\beta_2\)</span> verificamos que o resultado é é significativo, no sentido de rejeitar <span class="math inline">\(H_0\)</span> - há evidências de que a variável <em>age_sq</em> exerce influência sobre o resultado de <em>kyphosis</em>. Não só isso ocorreu, mas o próprio <span class="math inline">\(\beta_1\)</span> que passou a ser significativo, o que não havia ocorrido no modelo <span class="math inline">\(y \sim \alpha + \beta x\)</span> Isso deve-se ao efeito descrito na seção 4.1.6. Se olharmos para o gráfico apresentado no <strong>item b</strong>, constata-se que as distribuições (que devem ter formato de sino) de <span class="math inline">\(x\)</span> (<em>age</em>) para <span class="math inline">\(Y=1\)</span> e <span class="math inline">\(Y=0\)</span> apresentam variância (espalhamento) bem diferente uma da outra (ver figuras abaixo), o que constatamos ainda no item b. Segundo Agresti (2007, p.106) esta situação faz com que um modelo logístico com um termo de 1ª ordem <span class="math inline">\(x\)</span> juntamente com um termo quadrático <span class="math inline">\(x^2\)</span> apresente um bom ajuste aos dados, corroborando exatamente os resultados desta análise. Ao confecionarmos um modelo somente com o termo <em>age</em>, o ajuste não foi bom, mas ao construirmos um modelo com <em>age</em> e <em>age_sq</em>, o ajuste passou a ser bom.</p>
+<p>Plots das distribuições de <em>age</em>:</p>
+<pre class="r"><code># library(plotly)
+
+
+# separando em data frames com as densidades
+# densidade sempre terah um componente x e outro y
+# dens_zeros &lt;- data.frame(x = density(age.absent)$x,
+#                    y = density(age.absent)$y)
+# 
+# dens_ones &lt;- data.frame(x = density(age.present)$x,
+#                    y = density(age.present)$y)
+# 
+# 
+# miny &lt;- 0
+# maxy &lt;- max(dens_zeros$y)
+# 
+# plotly::plot_ly() %&gt;% 
+#   # add_histogram(x = age_zeros) %&gt;%
+#   # add_histogram(x = age_ones) %&gt;%
+#   plotly::add_lines(data = dens_zeros, x = ~x, y = ~y, yaxis = &quot;y&quot;, 
+#             line = list(width = 1), fill = &#39;tozeroy&#39;, name=&quot;zeros&quot;,
+#             fillcolor = &#39;rgba(168, 216, 234, 0.5)&#39;) %&gt;% 
+#   plotly::add_lines(data = dens_ones, x = ~x, y = ~y, yaxis = &quot;y1&quot;, 
+#             line = list(width = 1), fill = &#39;tozeroy&#39;, name=&quot;ones&quot;,
+#             fillcolor = &#39;rgba(255, 212, 96, 0.5)&#39;) %&gt;%
+#   plotly::layout(title=&quot;Densidade de age|kyphosis&quot;, yaxis2 = list(overlaying = &quot;y&quot;, 
+#                        side = &quot;right&quot;, 
+#                        range = c(miny, maxy),
+#                        showgrid = FALSE, 
+#                        zeroline = TRUE))
+
+
+
+# library(plotly)
+# https://plot.ly/r/filled-area-plots/
+
+# densidade sempre terah um componente x e outro y
+density1 &lt;- density(age.absent)
+density2 &lt;- density(age.present)
+
+plotly::plot_ly(x = ~density1$x, y = ~density1$y, type = &#39;scatter&#39;, mode = &#39;lines&#39;, name = &#39;age|Y=0&#39;, fill = &#39;tozeroy&#39;,
+        fillcolor = &#39;rgba(168, 216, 234, 0.5)&#39;,
+        line = list(width = 0.5)) %&gt;%
+  plotly::add_trace(x = ~density2$x, y = ~density2$y, name= &#39;age|Y=1&#39;, fill = &#39;tozeroy&#39;,
+            fillcolor = &#39;rgba(255, 212, 96, 0.5)&#39;) %&gt;%
+  # plotly::add_trace(x= ~age, y=0, type=&#39;scatter&#39;, mode=&#39;markers&#39;, split=~kyphosis ) # para colocar um jitter
+  plotly::layout(title=&quot;Densidade de age|kyphosis&quot;, xaxis = list(title = &#39;Age&#39;),
+         yaxis = list(title = &#39;Density&#39;))</code></pre>
+<div id="27212720c13b" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="27212720c13b">{"x":{"visdat":{"27217aeb8ecc":["function () ","plotlyVisDat"]},"cur_data":"27217aeb8ecc","attrs":{"27217aeb8ecc":{"x":{},"y":{},"mode":"lines","name":"age|Y=0","fill":"tozeroy","fillcolor":"rgba(168, 216, 234, 0.5)","line":{"width":0.5},"alpha":1,"sizes":[10,100],"type":"scatter"},"27217aeb8ecc.1":{"x":{},"y":{},"mode":"lines","name":"age|Y=1","fill":"tozeroy","fillcolor":"rgba(255, 212, 96, 0.5)","line":{"width":0.5},"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Densidade de age|kyphosis","xaxis":{"domain":[0,1],"title":"Age"},"yaxis":{"domain":[0,1],"title":"Density"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[-93.2601211784538,-92.490022856816,-91.7199245351783,-90.9498262135405,-90.1797278919027,-89.4096295702649,-88.6395312486271,-87.8694329269893,-87.0993346053516,-86.3292362837138,-85.559137962076,-84.7890396404382,-84.0189413188004,-83.2488429971626,-82.4787446755249,-81.7086463538871,-80.9385480322493,-80.1684497106115,-79.3983513889737,-78.6282530673359,-77.8581547456982,-77.0880564240604,-76.3179581024226,-75.5478597807848,-74.777761459147,-74.0076631375092,-73.2375648158715,-72.4674664942337,-71.6973681725959,-70.9272698509581,-70.1571715293203,-69.3870732076825,-68.6169748860447,-67.846876564407,-67.0767782427692,-66.3066799211314,-65.5365815994936,-64.7664832778558,-63.996384956218,-63.2262866345803,-62.4561883129425,-61.6860899913047,-60.9159916696669,-60.1458933480291,-59.3757950263913,-58.6056967047536,-57.8355983831158,-57.065500061478,-56.2954017398402,-55.5253034182024,-54.7552050965646,-53.9851067749268,-53.2150084532891,-52.4449101316513,-51.6748118100135,-50.9047134883757,-50.1346151667379,-49.3645168451001,-48.5944185234624,-47.8243202018246,-47.0542218801868,-46.284123558549,-45.5140252369112,-44.7439269152734,-43.9738285936357,-43.2037302719979,-42.4336319503601,-41.6635336287223,-40.8934353070845,-40.1233369854467,-39.353238663809,-38.5831403421712,-37.8130420205334,-37.0429436988956,-36.2728453772578,-35.50274705562,-34.7326487339823,-33.9625504123445,-33.1924520907067,-32.4223537690689,-31.6522554474311,-30.8821571257933,-30.1120588041556,-29.3419604825178,-28.57186216088,-27.8017638392422,-27.0316655176044,-26.2615671959666,-25.4914688743288,-24.7213705526911,-23.9512722310533,-23.1811739094155,-22.4110755877777,-21.6409772661399,-20.8708789445021,-20.1007806228644,-19.3306823012266,-18.5605839795888,-17.790485657951,-17.0203873363132,-16.2502890146754,-15.4801906930377,-14.7100923713999,-13.9399940497621,-13.1698957281243,-12.3997974064865,-11.6296990848487,-10.8596007632109,-10.0895024415732,-9.31940411993538,-8.5493057982976,-7.77920747665982,-7.00910915502203,-6.23901083338424,-5.46891251174647,-4.69881419010868,-3.9287158684709,-3.15861754683311,-2.38851922519532,-1.61842090355755,-0.84832258191976,-0.0782242602819707,0.691874061355804,1.46197238299359,2.23207070463138,3.00216902626916,3.77226734790695,4.54236566954472,5.31246399118251,6.0825623128203,6.85266063445808,7.62275895609586,8.39285727773364,9.16295559937143,9.93305392100922,10.703152242647,11.4732505642848,12.2433488859226,13.0134472075603,13.7835455291981,14.5536438508359,15.3237421724737,16.0938404941115,16.8639388157493,17.6340371373871,18.4041354590248,19.1742337806626,19.9443321023004,20.7144304239382,21.484528745576,22.2546270672138,23.0247253888515,23.7948237104893,24.5649220321271,25.3350203537649,26.1051186754027,26.8752169970405,27.6453153186782,28.415413640316,29.1855119619538,29.9556102835916,30.7257086052294,31.4958069268672,32.265905248505,33.0360035701427,33.8061018917805,34.5762002134183,35.3462985350561,36.1163968566939,36.8864951783316,37.6565934999694,38.4266918216072,39.196790143245,39.9668884648828,40.7369867865206,41.5070851081583,42.2771834297961,43.0472817514339,43.8173800730717,44.5874783947095,45.3575767163473,46.1276750379851,46.8977733596228,47.6678716812606,48.4379700028984,49.2080683245362,49.978166646174,50.7482649678118,51.5183632894496,52.2884616110873,53.0585599327251,53.8286582543629,54.5987565760007,55.3688548976385,56.1389532192763,56.909051540914,57.6791498625518,58.4492481841896,59.2193465058274,59.9894448274652,60.7595431491029,61.5296414707407,62.2997397923785,63.0698381140163,63.8399364356541,64.6100347572919,65.3801330789296,66.1502314005674,66.9203297222052,67.690428043843,68.4605263654808,69.2306246871186,70.0007230087564,70.7708213303941,71.5409196520319,72.3110179736697,73.0811162953075,73.8512146169453,74.6213129385831,75.3914112602208,76.1615095818586,76.9316079034964,77.7017062251342,78.471804546772,79.2419028684098,80.0120011900476,80.7820995116853,81.5521978333231,82.3222961549609,83.0923944765987,83.8624927982365,84.6325911198743,85.402689441512,86.1727877631498,86.9428860847876,87.7129844064254,88.4830827280632,89.253181049701,90.0232793713387,90.7933776929765,91.5634760146143,92.3335743362521,93.1036726578899,93.8737709795276,94.6438693011654,95.4139676228032,96.184065944441,96.9541642660788,97.7242625877166,98.4943609093544,99.2644592309921,100.03455755263,100.804655874268,101.574754195906,102.344852517543,103.114950839181,103.885049160819,104.655147482457,105.425245804094,106.195344125732,106.96544244737,107.735540769008,108.505639090646,109.275737412283,110.045835733921,110.815934055559,111.586032377197,112.356130698834,113.126229020472,113.89632734211,114.666425663748,115.436523985386,116.206622307023,116.976720628661,117.746818950299,118.516917271937,119.287015593575,120.057113915212,120.82721223685,121.597310558488,122.367408880126,123.137507201763,123.907605523401,124.677703845039,125.447802166677,126.217900488315,126.987998809952,127.75809713159,128.528195453228,129.298293774866,130.068392096504,130.838490418141,131.608588739779,132.378687061417,133.148785383055,133.918883704692,134.68898202633,135.459080347968,136.229178669606,136.999276991244,137.769375312881,138.539473634519,139.309571956157,140.079670277795,140.849768599432,141.61986692107,142.389965242708,143.160063564346,143.930161885984,144.700260207621,145.470358529259,146.240456850897,147.010555172535,147.780653494173,148.55075181581,149.320850137448,150.090948459086,150.861046780724,151.631145102361,152.401243423999,153.171341745637,153.941440067275,154.711538388913,155.48163671055,156.251735032188,157.021833353826,157.791931675464,158.562029997102,159.332128318739,160.102226640377,160.872324962015,161.642423283653,162.41252160529,163.182619926928,163.952718248566,164.722816570204,165.492914891842,166.263013213479,167.033111535117,167.803209856755,168.573308178393,169.343406500031,170.113504821668,170.883603143306,171.653701464944,172.423799786582,173.193898108219,173.963996429857,174.734094751495,175.504193073133,176.274291394771,177.044389716408,177.814488038046,178.584586359684,179.354684681322,180.124783002959,180.894881324597,181.664979646235,182.435077967873,183.205176289511,183.975274611148,184.745372932786,185.515471254424,186.285569576062,187.0556678977,187.825766219337,188.595864540975,189.365962862613,190.136061184251,190.906159505888,191.676257827526,192.446356149164,193.216454470802,193.98655279244,194.756651114077,195.526749435715,196.296847757353,197.066946078991,197.837044400629,198.607142722266,199.377241043904,200.147339365542,200.91743768718,201.687536008817,202.457634330455,203.227732652093,203.997830973731,204.767929295369,205.538027617006,206.308125938644,207.078224260282,207.84832258192,208.618420903557,209.388519225195,210.158617546833,210.928715868471,211.698814190109,212.468912511746,213.239010833384,214.009109155022,214.77920747666,215.549305798298,216.319404119935,217.089502441573,217.859600763211,218.629699084849,219.399797406486,220.169895728124,220.939994049762,221.7100923714,222.480190693038,223.250289014675,224.020387336313,224.790485657951,225.560583979589,226.330682301227,227.100780622864,227.870878944502,228.64097726614,229.411075587778,230.181173909415,230.951272231053,231.721370552691,232.491468874329,233.261567195967,234.031665517604,234.801763839242,235.57186216088,236.341960482518,237.112058804155,237.882157125793,238.652255447431,239.422353769069,240.192452090707,240.962550412344,241.732648733982,242.50274705562,243.272845377258,244.042943698896,244.813042020533,245.583140342171,246.353238663809,247.123336985447,247.893435307084,248.663533628722,249.43363195036,250.203730271998,250.973828593636,251.743926915273,252.514025236911,253.284123558549,254.054221880187,254.824320201825,255.594418523462,256.3645168451,257.134615166738,257.904713488376,258.674811810013,259.444910131651,260.215008453289,260.985106774927,261.755205096565,262.525303418202,263.29540173984,264.065500061478,264.835598383116,265.605696704753,266.375795026391,267.145893348029,267.915991669667,268.686089991305,269.456188312942,270.22628663458,270.996384956218,271.766483277856,272.536581599494,273.306679921131,274.076778242769,274.846876564407,275.616974886045,276.387073207682,277.15717152932,277.927269850958,278.697368172596,279.467466494234,280.237564815871,281.007663137509,281.777761459147,282.547859780785,283.317958102422,284.08805642406,284.858154745698,285.628253067336,286.398351388974,287.168449710611,287.938548032249,288.708646353887,289.478744675525,290.248842997163,291.0189413188,291.789039640438,292.559137962076,293.329236283714,294.099334605351,294.869432926989,295.639531248627,296.409629570265,297.179727891903,297.94982621354,298.719924535178,299.490022856816,300.260121178454],"y":[2.66502186547226e-05,2.87359098140366e-05,3.09818790908966e-05,3.34073391739424e-05,3.59284684659547e-05,3.87229797241155e-05,4.16462396761799e-05,4.47554695398027e-05,4.81299236804207e-05,5.16329139482871e-05,5.54623387338653e-05,5.9493629646046e-05,6.3732646274468e-05,6.8352082891133e-05,7.31405985211879e-05,7.83083894211543e-05,8.37780311959327e-05,8.94693210645792e-05,9.56912435472097e-05,0.000102130853641051,0.000108998175643557,0.000116299217568589,0.000123838578459598,0.000132068105292585,0.000140587077964345,0.000149572610629762,0.000159159746372716,0.000169044662265769,0.000179701393180112,0.000190786737421698,0.000202362022261339,0.00021474515838532,0.000227491872418123,0.000241077284170962,0.000255264683557972,0.000269943876364303,0.00028567506346447,0.000301839669821899,0.000318887440838521,0.000336743934597298,0.000355067034756401,0.000374719772069714,0.00039487641603508,0.000415930979531568,0.000438029678407188,0.000460658341286418,0.000484679158967023,0.000509390146230844,0.00053497814937909,0.000561864937354676,0.000589345164653491,0.000618223542586837,0.000648001786705007,0.000678596996289137,0.000710750042105444,0.000743548111427683,0.00077770042536516,0.000812965630075021,0.000848948660287969,0.000886732582652066,0.000925194849761592,0.000964915682447259,0.0010059467156613,0.00104766246694361,0.00109117944146611,0.00113548403374089,0.00118090273900974,0.00122778968376541,0.00127535836633596,0.00132454729592302,0.00137465787147062,0.00142569781551429,0.00147829802946732,0.00153154446694084,0.00158617191563354,0.00164179816117959,0.00169814273062142,0.0017560457517031,0.00181452321242887,0.00187409895142448,0.0019346687359285,0.00199577565280131,0.00205824448572102,0.00212121556081643,0.0021849790697584,0.00224962687012554,0.0023146873988873,0.00238068778127452,0.00244712380711887,0.00251404778043854,0.00258162309039651,0.00264945180865627,0.00271778997216817,0.00278639192026231,0.00285520499480204,0.00292430293660907,0.00299346582068146,0.00306273016064788,0.0031319721320372,0.00320120138097965,0.00327021586563477,0.00333908634684068,0.00340770270119848,0.00347589699983282,0.00354386465463468,0.00361112641045995,0.00367796139276071,0.00374426508628314,0.00380964553902655,0.00387458158423005,0.00393841197108641,0.00400144319750573,0.00406376348487153,0.00412458150663103,0.00418474689317951,0.00424352150878456,0.0043010557068678,0.00435780669072599,0.00441243285206157,0.00446622118861239,0.00451846127253717,0.0045689811350847,0.00461860160064371,0.00466577499445688,0.00471181022034569,0.00475626868295675,0.004798526166376,0.00483975182599101,0.00487847792772064,0.00491569953131759,0.00495143446953681,0.00498452823904798,0.00501650658158931,0.00504607874514797,0.00507380697683081,0.00510023644869326,0.00512366656810435,0.0051459517476205,0.0051660470217721,0.00518402230068715,0.00520085608846854,0.00521465075422661,0.00522722663446003,0.00523792003148752,0.00524631316769571,0.00525361209813632,0.00525827111291819,0.00526154444114825,0.00526329693761983,0.00526268959951305,0.00526108532202876,0.00525730792420161,0.00525207271788,0.00524569444502172,0.00523703215481561,0.00522751209347951,0.00521631008914929,0.00520368703817197,0.00519026798766624,0.00517480182930525,0.00515863692005418,0.00514126559478172,0.00512262251560921,0.00510336285895023,0.00508266002950079,0.00506131767921851,0.00503919533839711,0.00501605620564244,0.00499249361139205,0.00496803391813451,0.0049430841668448,0.00491770723837725,0.00489165791184751,0.00486537953451985,0.00483866523618711,0.00481168815814654,0.00478454867261125,0.0047571471038131,0.00472970096155106,0.00470217923701693,0.00467468078508883,0.00464720325844979,0.00461988975882233,0.00459270801462677,0.00456570504489498,0.00453904698438395,0.0045125653295223,0.00448656169360069,0.00446090035860418,0.00443557047995135,0.00441091802041366,0.00438656950999279,0.00436289548741759,0.00433979288378596,0.00431708441653933,0.00429537292929161,0.00427406199408916,0.00425351776896734,0.00423377190198779,0.00421445498679185,0.00419632955675345,0.00417871524341809,0.00416187382387543,0.00414603690052956,0.0041306816115823,0.00411651696650227,0.0041030158634573,0.00409022838077642,0.00407861529749998,0.00406750720861245,0.00405751439215302,0.00404831531457974,0.00403972592025205,0.00403243275810786,0.00402564161708705,0.00401983820418148,0.00401492452725617,0.00401050560931385,0.00400741979312863,0.00400482445103172,0.00400305770515218,0.00400223346304162,0.00400187006437151,0.00400263642479711,0.00400395161584369,0.00400592263864973,0.00400883924414833,0.00401216494354873,0.00401640011815181,0.00402120252687441,0.00402648941203874,0.00403267091157578,0.00403919512323048,0.0040464070843859,0.00405415928387158,0.00406223826222675,0.00407110420561177,0.00408023471078694,0.00408984247233183,0.00409991444426789,0.00411021856624167,0.00412106499404886,0.00413212831714518,0.00414347990541261,0.00415516876715785,0.00416699956976132,0.00417912422590598,0.00419138485392177,0.00420377450315964,0.00421632363306906,0.00422891898308669,0.00424158993841454,0.00425426971491461,0.00426695544928484,0.0042795743564655,0.00429214102779806,0.00430460260282346,0.00431690154806949,0.00432911065252634,0.00434101022529329,0.00435274593291324,0.00436423902318075,0.00437535839775717,0.0043862909581831,0.00439672508578299,0.00440684293779131,0.00441662747576583,0.00442579522991035,0.00443468448285206,0.00444293916264808,0.00445069423320967,0.00445807338985512,0.00446457137161683,0.00447070814627094,0.0044761292354238,0.00448084620777387,0.00448517354531919,0.00448838290163421,0.00449114316404451,0.0044931609740998,0.00449426118578132,0.00449490764418555,0.00449439216628272,0.00449326282740882,0.00449141476857776,0.00448844061826171,0.00448496557227746,0.00448034485826771,0.00447494572631358,0.00446889517789838,0.00446152978344081,0.00445363549562994,0.00444466475492932,0.00443476462288253,0.00442431435270617,0.00441239458896851,0.0043999382110119,0.00438651729552532,0.0043720425543742,0.00435703383858208,0.00434066293475235,0.00432366038156734,0.0043058354920965,0.0042868702829247,0.00426739139285623,0.00424672599093086,0.00422534712332053,0.00420330485749967,0.00418008252914018,0.00415638491325462,0.00413169824776915,0.00410625358184564,0.0040803076482338,0.00405319406944861,0.00402565890829512,0.00399733883664298,0.00396825875273236,0.00393878090195189,0.0039083002859155,0.00387741411343491,0.00384593996520853,0.00381374802929896,0.00378122724647493,0.00374794973844403,0.0037142753180061,0.00368019099898968,0.00364547347296343,0.00361050184174865,0.00357499849372563,0.00353914319580907,0.0035030285134745,0.00346640238013729,0.00342959845878493,0.00339245712559134,0.00335504117482772,0.00331747610184303,0.00327956527101956,0.00324154328565776,0.00320334144925429,0.0031649683106841,0.00312651804419416,0.00308791396708672,0.00304925632140314,0.00301053722180217,0.0029717681027902,0.0029329869544706,0.00289419906148925,0.00285543389699261,0.00281668736777261,0.0027780213606936,0.00273939935292071,0.00270087399198686,0.00266245901177357,0.00262410796359148,0.00258596879249202,0.00254791935853938,0.00251003031636882,0.00247234348382981,0.00243476090214586,0.00239746618297875,0.00236032081138505,0.00232336591003448,0.00228670300753489,0.00225017544329629,0.0022139721105041,0.00217798156987002,0.00214218491210968,0.00210676334966876,0.00207149871335922,0.00203656537681613,0.00200190660504299,0.00196742559611316,0.0019333933502645,0.0018995316244484,0.00186598694013355,0.00183277424328185,0.0017997354971006,0.00176715835625649,0.00173478453053481,0.00170269936421666,0.00167099828549693,0.00163947675926573,0.00160838639119118,0.00157754507164852,0.00154695578800901,0.00151679790307278,0.00148682182802897,0.00145723887221417,0.00142794884666602,0.0013988702693665,0.00137026724724804,0.00134184668617446,0.00131377805958687,0.00128604528598398,0.0012584950968781,0.00123143758401791,0.00120457596686329,0.00117802460003087,0.00115185242668246,0.00112586340713871,0.00110032635731436,0.0010750287645213,0.00105000034330465,0.00102539622011967,0.00100097662220155,0.000976969678049975,0.00095324741568513,0.000929753832438758,0.000906732272487798,0.000883897536905357,0.000861437062616623,0.00083930857250428,0.000817368204453162,0.000795950239840801,0.000774722011898842,0.000753829504251422,0.000733318099809858,0.000712997573971323,0.000693163179393172,0.000673565592200528,0.000654263875745836,0.000635393136160069,0.000616715920465996,0.000598485751960896,0.000580539943317524,0.000562848013461315,0.000545635868908225,0.000528618721180969,0.000512006110013101,0.000495724050053624,0.000479651492450458,0.00046410407754919,0.000448751180552546,0.000433756527763184,0.000419135192289823,0.000404707523889867,0.000390783299606588,0.000377081029320984,0.000363687376019686,0.000350704127421897,0.00033791036346121,0.00032556466994869,0.000313477949192943,0.000301648049274337,0.000290257821720447,0.000279049926650277,0.000268231254633626,0.000257701913443443,0.000247377113530871,0.000237511689589156,0.000227818540710987,0.000218454262867396,0.000209401514329706,0.00020051650227443,0.000192071845827533,0.000183800851749573,0.000175799097545466,0.000168121954474766,0.000160599037857397,0.000153446558237861,0.000146487015253909,0.000139739986949474,0.000133321225515051,0.00012704142514838,0.000121065064735608,0.000115292768706965,0.000109681061595176,0.000104392202854314,9.92259934743938e-05,9.43012830529679e-05,8.958383067475e-05,8.49826880719281e-05,8.06879997118812e-05,7.65007503667552e-05,7.24997144441201e-05,6.87019290329448e-05,6.50038880702259e-05,6.15479295250044e-05,5.82051737165285e-05,5.50009855362428e-05,5.19899733818543e-05,4.90627400414816e-05,4.63217531870655e-05,4.36938582985952e-05,4.11648993301132e-05,3.88143607583144e-05,3.65327419684055e-05,3.43904340837312e-05,3.23563736473327e-05,3.03894680760902e-05,2.85830279108097e-05,2.68321161874106e-05,2.51822761856214e-05,2.36323513557614e-05,2.21333004227545e-05,2.07585275902008e-05,1.94358070569173e-05,1.81839738107591e-05,1.70214618164058e-05,1.58988135498095e-05,1.48660181546222e-05,1.38824342559204e-05,1.29466736809732e-05,1.20884869078035e-05,1.12609049527948e-05,1.04965505027883e-05,9.77667317502738e-06,9.08758777134579e-06,8.46410015825362e-06,7.8636338845545e-06,7.30637997089082e-06,6.78784332528093e-06],"mode":"lines","name":"age|Y=0","fill":"tozeroy","fillcolor":"rgba(168, 216, 234, 0.5)","line":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","width":0.5},"type":"scatter","xaxis":"x","yaxis":"y","frame":null},{"x":[-53.3404420633777,-52.8009491394506,-52.2614562155234,-51.7219632915963,-51.1824703676692,-50.6429774437421,-50.103484519815,-49.5639915958879,-49.0244986719607,-48.4850057480336,-47.9455128241065,-47.4060199001794,-46.8665269762523,-46.3270340523252,-45.7875411283981,-45.2480482044709,-44.7085552805438,-44.1690623566167,-43.6295694326896,-43.0900765087625,-42.5505835848354,-42.0110906609083,-41.4715977369812,-40.932104813054,-40.3926118891269,-39.8531189651998,-39.3136260412727,-38.7741331173456,-38.2346401934185,-37.6951472694914,-37.1556543455642,-36.6161614216371,-36.07666849771,-35.5371755737829,-34.9976826498558,-34.4581897259287,-33.9186968020015,-33.3792038780744,-32.8397109541473,-32.3002180302202,-31.7607251062931,-31.221232182366,-30.6817392584389,-30.1422463345118,-29.6027534105846,-29.0632604866575,-28.5237675627304,-27.9842746388033,-27.4447817148762,-26.9052887909491,-26.365795867022,-25.8263029430948,-25.2868100191677,-24.7473170952406,-24.2078241713135,-23.6683312473864,-23.1288383234593,-22.5893453995322,-22.049852475605,-21.5103595516779,-20.9708666277508,-20.4313737038237,-19.8918807798966,-19.3523878559695,-18.8128949320424,-18.2734020081152,-17.7339090841881,-17.194416160261,-16.6549232363339,-16.1154303124068,-15.5759373884797,-15.0364444645526,-14.4969515406254,-13.9574586166983,-13.4179656927712,-12.8784727688441,-12.338979844917,-11.7994869209899,-11.2599939970628,-10.7205010731356,-10.1810081492085,-9.64151522528141,-9.1020223013543,-8.56252937742718,-8.02303645350007,-7.48354352957296,-6.94405060564584,-6.40455768171873,-5.86506475779161,-5.3255718338645,-4.78607890993739,-4.24658598601027,-3.70709306208315,-3.16760013815604,-2.62810721422893,-2.08861429030181,-1.5491213663747,-1.00962844244759,-0.470135518520472,0.0693574054066417,0.608850329333755,1.14834325326087,1.68783617718799,2.2273291011151,2.76682202504222,3.30631494896933,3.84580787289644,4.38530079682356,4.92479372075067,5.46428664467778,6.0037795686049,6.54327249253201,7.08276541645913,7.62225834038625,8.16175126431336,8.70124418824047,9.24073711216759,9.7802300360947,10.3197229600218,10.8592158839489,11.398708807876,11.9382017318032,12.4776946557303,13.0171875796574,13.5566805035845,14.0961734275116,14.6356663514387,15.1751592753658,15.714652199293,16.2541451232201,16.7936380471472,17.3331309710743,17.8726238950014,18.4121168189285,18.9516097428556,19.4911026667828,20.0305955907099,20.570088514637,21.1095814385641,21.6490743624912,22.1885672864183,22.7280602103454,23.2675531342726,23.8070460581997,24.3465389821268,24.8860319060539,25.425524829981,25.9650177539081,26.5045106778352,27.0440036017624,27.5834965256895,28.1229894496166,28.6624823735437,29.2019752974708,29.7414682213979,30.280961145325,30.8204540692522,31.3599469931793,31.8994399171064,32.4389328410335,32.9784257649606,33.5179186888877,34.0574116128148,34.596904536742,35.1363974606691,35.6758903845962,36.2153833085233,36.7548762324504,37.2943691563775,37.8338620803046,38.3733550042318,38.9128479281589,39.452340852086,39.9918337760131,40.5313266999402,41.0708196238673,41.6103125477944,42.1498054717215,42.6892983956487,43.2287913195758,43.7682842435029,44.30777716743,44.8472700913571,45.3867630152842,45.9262559392114,46.4657488631385,47.0052417870656,47.5447347109927,48.0842276349198,48.6237205588469,49.163213482774,49.7027064067012,50.2421993306283,50.7816922545554,51.3211851784825,51.8606781024096,52.4001710263367,52.9396639502638,53.4791568741909,54.0186497981181,54.5581427220452,55.0976356459723,55.6371285698994,56.1766214938265,56.7161144177536,57.2556073416808,57.7951002656079,58.334593189535,58.8740861134621,59.4135790373892,59.9530719613163,60.4925648852434,61.0320578091706,61.5715507330977,62.1110436570248,62.6505365809519,63.190029504879,63.7295224288061,64.2690153527332,64.8085082766603,65.3480012005875,65.8874941245146,66.4269870484417,66.9664799723688,67.5059728962959,68.045465820223,68.5849587441502,69.1244516680773,69.6639445920044,70.2034375159315,70.7429304398586,71.2824233637857,71.8219162877128,72.36140921164,72.9009021355671,73.4403950594942,73.9798879834213,74.5193809073484,75.0588738312755,75.5983667552026,76.1378596791298,76.6773526030569,77.216845526984,77.7563384509111,78.2958313748382,78.8353242987653,79.3748172226924,79.9143101466195,80.4538030705467,80.9932959944738,81.5327889184009,82.072281842328,82.6117747662551,83.1512676901822,83.6907606141094,84.2302535380365,84.7697464619636,85.3092393858907,85.8487323098178,86.3882252337449,86.927718157672,87.4672110815992,88.0067040055263,88.5461969294534,89.0856898533805,89.6251827773076,90.1646757012347,90.7041686251618,91.2436615490889,91.7831544730161,92.3226473969432,92.8621403208703,93.4016332447974,93.9411261687245,94.4806190926516,95.0201120165788,95.5596049405058,96.099097864433,96.6385907883601,97.1780837122872,97.7175766362143,98.2570695601414,98.7965624840686,99.3360554079957,99.8755483319228,100.41504125585,100.954534179777,101.494027103704,102.033520027631,102.573012951558,103.112505875485,103.651998799413,104.19149172334,104.730984647267,105.270477571194,105.809970495121,106.349463419048,106.888956342975,107.428449266902,107.96794219083,108.507435114757,109.046928038684,109.586420962611,110.125913886538,110.665406810465,111.204899734392,111.744392658319,112.283885582246,112.823378506174,113.362871430101,113.902364354028,114.441857277955,114.981350201882,115.520843125809,116.060336049736,116.599828973663,117.13932189759,117.678814821518,118.218307745445,118.757800669372,119.297293593299,119.836786517226,120.376279441153,120.91577236508,121.455265289007,121.994758212934,122.534251136862,123.073744060789,123.613236984716,124.152729908643,124.69222283257,125.231715756497,125.771208680424,126.310701604351,126.850194528278,127.389687452206,127.929180376133,128.46867330006,129.008166223987,129.547659147914,130.087152071841,130.626644995768,131.166137919695,131.705630843623,132.24512376755,132.784616691477,133.324109615404,133.863602539331,134.403095463258,134.942588387185,135.482081311112,136.021574235039,136.561067158967,137.100560082894,137.640053006821,138.179545930748,138.719038854675,139.258531778602,139.798024702529,140.337517626456,140.877010550383,141.416503474311,141.955996398238,142.495489322165,143.034982246092,143.574475170019,144.113968093946,144.653461017873,145.1929539418,145.732446865727,146.271939789655,146.811432713582,147.350925637509,147.890418561436,148.429911485363,148.96940440929,149.508897333217,150.048390257144,150.587883181072,151.127376104999,151.666869028926,152.206361952853,152.74585487678,153.285347800707,153.824840724634,154.364333648561,154.903826572488,155.443319496416,155.982812420343,156.52230534427,157.061798268197,157.601291192124,158.140784116051,158.680277039978,159.219769963905,159.759262887832,160.29875581176,160.838248735687,161.377741659614,161.917234583541,162.456727507468,162.996220431395,163.535713355322,164.075206279249,164.614699203176,165.154192127104,165.693685051031,166.233177974958,166.772670898885,167.312163822812,167.851656746739,168.391149670666,168.930642594593,169.470135518521,170.009628442448,170.549121366375,171.088614290302,171.628107214229,172.167600138156,172.707093062083,173.24658598601,173.786078909937,174.325571833865,174.865064757792,175.404557681719,175.944050605646,176.483543529573,177.0230364535,177.562529377427,178.102022301354,178.641515225281,179.181008149209,179.720501073136,180.259993997063,180.79948692099,181.338979844917,181.878472768844,182.417965692771,182.957458616698,183.496951540626,184.036444464553,184.57593738848,185.115430312407,185.654923236334,186.194416160261,186.733909084188,187.273402008115,187.812894932042,188.352387855969,188.891880779897,189.431373703824,189.970866627751,190.510359551678,191.049852475605,191.589345399532,192.128838323459,192.668331247386,193.207824171314,193.747317095241,194.286810019168,194.826302943095,195.365795867022,195.905288790949,196.444781714876,196.984274638803,197.52376756273,198.063260486658,198.602753410585,199.142246334512,199.681739258439,200.221232182366,200.760725106293,201.30021803022,201.839710954147,202.379203878074,202.918696802002,203.458189725929,203.997682649856,204.537175573783,205.07666849771,205.616161421637,206.155654345564,206.695147269491,207.234640193418,207.774133117346,208.313626041273,208.8531189652,209.392611889127,209.932104813054,210.471597736981,211.011090660908,211.550583584835,212.090076508763,212.62956943269,213.169062356617,213.708555280544,214.248048204471,214.787541128398,215.327034052325,215.866526976252,216.406019900179,216.945512824107,217.485005748034,218.024498671961,218.563991595888,219.103484519815,219.642977443742,220.182470367669,220.721963291596,221.261456215523,221.800949139451,222.340442063378],"y":[1.89949775570445e-05,2.05082132881683e-05,2.20845197253699e-05,2.37864821228939e-05,2.56130890858737e-05,2.75105692886284e-05,2.96138538789164e-05,3.18053872414916e-05,3.41372911362154e-05,3.66568221078608e-05,3.92705361010584e-05,4.21215925085775e-05,4.51161689627107e-05,4.82601895830627e-05,5.16760123315941e-05,5.52140820617474e-05,5.90168587268386e-05,6.30382375840731e-05,6.72091732386719e-05,7.17605068425994e-05,7.64667627919695e-05,8.14572218099527e-05,8.67640365108602e-05,9.22397002636831e-05,9.81674743160344e-05,0.000104318580604956,0.000110761450431248,0.000117642806934253,0.000124730978355187,0.000132300526131257,0.000140199336868926,0.000148381517031091,0.000157148539925942,0.000166162378772694,0.000175669854545282,0.00018563441170925,0.000195861521711374,0.000206827452448306,0.000218087004122945,0.00022983123544462,0.000242179169152841,0.000254828674207922,0.000268223910107659,0.000282037957901599,0.000296303649675587,0.000311332247373689,0.000326697147325379,0.000342786046962019,0.000359430065669853,0.000376467849997881,0.000394430691387598,0.000412756867002465,0.000431755225293176,0.0004514467300717,0.000471509206815569,0.000492532992223918,0.000513993906195946,0.000536046651351529,0.000558919921375159,0.000582174371459177,0.00060629924019495,0.000630971426244282,0.000656131493600912,0.000682214237031081,0.000708672809493044,0.000735880289893229,0.000763722442522972,0.000791933756469842,0.000821128108492404,0.000850675944885186,0.000880829521417589,0.000911668182797212,0.000942845621590334,0.000974826047754585,0.00100721202190681,0.00104005094621345,0.00107357557984896,0.00110739072386715,0.00114181486027371,0.00117665304140517,0.00121179566342054,0.00124756525145794,0.00128356107787832,0.00131997375842735,0.00135675715566395,0.00139373804256003,0.00143117709611758,0.00146878895844782,0.00150664334059408,0.00154477018367235,0.00158301438548253,0.00162149463394082,0.00166008323048344,0.00169877185704867,0.00173758310910548,0.00177642725962994,0.00181532206798366,0.00185421615773716,0.00189310981419424,0.00193193500415778,0.00197071105390806,0.00200940066020914,0.00204794576059704,0.00208641199483428,0.00212464384738856,0.00216272902609627,0.00220064452844406,0.00223825265376299,0.00227571500615348,0.00231284232555328,0.00234970699307059,0.00238637151075209,0.00242256641524727,0.00245856632480928,0.00249419297012723,0.00252944080802957,0.00256448015284035,0.00259895579032037,0.00263318556480185,0.00266705760385664,0.00270045320753072,0.00273362196104473,0.00276625986041801,0.00279858134668995,0.00283060029740727,0.00286208059769325,0.00289333833805776,0.00292414359140817,0.00295458948909939,0.00298481051208091,0.00301447842898771,0.00304394844888616,0.00307307020784635,0.0031018277392411,0.00313040178384078,0.0031585439399181,0.00318648759739321,0.00321419339252093,0.00324157237958889,0.00326881309039875,0.00329576577227714,0.00332254340741533,0.00334918282181518,0.0033755723281415,0.00340187556903029,0.00342801963338262,0.00345404318247367,0.00348000113307296,0.00350582461027807,0.00353160952858806,0.00355733626519444,0.00358301978142624,0.00360868770376678,0.00363433998544261,0.00366000122003709,0.00368567131981031,0.00371138577043653,0.00373712614530954,0.00376292825208053,0.00378879577913211,0.00381470577892948,0.00384074370498387,0.0038668367419082,0.00389302920252481,0.00391934056761426,0.00394571452514733,0.00397225447416012,0.00399887882197326,0.00402560794363404,0.00405249567823823,0.00407945553409739,0.00410657668568543,0.00413380590731034,0.00416112353959631,0.00418861826682828,0.00421618222605227,0.00424387955824312,0.00427169354313387,0.00429957294377243,0.00432761674409326,0.00435572143077039,0.00438392141731254,0.00441222983600674,0.00444058915406504,0.00446906138803364,0.00449759028278134,0.00452617728121367,0.00455485068592944,0.0045835577224507,0.0046123310515989,0.00464114766752329,0.00466999343158846,0.00469889688023255,0.00472781848608858,0.00475677226429611,0.00478575290254787,0.00481474705697876,0.00484376916047965,0.00487280163247034,0.00490184744087749,0.00493090892699455,0.00495997722618636,0.00498905994915368,0.00501815227329431,0.00504725273415722,0.00507637173316938,0.00510549962746855,0.00513464589106491,0.00516381331102288,0.00519299292421001,0.0052222144463294,0.00525145667883229,0.00528073254702817,0.00531005958379456,0.00533941361745149,0.00536884201319121,0.00539831981963136,0.00542785010042629,0.00545748369232131,0.00548716640361202,0.00551695953417536,0.00554684891332557,0.00557680549652252,0.00560694011289968,0.00563715074855573,0.00566750272787258,0.00569801608824689,0.0057286166122438,0.00575945827957024,0.00579042011557677,0.00582154212509748,0.00585290595197138,0.00588438518774414,0.00591613686594179,0.0059480737296964,0.00598017315342236,0.00601260414796853,0.00604517574350272,0.00607803063826407,0.00611114306156592,0.0061444044501393,0.00617808416478476,0.00621192530825093,0.00624603858108343,0.00628048100290032,0.00631508794825515,0.00635009896993659,0.00638532852061377,0.00642079842794924,0.0064566580754423,0.00649268752582024,0.00652908042951712,0.00656573878459376,0.0066025892853833,0.00663986672851397,0.00667730640130562,0.00671504657153451,0.00675307703900833,0.00679126269022158,0.00682983269811414,0.00686856316448426,0.00690751530597593,0.00694674667465797,0.00698610341529635,0.0070257320513888,0.00706550996255128,0.0071054235925716,0.00714555391317502,0.00718576143025115,0.00722611401258862,0.00726655682265475,0.00730705315636674,0.00734763539105699,0.0073882265299131,0.00742883259382985,0.0074694058910168,0.00750995537353234,0.00755039815909595,0.00759074855160061,0.00763099369150256,0.00767100303783499,0.00771089022964333,0.00775048090736135,0.00778980449021023,0.00782892768763304,0.00786751746250939,0.00790586589927258,0.00794374794954314,0.00798110104219031,0.00801816093594578,0.00805436166451388,0.00809014438542688,0.00812532844230032,0.00815962495924234,0.00819348379913071,0.00822626367718512,0.00825832572993468,0.00828971186677721,0.00831975158176866,0.00834919686720011,0.00837740044119139,0.00840449503035264,0.0084309067882983,0.00845541737722331,0.008479171385057,0.00850159575022785,0.00852243387499011,0.0085424524964541,0.00856035566000832,0.0085771320741841,0.00859257894610692,0.00860589065535114,0.00861822813023134,0.00862838678642131,0.00863695707627622,0.00864429247966626,0.0086488961395339,0.00865238796662977,0.0086537461680346,0.00865301121465546,0.00865111750475327,0.00864610332311784,0.00863975537363458,0.00863142669712123,0.00862048797562152,0.00860829375313741,0.00859312513493502,0.0085761817844558,0.0085575077741367,0.0085357318449979,0.0085126427290449,0.00848684103251572,0.00845884305532043,0.0084294418911726,0.00839651215692663,0.00836225643238597,0.00832564442147339,0.00828647107324382,0.00824598017544826,0.00820222265508633,0.00815688231675836,0.00810960719823622,0.00805949827397375,0.00800812658822336,0.00795398722572121,0.00789800740717545,0.0078405450404018,0.00778010058813524,0.00771849443818146,0.00765466094378149,0.00758883664889044,0.00752190169260637,0.00745213394434335,0.00738127224051683,0.00730872552955032,0.00723416678313288,0.00715865476032397,0.00708096954759661,0.00700211788576127,0.00692208823030767,0.00684016678101238,0.00675747939307507,0.00667324241098665,0.00658789127559562,0.00650180175480706,0.00641408404599835,0.00632580767404004,0.00623653491221508,0.00614632734144518,0.00605564523301803,0.00596390127348173,0.00587173125937013,0.00577902167742338,0.00568567632580722,0.00559207356216347,0.00549797149980378,0.00540363522908581,0.00530910350905754,0.00521433893782728,0.00511952871420561,0.00502465841403883,0.00492984268844004,0.00483506067188624,0.00474052179996283,0.00464613905659466,0.00455200581073541,0.00445829301301452,0.00436480346079085,0.00427193406999121,0.00417947820501465,0.00408745483461988,0.00399627107384359,0.00390547645489762,0.00381554009194148,0.00372633083631982,0.00363762130417024,0.00355019829208703,0.00346330252329042,0.0033773763328614,0.00329252372969481,0.00320824403005819,0.00312548986666911,0.00304347629014463,0.00296243456819775,0.00288282274424053,0.00280387940550859,0.00272647675822647,0.00265009927143343,0.00257460796720796,0.00250089141003641,0.00242790892441981,0.00235638652341936,0.00228617216403919,0.00221670981220035,0.0021493032324281,0.00208268497756566,0.00201737411969215,0.00195363496115166,0.00189067413376915,0.00182959776358635,0.00176954219772552,0.00171059232183527,0.00165344439206989,0.00159707684121203,0.00154236982660408,0.00148889242211743,0.00143629118280118,0.00138567820948673,0.00133582692758067,0.00128738167556383,0.00124034052004271,0.00119404886744838,0.00114965671206871,0.00110610281524074,0.00106368896414827,0.00102281224859855,0.000982643619445272,0.000944073219741882,0.000906483840276959,0.00086977281526227,0.000834686750455437,0.000800255919957675,0.000767126694049935,0.000735082602558487,0.000703671749696377,0.000673927755298826,0.000644778348460976,0.000616651093670646,0.000589673051858634,0.000563264474924903,0.00053820883457978,0.000513838597004135,0.000490237261202107,0.000467810339105444,0.000445886898817202,0.000425029133480352,0.000404912814666991,0.000385344130826012,0.000366939413019865,0.000348971838760194,0.000331816886196561,0.000315426255998741,0.000299447282543291,0.000284490136939138,0.000269956165647534,0.000256018772927775,0.000242839444926739,0.000230008776751852,0.00021795740792657,0.000206356691438669,0.000195173867289387,0.00018471874974109,0.000174553700931071,0.000164965438341891,0.000155831041797968,0.000146971599184164,0.000138790941179503,0.000130847287203241,0.000123316037377074,0.000116222580945247,0.00010934714133333,0.000102981981640332,9.68602593696763e-05,9.10214008087784e-05,8.55900386241306e-05,8.03324740205339e-05,7.54409449387856e-05,7.07897598759804e-05,6.63225476556372e-05,6.22231044348649e-05,5.82596859452295e-05,5.45505484010052e-05,5.10672713586968e-05,4.77069847155099e-05,4.46457705632266e-05,4.17009456530417e-05,3.89262430235758e-05,3.63555594725693e-05,3.3878779247054e-05,3.16095748808961e-05,2.94535144100852e-05,2.7406112694883e-05,2.55369306818846e-05,2.37381139031793e-05,2.20790931933277e-05,2.05238914448074e-05,1.90339590639913e-05,1.76951844879021e-05,1.6408141110356e-05,1.5212045189792e-05,1.41070664186459e-05,1.30477641512872e-05],"mode":"lines","name":"age|Y=1","fill":"tozeroy","fillcolor":"rgba(255, 212, 96, 0.5)","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","width":0.5},"type":"scatter","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<hr />
+<hr />
+</div>
+</div>
+</div>
+<div id="problema-18-4.9" class="section level3">
+<h3>Problema 18 (4.9)</h3>
+<p>For the horseshoe crab data, fit a logistic regression model for the probability of a satellite, using color alone as the predictor.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Treat color as nominal scale (qualitative). Report the prediction equation, and explain how to interpret the coefficient of the first indicator variable.</li>
+<li>For the model in (a), conduct a likelihood-ratio test of the hypothesis that color has no effect. Interpret.</li>
+<li>Treating color in a quantitative manner, obtain a prediction equation. Interpret the coefficient of color.</li>
+<li>For the model in (c), test the hypothesis that color has no effect. Interpret.</li>
+<li>When we treat color as quantitative instead of qualitative, state an advantage relating to power and a potential disadvantage relating to model lack of fit.</li>
+</ol>
+<hr />
+<div id="item-a-1" class="section level4">
+<h4><strong>item a)</strong></h4>
+<p><strong>Preparação dos dados:</strong></p>
+<pre class="r"><code>library(readr)
+library(dplyr)
+
+crabs &lt;- read_table2(&quot;/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/exemplos/crab/crabs.txt&quot;, col_names = FALSE)
+
+crabs &lt;- crabs %&gt;%
+  magrittr::set_colnames(c(&quot;color&quot;, &quot;spine&quot;, &quot;width&quot;, &quot;satell&quot;, &quot;weight&quot;)) %&gt;%
+  na.omit() %&gt;%
+  dplyr::mutate(y = dplyr::if_else(satell &gt; 0, 1, 0), # resposta
+                weight = weight/1000, # transformando peso em kg
+                color = color - 1) # para escala de color de 1 a 4 
+
+
+tibble::as.tibble(crabs)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["color"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["spine"],"name":[2],"type":["int"],"align":["right"]},{"label":["width"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["satell"],"name":[4],"type":["int"],"align":["right"]},{"label":["weight"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"3","3":"28.3","4":"8","5":"3.050","6":"1"},{"1":"3","2":"3","3":"24.8","4":"0","5":"2.100","6":"0"},{"1":"1","2":"1","3":"26.5","4":"0","5":"2.350","6":"0"},{"1":"3","2":"3","3":"25.6","4":"0","5":"2.150","6":"0"},{"1":"2","2":"3","3":"28.2","4":"11","5":"3.050","6":"1"},{"1":"1","2":"1","3":"27.1","4":"8","5":"2.950","6":"1"},{"1":"4","2":"3","3":"24.7","4":"0","5":"2.200","6":"0"},{"1":"1","2":"2","3":"25.0","4":"3","5":"2.300","6":"1"},{"1":"4","2":"3","3":"25.8","4":"3","5":"2.000","6":"1"},{"1":"2","2":"1","3":"26.8","4":"5","5":"2.700","6":"1"},{"1":"1","2":"1","3":"29.3","4":"4","5":"3.200","6":"1"},{"1":"2","2":"1","3":"25.7","4":"8","5":"2.000","6":"1"},{"1":"2","2":"3","3":"26.8","4":"0","5":"2.650","6":"0"},{"1":"2","2":"3","3":"27.9","4":"6","5":"2.800","6":"1"},{"1":"1","2":"1","3":"27.7","4":"6","5":"2.500","6":"1"},{"1":"3","2":"3","3":"28.9","4":"4","5":"2.800","6":"1"},{"1":"2","2":"3","3":"28.5","4":"3","5":"3.000","6":"1"},{"1":"2","2":"3","3":"27.7","4":"5","5":"2.900","6":"1"},{"1":"2","2":"1","3":"25.7","4":"5","5":"2.000","6":"1"},{"1":"3","2":"3","3":"26.2","4":"3","5":"2.300","6":"1"},{"1":"3","2":"3","3":"27.1","4":"0","5":"2.550","6":"0"},{"1":"2","2":"3","3":"26.0","4":"5","5":"2.150","6":"1"},{"1":"2","2":"3","3":"29.0","4":"10","5":"3.200","6":"1"},{"1":"2","2":"3","3":"26.2","4":"3","5":"2.400","6":"1"},{"1":"3","2":"3","3":"23.0","4":"0","5":"1.800","6":"0"},{"1":"2","2":"2","3":"22.9","4":"0","5":"1.600","6":"0"},{"1":"3","2":"3","3":"25.7","4":"0","5":"1.200","6":"0"},{"1":"4","2":"3","3":"27.5","4":"0","5":"2.900","6":"0"},{"1":"2","2":"3","3":"25.8","4":"0","5":"2.300","6":"0"},{"1":"4","2":"1","3":"25.5","4":"0","5":"2.750","6":"0"},{"1":"2","2":"1","3":"29.7","4":"5","5":"3.850","6":"1"},{"1":"2","2":"1","3":"28.7","4":"0","5":"3.200","6":"0"},{"1":"3","2":"3","3":"25.5","4":"0","5":"2.250","6":"0"},{"1":"3","2":"3","3":"28.5","4":"1","5":"3.000","6":"1"},{"1":"2","2":"3","3":"27.5","4":"1","5":"2.550","6":"1"},{"1":"3","2":"3","3":"27.3","4":"1","5":"2.900","6":"1"},{"1":"2","2":"3","3":"25.3","4":"2","5":"1.900","6":"1"},{"1":"2","2":"3","3":"27.0","4":"6","5":"2.500","6":"1"},{"1":"2","2":"3","3":"31.9","4":"2","5":"3.325","6":"1"},{"1":"3","2":"3","3":"22.0","4":"0","5":"1.400","6":"0"},{"1":"3","2":"3","3":"23.8","4":"6","5":"1.800","6":"1"},{"1":"2","2":"3","3":"24.2","4":"2","5":"1.650","6":"1"},{"1":"3","2":"3","3":"28.4","4":"3","5":"3.200","6":"1"},{"1":"2","2":"1","3":"24.9","4":"6","5":"2.300","6":"1"},{"1":"2","2":"1","3":"28.0","4":"4","5":"2.900","6":"1"},{"1":"2","2":"3","3":"24.9","4":"0","5":"2.200","6":"0"},{"1":"2","2":"2","3":"25.0","4":"6","5":"2.250","6":"1"},{"1":"2","2":"3","3":"30.5","4":"3","5":"3.325","6":"1"},{"1":"2","2":"3","3":"25.8","4":"0","5":"2.400","6":"0"},{"1":"2","2":"3","3":"29.5","4":"4","5":"3.025","6":"1"},{"1":"2","2":"3","3":"27.6","4":"4","5":"2.850","6":"1"},{"1":"2","2":"1","3":"22.9","4":"0","5":"1.600","6":"0"},{"1":"2","2":"3","3":"28.3","4":"0","5":"3.200","6":"0"},{"1":"3","2":"2","3":"29.8","4":"4","5":"3.500","6":"1"},{"1":"2","2":"3","3":"28.2","4":"8","5":"3.050","6":"1"},{"1":"2","2":"3","3":"25.8","4":"0","5":"2.200","6":"0"},{"1":"3","2":"3","3":"26.1","4":"3","5":"2.750","6":"1"},{"1":"4","2":"3","3":"27.0","4":"0","5":"2.625","6":"0"},{"1":"3","2":"3","3":"22.5","4":"0","5":"1.550","6":"0"},{"1":"3","2":"3","3":"26.0","4":"4","5":"2.600","6":"1"},{"1":"3","2":"2","3":"24.7","4":"0","5":"1.900","6":"0"},{"1":"3","2":"3","3":"24.3","4":"0","5":"2.150","6":"0"},{"1":"4","2":"2","3":"21.0","4":"0","5":"1.850","6":"0"},{"1":"2","2":"3","3":"25.2","4":"1","5":"2.000","6":"1"},{"1":"2","2":"3","3":"27.4","4":"5","5":"2.700","6":"1"},{"1":"2","2":"1","3":"22.5","4":"1","5":"1.600","6":"1"},{"1":"4","2":"3","3":"26.2","4":"0","5":"1.300","6":"0"},{"1":"4","2":"3","3":"27.5","4":"0","5":"2.600","6":"0"},{"1":"1","2":"3","3":"25.8","4":"0","5":"2.600","6":"0"},{"1":"2","2":"1","3":"26.7","4":"5","5":"2.700","6":"1"},{"1":"2","2":"3","3":"27.5","4":"6","5":"3.150","6":"1"},{"1":"3","2":"3","3":"27.5","4":"3","5":"3.100","6":"1"},{"1":"2","2":"1","3":"30.0","4":"5","5":"3.300","6":"1"},{"1":"2","2":"3","3":"28.2","4":"6","5":"2.600","6":"1"},{"1":"2","2":"1","3":"30.3","4":"3","5":"3.600","6":"1"},{"1":"1","2":"1","3":"27.4","4":"6","5":"2.700","6":"1"},{"1":"2","2":"3","3":"28.3","4":"15","5":"3.000","6":"1"},{"1":"2","2":"1","3":"27.8","4":"0","5":"2.750","6":"0"},{"1":"3","2":"3","3":"24.5","4":"5","5":"2.050","6":"1"},{"1":"2","2":"3","3":"28.0","4":"1","5":"2.800","6":"1"},{"1":"2","2":"3","3":"26.2","4":"0","5":"2.400","6":"0"},{"1":"3","2":"3","3":"25.6","4":"7","5":"2.800","6":"1"},{"1":"2","2":"3","3":"25.4","4":"6","5":"2.250","6":"1"},{"1":"3","2":"2","3":"26.0","4":"3","5":"2.200","6":"1"},{"1":"2","2":"3","3":"25.1","4":"5","5":"2.100","6":"1"},{"1":"3","2":"3","3":"23.1","4":"0","5":"1.650","6":"0"},{"1":"4","2":"3","3":"27.0","4":"3","5":"2.250","6":"1"},{"1":"4","2":"3","3":"23.5","4":"0","5":"1.900","6":"0"},{"1":"2","2":"1","3":"26.8","4":"0","5":"2.550","6":"0"},{"1":"3","2":"3","3":"23.1","4":"0","5":"1.550","6":"0"},{"1":"3","2":"3","3":"26.5","4":"1","5":"1.967","6":"1"},{"1":"2","2":"3","3":"28.2","4":"1","5":"2.867","6":"1"},{"1":"2","2":"2","3":"24.7","4":"4","5":"2.550","6":"1"},{"1":"2","2":"3","3":"26.3","4":"1","5":"2.400","6":"1"},{"1":"2","2":"3","3":"26.5","4":"4","5":"2.300","6":"1"},{"1":"3","2":"3","3":"25.7","4":"0","5":"2.100","6":"0"},{"1":"4","2":"3","3":"23.7","4":"0","5":"1.800","6":"0"},{"1":"2","2":"3","3":"25.0","4":"5","5":"2.400","6":"1"},{"1":"1","2":"1","3":"30.2","4":"2","5":"3.275","6":"1"},{"1":"2","2":"3","3":"27.4","4":"3","5":"2.900","6":"1"},{"1":"4","2":"3","3":"22.5","4":"4","5":"1.475","6":"1"},{"1":"1","2":"2","3":"24.5","4":"6","5":"1.950","6":"1"},{"1":"4","2":"3","3":"25.8","4":"10","5":"2.250","6":"1"},{"1":"2","2":"1","3":"28.4","4":"5","5":"3.100","6":"1"},{"1":"2","2":"3","3":"27.5","4":"6","5":"2.625","6":"1"},{"1":"3","2":"3","3":"29.0","4":"3","5":"2.925","6":"1"},{"1":"4","2":"3","3":"25.0","4":"8","5":"2.100","6":"1"},{"1":"3","2":"3","3":"24.0","4":"10","5":"1.900","6":"1"},{"1":"2","2":"3","3":"26.2","4":"0","5":"2.300","6":"0"},{"1":"4","2":"3","3":"24.5","4":"0","5":"1.900","6":"0"},{"1":"2","2":"3","3":"23.9","4":"2","5":"1.850","6":"1"},{"1":"2","2":"3","3":"26.5","4":"4","5":"2.350","6":"1"},{"1":"4","2":"3","3":"25.7","4":"0","5":"2.150","6":"0"},{"1":"3","2":"3","3":"24.1","4":"0","5":"1.800","6":"0"},{"1":"3","2":"3","3":"29.0","4":"4","5":"3.275","6":"1"},{"1":"2","2":"2","3":"24.5","4":"0","5":"2.000","6":"0"},{"1":"1","2":"1","3":"26.0","4":"9","5":"2.300","6":"1"},{"1":"2","2":"3","3":"23.8","4":"0","5":"2.100","6":"0"},{"1":"2","2":"1","3":"23.7","4":"0","5":"1.950","6":"0"},{"1":"2","2":"3","3":"25.8","4":"0","5":"2.650","6":"0"},{"1":"2","2":"1","3":"26.0","4":"14","5":"2.300","6":"1"},{"1":"2","2":"3","3":"29.0","4":"1","5":"3.000","6":"1"},{"1":"2","2":"2","3":"23.2","4":"4","5":"1.950","6":"1"},{"1":"3","2":"3","3":"26.7","4":"2","5":"2.600","6":"1"},{"1":"2","2":"3","3":"28.7","4":"3","5":"3.150","6":"1"},{"1":"2","2":"3","3":"24.9","4":"0","5":"2.100","6":"0"},{"1":"2","2":"2","3":"25.7","4":"0","5":"2.000","6":"0"},{"1":"4","2":"3","3":"23.7","4":"0","5":"1.850","6":"0"},{"1":"4","2":"3","3":"23.4","4":"0","5":"1.900","6":"0"},{"1":"1","2":"1","3":"26.1","4":"5","5":"2.800","6":"1"},{"1":"3","2":"1","3":"28.5","4":"9","5":"3.250","6":"1"},{"1":"2","2":"3","3":"25.0","4":"4","5":"2.100","6":"1"},{"1":"4","2":"3","3":"24.7","4":"5","5":"2.100","6":"1"},{"1":"2","2":"3","3":"22.9","4":"4","5":"1.600","6":"1"},{"1":"2","2":"3","3":"27.2","4":"3","5":"2.700","6":"1"},{"1":"4","2":"3","3":"25.5","4":"0","5":"2.250","6":"0"},{"1":"3","2":"1","3":"27.0","4":"3","5":"2.450","6":"1"},{"1":"2","2":"3","3":"30.0","4":"8","5":"3.050","6":"1"},{"1":"2","2":"1","3":"26.5","4":"0","5":"1.300","6":"0"},{"1":"3","2":"3","3":"23.0","4":"1","5":"1.650","6":"1"},{"1":"3","2":"3","3":"24.2","4":"0","5":"1.900","6":"0"},{"1":"2","2":"3","3":"25.4","4":"4","5":"2.250","6":"1"},{"1":"3","2":"2","3":"24.5","4":"0","5":"2.250","6":"0"},{"1":"3","2":"1","3":"25.9","4":"4","5":"2.550","6":"1"},{"1":"2","2":"3","3":"28.5","4":"0","5":"3.050","6":"0"},{"1":"2","2":"2","3":"24.0","4":"0","5":"1.700","6":"0"},{"1":"4","2":"3","3":"26.7","4":"0","5":"2.450","6":"0"},{"1":"2","2":"1","3":"29.0","4":"1","5":"2.800","6":"1"},{"1":"3","2":"3","3":"24.5","4":"1","5":"2.200","6":"1"},{"1":"2","2":"3","3":"24.5","4":"1","5":"1.600","6":"1"},{"1":"2","2":"1","3":"25.2","4":"1","5":"2.000","6":"1"},{"1":"2","2":"3","3":"29.0","4":"1","5":"3.100","6":"1"},{"1":"2","2":"3","3":"27.8","4":"3","5":"3.250","6":"1"},{"1":"2","2":"3","3":"25.0","4":"2","5":"2.100","6":"1"},{"1":"4","2":"3","3":"29.3","4":"12","5":"3.225","6":"1"},{"1":"3","2":"3","3":"27.0","4":"6","5":"2.500","6":"1"},{"1":"3","2":"3","3":"26.2","4":"0","5":"2.225","6":"0"},{"1":"2","2":"2","3":"25.4","4":"0","5":"2.300","6":"0"},{"1":"2","2":"3","3":"26.2","4":"2","5":"2.025","6":"1"},{"1":"2","2":"3","3":"25.1","4":"0","5":"1.800","6":"0"},{"1":"2","2":"3","3":"27.9","4":"7","5":"3.050","6":"1"},{"1":"3","2":"3","3":"27.2","4":"5","5":"2.400","6":"1"},{"1":"2","2":"1","3":"33.5","4":"7","5":"5.200","6":"1"},{"1":"2","2":"1","3":"24.3","4":"0","5":"2.000","6":"0"},{"1":"2","2":"1","3":"31.7","4":"4","5":"3.725","6":"1"},{"1":"2","2":"3","3":"30.0","4":"9","5":"3.000","6":"1"},{"1":"2","2":"1","3":"23.1","4":"0","5":"2.000","6":"0"},{"1":"2","2":"3","3":"24.7","4":"4","5":"1.950","6":"1"},{"1":"3","2":"3","3":"23.8","4":"0","5":"1.800","6":"0"},{"1":"2","2":"3","3":"26.0","4":"3","5":"2.275","6":"1"},{"1":"2","2":"3","3":"26.5","4":"7","5":"2.750","6":"1"},{"1":"3","2":"3","3":"26.2","4":"2","5":"2.175","6":"1"},{"1":"1","2":"1","3":"28.0","4":"0","5":"2.625","6":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># soh precisamos tratar color como fator:
+
+crabs2 &lt;- crabs %&gt;%
+  dplyr::mutate(color = factor(color, labels = c(&quot;Lt Med&quot;, &quot;Medium&quot;, &quot;Dk Med&quot;, &quot;Dark&quot;)))
+
+head(crabs2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["color"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["spine"],"name":[2],"type":["int"],"align":["right"]},{"label":["width"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["satell"],"name":[4],"type":["int"],"align":["right"]},{"label":["weight"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"Medium","2":"3","3":"28.3","4":"8","5":"3.05","6":"1"},{"1":"Dk Med","2":"3","3":"24.8","4":"0","5":"2.10","6":"0"},{"1":"Lt Med","2":"1","3":"26.5","4":"0","5":"2.35","6":"0"},{"1":"Dk Med","2":"3","3":"25.6","4":"0","5":"2.15","6":"0"},{"1":"Medium","2":"3","3":"28.2","4":"11","5":"3.05","6":"1"},{"1":"Lt Med","2":"1","3":"27.1","4":"8","5":"2.95","6":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code>mod_nom &lt;- glm(data=crabs, y ~ color, family=binomial(link=&quot;logit&quot;))
+
+summary(mod_nom)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ color, family = binomial(link = &quot;logit&quot;), data = crabs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.9103  -1.2719   0.8142   0.8142   1.3937  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   2.3635     0.5551   4.257 2.07e-05 ***
+## color        -0.7147     0.2095  -3.412 0.000645 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 225.76  on 172  degrees of freedom
+## Residual deviance: 213.30  on 171  degrees of freedom
+## AIC: 217.3
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>Equação de predição: <span class="math inline">\(logit[\pi(x)] = \alpha \space + \space \beta_1Color_{Medium} \space + \beta_2Color_{Dk \space Medium} \space + \beta_3Color_{Dark}\)</span> <strong>ou soh um beta (???)</strong></p>
+<p>Interpretação dos coeficientes: os sinais negativos que se intensificam com a também intensificação da cor da fêmea, mostram que quanto mais escura a cor do carangueijo fêmea, menor é a <em>log(odds)</em> de haver um macho satelite próximo a ela.</p>
+<hr />
+</div>
+<div id="item-b-1" class="section level4">
+<h4><strong>item b)</strong></h4>
+<p><strong>Testes de hipótese para <span class="math inline">\(\beta\)</span>:</strong></p>
+<pre class="r"><code># testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_nom)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-106.6489","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-112.8793","3":"-1","4":"12.46065","5":"0.0004156143","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 2) teste de Wald
+# waldtest(mod_nom, &quot;color&quot;)
+# waldtest(mod_nom)
+# 
+# library(survey)
+# regTermTest(mod_nom, &quot;color&quot;)
+# # regTermTest(mod_nom)
+# # regTermTest(mod2, &quot;color Medium&quot;)</code></pre>
+<p>O teste de Razão de Verossimilhanças, neste caso, testa o modelo <span class="math inline">\(y \sim \alpha\)</span> contra o modelo completo com <em>color</em> na forma nominal. O resultado ( a um nível de significância de <span class="math inline">\(5\%\)</span>) indica que o modelo com <em>color</em> (da fêmea) exerce influência na variável resposta, qual seja, a probabilidade <strong>(probabilidade ou só a presença (???))</strong> da presença de machos satélites nos ninhos.</p>
+<!-- Todos os testes indicam que os $\beta s$ **(??? ou soh beta)** são significativos, ou seja, variável *color* (da fêmea) é importante para descrever a probabilidade de se encontrar machos satélites nos ninhos. -->
+<hr />
+</div>
+<div id="item-c-1" class="section level4">
+<h4><strong>item c)</strong></h4>
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code>mod_ord &lt;- glm(data=crabs, y ~ color, family=binomial(link=&quot;logit&quot;))
+
+summary(mod_ord)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ color, family = binomial(link = &quot;logit&quot;), data = crabs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.9103  -1.2719   0.8142   0.8142   1.3937  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   2.3635     0.5551   4.257 2.07e-05 ***
+## color        -0.7147     0.2095  -3.412 0.000645 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 225.76  on 172  degrees of freedom
+## Residual deviance: 213.30  on 171  degrees of freedom
+## AIC: 217.3
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>Equação de predição: <span class="math inline">\(logit[\pi(x)] = \alpha \space + \space \beta_1color\)</span>.</p>
+<p>Interpretação do coeficiente: o sinal negativo indica que a cor da fêmea e a variável presença <strong>((???) ou log(odds) da presença de machos?)</strong> de machos satélites nos ninhos estão <strong>inversamente</strong> relacionadas. Quanto mais escura é a cor do carangueijo fêmea, menor é a <em>log(odds)</em> de haver um macho satélite próximo a ela.</p>
+<p></p>
+<hr />
+<p><strong>item d)</strong></p>
+<p><strong>Testes de hipótese para <span class="math inline">\(\beta\)</span>:</strong></p>
+<pre class="r"><code># testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_ord)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-106.6489","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-112.8793","3":"-1","4":"12.46065","5":"0.0004156143","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 2) teste de Wald
+waldtest(mod_ord, &quot;color&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"171","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"172","2":"-1","3":"11.64026","4":"0.0008055125","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>waldtest(mod_ord)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"171","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"172","2":"-1","3":"11.64026","4":"0.0008055125","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>library(survey)
+regTermTest(mod_ord, &quot;color&quot;)</code></pre>
+<pre><code>## Wald test for color
+##  in glm(formula = y ~ color, family = binomial(link = &quot;logit&quot;), data = crabs)
+## F =  11.64026  on  1  and  171  df: p= 0.00080551</code></pre>
+<pre class="r"><code># regTermTest(mod_nom)
+# regTermTest(mod2, &quot;color Medium&quot;)</code></pre>
+<p>O teste de Razão de Verossimilhanças e o de Wald (a um nível de significância de <span class="math inline">\(5\%\)</span>) indicam que o modelo com <em>color</em> (ordinal) (da fêmea) exerce influência na variável resposta, qual seja, a probabilidade <strong>(probabilidade ou só a presença ou a log(odds) (???))</strong> da presença de machos satélites nos ninhos.</p>
+<hr />
+<p><strong>item e)</strong></p>
+<p>A variável <em>color</em> é um preditor ordinal. É vantajoso tratar preditores ordinais de forma quantitativa ao invés de qualitativa porque:</p>
+<ol style="list-style-type: lower-alpha">
+<li><p>o modelo fica mais simples: <span class="math inline">\(logit[\pi(x)] = \alpha + \beta x\)</span> ao invés de <span class="math inline">\(logit[\pi(x)] = \alpha + \beta_1 c_1 + \beta_2 c_2 + \beta_3 c_3\)</span>, em que criamos variáveis <em>dummies</em> para <span class="math inline">\(k-1\)</span> níveis da variável;</p></li>
+<li><p>mais fácil de interpretar já que a variável <em>color</em> não é subdividida em variáveis <em>dummies</em>;</p></li>
+<li><p>os testes do efeito do preditor linear são geralmente mais poderesos com 1 parâmetro <span class="math inline">\(\beta\)</span> do que com vários.</p></li>
+</ol>
+<hr />
+<hr />
+</div>
+</div>
+<div id="problema-19-4.15" class="section level3">
+<h3>Problema 19 (4.15)</h3>
+<p>Table 4.12 refers to ratings of agricultural extension agents in North Carolina. In each of five districts, agents were classified by their race and by whether they qualified for a merit pay increase.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Conduct the Cochran–Mantel–Haenszel test of the hypothesis that the merit pay decision is independent of race, conditional on the district. Interpret.</li>
+<li>Show how you could alternatively test the hypothesis in (a) using a test about a parameter in a logistic regression model.</li>
+<li>What information can you get from a model-based analysis that you do not get from the CMH test?</li>
+</ol>
+<div class="figure">
+<img src="img/table4.12.png" width="500" />
+
+</div>
+<hr />
+<div id="item-a-2" class="section level4">
+<h4><strong>item a)</strong></h4>
+<p>Preparando os dados:</p>
+<pre class="r"><code># criando tabela 2x2x5
+
+counts &lt;- c(24,9,47,12,10,3,45,8,5,4,57,9,16,7,54,10,7,4,59,12)
+
+dados &lt;- array(counts, dim=c(2,2,5), dimnames = list(merit = c(&quot;yes&quot;, &quot;no&quot;), race = c(&quot;blacks&quot;, &quot;whites&quot;),  district = c(&quot;NC&quot;, &quot;NE&quot;, &quot;NW&quot;, &quot;SE&quot;, &quot;SW&quot;)))
+
+partial_tables &lt;- as.table(dados)
+
+str(partial_tables)</code></pre>
+<pre><code>##  table [1:2, 1:2, 1:5] 24 9 47 12 10 3 45 8 5 4 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 3
+##   ..$ merit   : chr [1:2] &quot;yes&quot; &quot;no&quot;
+##   ..$ race    : chr [1:2] &quot;blacks&quot; &quot;whites&quot;
+##   ..$ district: chr [1:5] &quot;NC&quot; &quot;NE&quot; &quot;NW&quot; &quot;SE&quot; ...</code></pre>
+<pre class="r"><code>partial_tables</code></pre>
+<pre><code>## , , district = NC
+## 
+##      race
+## merit blacks whites
+##   yes     24     47
+##   no       9     12
+## 
+## , , district = NE
+## 
+##      race
+## merit blacks whites
+##   yes     10     45
+##   no       3      8
+## 
+## , , district = NW
+## 
+##      race
+## merit blacks whites
+##   yes      5     57
+##   no       4      9
+## 
+## , , district = SE
+## 
+##      race
+## merit blacks whites
+##   yes     16     54
+##   no       7     10
+## 
+## , , district = SW
+## 
+##      race
+## merit blacks whites
+##   yes      7     59
+##   no       4     12</code></pre>
+<p>Calculando as <em>odds ratio</em> condicionais:</p>
+<pre class="r"><code>library(samplesizeCMH)
+# calculando as odds ratio condicionais
+apply(partial_tables, 3, odds.ratio)</code></pre>
+<pre><code>##        NC        NE        NW        SE        SW 
+## 0.6808511 0.5925926 0.1973684 0.4232804 0.3559322</code></pre>
+<p>As chances dos negros obterem pagamento com base em mérito são menores que a dos brancos em todas os distritos, mas com diferenças sensíveis dependendo da região.</p>
+<p>Teste de Mantel Haenzel:</p>
+<pre class="r"><code># teste para a razão de chances condiconal
+mantelhaen.test(partial_tables)</code></pre>
+<pre><code>## 
+##  Mantel-Haenszel chi-squared test with continuity correction
+## 
+## data:  partial_tables
+## Mantel-Haenszel X-squared = 6.9797, df = 1, p-value = 0.008244
+## alternative hypothesis: true common odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.2652676 0.8036854
+## sample estimates:
+## common odds ratio 
+##         0.4617269</code></pre>
+<p>As chances dos negros conseguirem um pagamento baseado em mérito é menor que a dos brancos, controlando-se a variável distrito.</p>
+<p>Calculando <em>odds ratio</em> marginal apenas para comparar com a condicional:</p>
+<pre class="r"><code># criando a tabela marginal
+marginal_table &lt;- margin.table(partial_tables, margin=c(1,2)) # margin indica para qual dimensao queremos calcular as marginais
+
+# calculando a razão de chances marginal:
+odds.ratio(marginal_table)</code></pre>
+<pre><code>## [1] 0.446989</code></pre>
+<p>Não há paradoxo de Simpson, pois a chance dos negros continua menor que a dos brancos mesmo com a tabela marginal.</p>
+<hr />
+</div>
+<div id="item-b-2" class="section level4">
+<h4><strong>item b)</strong></h4>
+<p>Alternativamente, para testar a hipótese de <strong>(a)</strong>, poderíamos ajustar um modelo de regressão logística em que a variável <em>merit pay</em> seria a variável dependente e e a variável <em>race</em> seria nossa variável explicativa. Faríamos então um teste de hipóteses para o parâmetro <span class="math inline">\(\beta\)</span> desta regressão que nos diria se a variável raça exerce influência sobre a decisão de <em>merit pay</em>. Sabendo que o parâmetro <span class="math inline">\(\beta\)</span> de uma regressão logística é uma <em>log(odds)</em>, poderíamos chegar aos mesmos valores da <em>odds ratio</em> do exemplo anterior calculando a inversa, ou seja, <span class="math inline">\(e^{\beta}\)</span>.</p>
+<p>Preparando os dados para regressão logística:</p>
+<pre class="r"><code># criando tabela 2x2x5
+
+# counts &lt;- (24,9,47,12,10,3,45,8,5,4,57,9,16,7,54,10,7,4,59,12)
+
+yes &lt;- matrix(c(24,10,5,16,7, 47, 45,57,54,59))
+
+no &lt;- matrix(c(9,3,4,7,4,12,8,9,10,12))
+
+race &lt;- rep(c(&quot;black&quot;, &quot;white&quot;), each=5) 
+
+district &lt;- rep(c(&quot;NC&quot;, &quot;NE&quot;, &quot;NW&quot;, &quot;SE&quot;, &quot;SW&quot;), 2) # 2x2x5 = 20
+
+# merit &lt;- rep(rep(c(1, 0), 2), 5) # 2x2x5 = 20
+
+# criando um data frmae no formato long
+
+# tem que ser por model matrix pq temos variaveis nominais
+race.m &lt;- model.matrix(~race-1)
+district.m &lt;- model.matrix(~district-1)
+
+
+
+tibble::as.tibble(cbind(yes, no, race.m[,-2, drop=FALSE], district.m[,-5]))</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["V1"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["V2"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["raceblack"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["districtNC"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["districtNE"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["districtNW"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["districtSE"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"24","2":"9","3":"1","4":"1","5":"0","6":"0","7":"0"},{"1":"10","2":"3","3":"1","4":"0","5":"1","6":"0","7":"0"},{"1":"5","2":"4","3":"1","4":"0","5":"0","6":"1","7":"0"},{"1":"16","2":"7","3":"1","4":"0","5":"0","6":"0","7":"1"},{"1":"7","2":"4","3":"1","4":"0","5":"0","6":"0","7":"0"},{"1":"47","2":"12","3":"0","4":"1","5":"0","6":"0","7":"0"},{"1":"45","2":"8","3":"0","4":"0","5":"1","6":"0","7":"0"},{"1":"57","2":"9","3":"0","4":"0","5":"0","6":"1","7":"0"},{"1":"54","2":"10","3":"0","4":"0","5":"0","6":"0","7":"1"},{"1":"59","2":"12","3":"0","4":"0","5":"0","6":"0","7":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>merit &lt;- tibble::as.tibble(cbind(yes, no, race.m[,-2, drop=FALSE], district.m[,-5])) %&gt;%
+  magrittr::set_colnames(c(&quot;yes&quot;, &quot;no&quot;, &quot;black&quot;, &quot;NC&quot;, &quot;NE&quot;, &quot;NW&quot;, &quot;SE&quot;))
+
+merit</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["yes"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["no"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["black"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["NC"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["NE"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["NW"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["SE"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"24","2":"9","3":"1","4":"1","5":"0","6":"0","7":"0"},{"1":"10","2":"3","3":"1","4":"0","5":"1","6":"0","7":"0"},{"1":"5","2":"4","3":"1","4":"0","5":"0","6":"1","7":"0"},{"1":"16","2":"7","3":"1","4":"0","5":"0","6":"0","7":"1"},{"1":"7","2":"4","3":"1","4":"0","5":"0","6":"0","7":"0"},{"1":"47","2":"12","3":"0","4":"1","5":"0","6":"0","7":"0"},{"1":"45","2":"8","3":"0","4":"0","5":"1","6":"0","7":"0"},{"1":"57","2":"9","3":"0","4":"0","5":"0","6":"1","7":"0"},{"1":"54","2":"10","3":"0","4":"0","5":"0","6":"0","7":"1"},{"1":"59","2":"12","3":"0","4":"0","5":"0","6":"0","7":"0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>** Ajustando os modelos:**</p>
+<pre class="r"><code>resposta &lt;- as.matrix(merit %&gt;%
+  dplyr::select(yes, no))
+
+
+
+black &lt;- as.matrix(merit %&gt;%
+  dplyr::select(black))
+
+mod_merit1 &lt;- glm(resposta ~ black, family=binomial(link=&quot;logit&quot;) )
+mod_merit2 &lt;- glm(resposta ~ black + district, family=binomial(link=&quot;logit&quot;) )
+
+summary(mod_merit1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = resposta ~ black, family = binomial(link = &quot;logit&quot;))
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.89000  -0.35517   0.06776   0.34982   0.59845  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)   1.6365     0.1531   10.69  &lt; 2e-16 ***
+## black        -0.8052     0.2768   -2.91  0.00362 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10.6649  on 9  degrees of freedom
+## Residual deviance:  2.5876  on 8  degrees of freedom
+## AIC: 41.953
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>summary(mod_merit2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = resposta ~ black + district, family = binomial(link = &quot;logit&quot;))
+## 
+## Deviance Residuals: 
+##        1         2         3         4         5         6         7  
+##  0.60191   0.30311  -0.97042  -0.09608  -0.30707  -0.53319  -0.18583  
+##        8         9        10  
+##  0.47422   0.07216   0.15054  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.54076    0.28351   5.435 5.49e-08 ***
+## black       -0.79129    0.28532  -2.773  0.00555 ** 
+## districtNE   0.25837    0.42067   0.614  0.53909    
+## districtNW   0.13836    0.40517   0.341  0.73273    
+## districtSE   0.12087    0.37287   0.324  0.74581    
+## districtSW   0.00445    0.38486   0.012  0.99077    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 10.665  on 9  degrees of freedom
+## Residual deviance:  2.071  on 4  degrees of freedom
+## AIC: 49.437
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p><strong>Testando o parâmetro <span class="math inline">\(\beta\)</span> para <em>race</em>:</strong></p>
+<pre class="r"><code># testes para existência de regressão
+
+# 1) razao de verossimilhancas
+library(lmtest)
+lrtest(mod_merit1)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-18.97661","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-23.01522","3":"-1","4":"8.077222","5":"0.004482511","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>lrtest(mod_merit2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"6","2":"-18.71828","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-23.01522","3":"-5","4":"8.593883","5":"0.1264011","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 2) teste de Wald
+waldtest(mod_merit1)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"8","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"9","2":"-1","3":"8.465537","4":"0.01960233","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>waldtest(mod_merit2, &quot;black&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"4","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"5","2":"-1","3":"7.691422","4":"0.05015909","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>library(survey)
+regTermTest(mod_merit1, &quot;black&quot;)</code></pre>
+<pre><code>## Wald test for black
+##  in glm(formula = resposta ~ black, family = binomial(link = &quot;logit&quot;))
+## F =  8.465537  on  1  and  8  df: p= 0.019602</code></pre>
+<pre class="r"><code>regTermTest(mod_merit2, &quot;black&quot;)</code></pre>
+<pre><code>## Wald test for black
+##  in glm(formula = resposta ~ black + district, family = binomial(link = &quot;logit&quot;))
+## F =  7.691422  on  1  and  4  df: p= 0.050159</code></pre>
+<pre class="r"><code># regTermTest(mod_nom)
+# regTermTest(mod2, &quot;color Medium&quot;)</code></pre>
+<p>Os resultados corroboram <strong>(a)</strong> indicando que ser negro influencia negativamente em obter <em>merit pay</em>.</p>
+<p><strong>Calculando a <em>odds ratio</em>:</strong></p>
+<pre class="r"><code>exp(mod_merit1$coefficients[2])</code></pre>
+<pre><code>##    black 
+## 0.446989</code></pre>
+<pre class="r"><code>exp(mod_merit2$coefficients[2])</code></pre>
+<pre><code>##     black 
+## 0.4532621</code></pre>
+<p><strong>Portanto, como esperado, <span class="math inline">\(e^\beta\)</span> do modelo com um parâmetro <span class="math inline">\(logit[\pi(x)] = \alpha + \beta race_{black}\)</span> é exatamente a nossa <em>odds ratio</em> da tabela marginal - ou seja - sem considerar o efeito da variável <em>district</em>. Com o modelo mais complexo, a <em>odds ratio</em> não é exatamente igual, mas bastante próxima da estatística do teste CMH e corrobora o resultado.</strong></p>
+</div>
+<div id="item-c-2" class="section level4">
+<h4>**item c)</h4>
+<p>A informação que podemos obter por meio de uma regressão logística mas não pelo teste CMH é a <strong>probabilidade</strong> de um resultado da variável resposta. Na verdade, como o teste CMH não faz modelagem, não temos a diferenciação entre variáveis dependentes/resposta e variável independentes que possuímos na regressão logística. Além disso, a regressão logística nos permite trabalhar também com variáveis continuas, o que não é possível com o teste CMH.</p>
+<hr />
+<hr />
+</div>
+</div>
+<div id="problema-20" class="section level3">
+<h3>Problema 20)</h3>
+<p>A tabela abaixo é baseada em estudo epidemiológico com 2484 sujeitos para avaliar se ronco (escores 0,2,4,5) é um possível fator de risco para doença do coração.</p>
+<div class="figure">
+<img src="img/table20.png" width="500" />
+
+</div>
+<p>Utilize o SAS e/ou R para responder as questões seguintes: (a) Ajuste um modelo de regressão logística e obtenha as estimativas dos parâmetros. (b) Calcule as probabilidades amostrais de casos de doenças de coração para cada nível de ronco. Obtenha as probabilidades estimadas e indique se o modelo parece ajustar bem os valores amostrados. (c) Calcule e interprete o nível efetivo mediano EL 50 = −<span class="math inline">\(\hat {\frac{\alpha}{\beta}}\)</span>. (d) Calcule o acréscimo na chance de infarto para cada unidade acrescida no ronco. (e) Faça um teste para qualidade do ajuste. Indique as hipóteses, estatística do teste, p-valor e conclusão. (f) Se alterarmos a codificação da variável ronco no programa SAS, as estimativas dos parâmetros irão ser diferentes? Justifique?</p>
+<hr />
+<div id="item-a-3" class="section level4">
+<h4><strong>item a)</strong></h4>
+<pre class="r"><code>dados &lt;- c(24, 35, 21, 30, 1355, 603, 192, 224)
+d &lt;- matrix(dados, ncol=2)
+
+
+snoring1&lt;-c(0,2,4,5) # snoring eh uma unica variavel!!!
+colnames(d) &lt;- c(&quot;yes&quot;, &quot;no&quot;)
+logit_model1 &lt;-glm(d~snoring1,
+                family=binomial(link=logit))
+
+# logit_model1
+# logit_model1$fitted.values
+summary(logit_model1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = d ~ snoring1, family = binomial(link = logit))
+## 
+## Deviance Residuals: 
+##       1        2        3        4  
+## -0.8346   1.2521   0.2758  -0.6845  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -3.86625    0.16621 -23.261  &lt; 2e-16 ***
+## snoring1     0.39734    0.05001   7.945 1.94e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 65.9045  on 3  degrees of freedom
+## Residual deviance:  2.8089  on 2  degrees of freedom
+## AIC: 27.061
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<hr />
+</div>
+<div id="item-b-3" class="section level4">
+<h4><strong>item b)</strong></h4>
+<p>Probabilidades amostrais:</p>
+<pre class="r"><code>rsums &lt;- rowSums(d)
+probs &lt;- sapply(1:4, function(i){
+  d[i,1]/rsums[i]
+})
+
+probs</code></pre>
+<pre><code>##        yes        yes        yes        yes 
+## 0.01740392 0.05485893 0.09859155 0.11811024</code></pre>
+<p>Probabilidades estimadas:</p>
+<pre class="r"><code>probs_est &lt;- exp(logit_model1$coefficients[1] + logit_model1$coefficients[2]*snoring1) / (1+exp(logit_model1$coefficients[1] + logit_model1$coefficients[2]*snoring1))
+
+
+probs_est</code></pre>
+<pre><code>## [1] 0.02050742 0.04429511 0.09305411 0.13243885</code></pre>
+<p>As probabilidades estimadas estão próximas das probabilidades amostrais.</p>
+<hr />
+</div>
+<div id="item-c-3" class="section level4">
+<h4><strong>item c)</strong></h4>
+<pre class="r"><code># EL_50
+
+unname(-logit_model1$coefficients[1]/logit_model1$coefficients[2])</code></pre>
+<pre><code>## [1] 9.73041</code></pre>
+<p>O nível efetivo mediano indica o valor da variável explicativa <em>ronco</em> para o qual a probabilidade de ter doença do coração é <span class="math inline">\(\hat \pi(x) = 0.5\)</span>.</p>
+<hr />
+</div>
+<div id="item-d" class="section level4">
+<h4><strong>item d)</strong></h4>
+<p>** chance ou probabilidade (???)** O acréscimo da chance de infarto para cada unidade acrescida de ronco é dado por <span class="math inline">\(\hat \beta \pi(x)[1-\pi(x)]\)</span>:</p>
+<pre class="r"><code>logit_model1$coefficients[2]*probs_est*(1-probs_est)</code></pre>
+<pre><code>## [1] 0.007981246 0.016820473 0.033533242 0.045653500</code></pre>
+<p>Diferente dos modelos de probabilidade linear, constata-se que o modelo de regressão logística permite que a taxa de variação mude conforme o nível de <span class="math inline">\(x\)</span> varia.</p>
+</div>
+<div id="item-e" class="section level4">
+<h4><strong>item e)</strong></h4>
+<p><strong>Podemos fazer tanto um teste de razão de verossimilhanças entre um modelo mais completo (por exemplo com um termo quadrático) e o modelo que ajustamos, quanto o teste de Hosmer Lemeshow (slides, p.49). O primeiro teste seria mais informativo como teste de lack of fit.</strong></p>
+<p><strong>Teste de Hosmer Lemeshow</strong></p>
+<p>Faremos na abordagem om tabela de contingência e na abordagem com variável resposta com zeros e uns (versão SAS).</p>
+<p><strong>(???)</strong> As hipóteses do teste de HL são:</p>
+<p><span class="math inline">\(H_0:\)</span> não existem diferenças entre os valores esperados e os valores ajustados</p>
+<p><span class="math inline">\(H_1:\)</span> há diferenças significativas entre os valores esperados e aqueles ajustados pelo modelo</p>
+<p>Versão 1:</p>
+<pre class="r"><code>#antes do teste (nos moldes do SAS), eh necessario transformar para zero e uns
+
+# nao evento eh no
+yes &lt;- rep(c(1,0), c(sum(d[,&quot;yes&quot;]), sum(d[,&quot;no&quot;])))
+snor.yes &lt;- rep(snoring1, d[,1])
+snor.no &lt;- rep(snoring1, d[,2])
+
+response_m &lt;- matrix(c(yes, c(snor.yes, snor.no)), ncol=2)
+
+logit_model2 &lt;- glm(response_m[,1] ~ response_m[,2], family=binomial(link=&quot;logit&quot;))
+
+# logit_model1 # ok! nao altera os coeficientes
+
+
+library(modEvA)
+# alteração da função HLfit:
+HLfit2 &lt;- function (model = NULL, obs = NULL, pred = NULL, bin.method, n.bins = 10, fixed.bin.size = FALSE, min.bin.size = 15, min.prob.interval = 0.1, simplif = FALSE) {
+  # version 1.5 (24 Jun 2015)
+  
+  if (!is.null(model)) {
+    if (!is.null(obs)) message(&quot;Argument &#39;obs&#39; ignored in favour of &#39;model&#39;.&quot;)
+    if (!is.null(pred)) message(&quot;Argument &#39;pred&#39; ignored in favour of &#39;model&#39;.&quot;)
+    obs &lt;- model$y
+    pred &lt;- model$fitted.values
+  }  # end if model
+  
+  stopifnot(
+    length(obs) == length(pred),
+    obs %in% c(0, 1),
+    pred &gt;= 0,
+    pred &lt;= 1
+  )
+  
+  bins &lt;- getBins(obs = obs, pred = pred, bin.method = bin.method, n.bins = n.bins, fixed.bin.size = fixed.bin.size, min.bin.size = min.bin.size, min.prob.interval = min.prob.interval)
+  n.bins &lt;- nrow(bins$bins.table)
+  
+  # next 4 lines: adapted from hosmerlem function in http://www.stat.sc.edu/~hitchcock/diseaseoutbreakRexample704.txt
+  observed &lt;- xtabs(cbind(1 - obs, obs) ~ bins$prob.bin)
+  expected &lt;- xtabs(cbind(1 - pred, pred) ~ bins$prob.bin)
+  chi.sq &lt;- sum((observed - expected) ^ 2 / expected)
+  p.value &lt;- 1 - pchisq(chi.sq, df = n.bins - 2)
+  rmse &lt;- sqrt(mean((observed - expected) ^ 2))
+  
+  if (simplif) return(list(chi.sq = chi.sq, p.value = p.value, RMSE = rmse))
+  
+  # plotting loosely based on calibration.plot function in package PresenceAbsence
+  # no plot -- nosso ajuste!
+  
+  # nosso ajuste: partition table
+  partition &lt;- data.frame(cbind(matrix(observed[,2]), matrix(expected[,2])), 
+                          cbind(matrix(observed[,1]), matrix(expected[,1])))
+  
+  #str(partition)
+  colnames(partition) &lt;- c(&quot;Observed_Event&quot;, &quot;Expected_Event&quot;, &quot;Observed_Nonevent&quot;, &quot;Expected_Nonevent&quot;)
+  
+  return(list(partition = partition, stats = list(chi.sq = chi.sq, DF = n.bins - 2, p.value = p.value), RMSE = rmse))
+}
+out_HL &lt;- HLfit2(model=logit_model2, bin.method = &quot;quantiles&quot;, n.bins = 10) # ok!</code></pre>
+<pre><code>## Arguments fixed.bin.size, min.bin.size and min.prob.interval are ignored by this bin.method.</code></pre>
+<pre class="r"><code>tibble::as.tibble(out_HL$partition)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Observed_Event"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Expected_Event"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Observed_Nonevent"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Expected_Nonevent"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"24","2":"28.27973","3":"1355","4":"1350.7203"},{"1":"56","2":"48.08081","3":"795","4":"802.9192"},{"1":"30","2":"33.63947","3":"224","4":"220.3605"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># ou
+library(ResourceSelection)</code></pre>
+<pre><code>## ResourceSelection 0.3-2   2017-02-28</code></pre>
+<pre class="r"><code>hoslem.test(logit_model2$y, logit_model2$fitted.values, g=5)</code></pre>
+<pre><code>## 
+##  Hosmer and Lemeshow goodness of fit (GOF) test
+## 
+## data:  logit_model2$y, logit_model2$fitted.values
+## X-squared = 0.23795, df = 3, p-value = 0.9712</code></pre>
+<p>Versão 2</p>
+<pre class="r"><code>library(ResourceSelection)
+# como temos somente 4 niveis (0,2,4,5), nao daha para especificar muitas bins
+hoslem.test(logit_model1$y, logit_model1$fitted.values, g=4)</code></pre>
+<pre><code>## 
+##  Hosmer and Lemeshow goodness of fit (GOF) test
+## 
+## data:  logit_model1$y, logit_model1$fitted.values
+## X-squared = 0.0052658, df = 2, p-value = 0.9974</code></pre>
+<pre class="r"><code>hoslem.test(logit_model1$y, logit_model1$fitted.values, g=3)</code></pre>
+<pre><code>## 
+##  Hosmer and Lemeshow goodness of fit (GOF) test
+## 
+## data:  logit_model1$y, logit_model1$fitted.values
+## X-squared = 0.0030378, df = 1, p-value = 0.956</code></pre>
+<p>Em ambos os casos, não há evidências para se rejeitar <span class="math inline">\(H_0\)</span> a um nível alpha de <span class="math inline">\(5\%\)</span>. Portanto, o modelo apresenta bom ajuste.</p>
+<p><strong>Teste de Razão de Verossimilhanças para avaliar <em>goodnes of fit</em> </strong></p>
+<p>Ajustando um modelo mais complexo (quadrático):</p>
+<pre class="r"><code># modelo de tabela de contingencia
+snoring1_sq &lt;- snoring1^2
+
+mod_sq &lt;- glm(d ~ snoring1 + snoring1_sq, family=binomial(link=&quot;logit&quot;))
+
+summary(mod_sq)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = d ~ snoring1 + snoring1_sq, family = binomial(link = &quot;logit&quot;))
+## 
+## Deviance Residuals: 
+##        1         2         3         4  
+## -0.02616   0.07404  -0.14496   0.06620  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -4.02812    0.20314 -19.829  &lt; 2e-16 ***
+## snoring1     0.70657    0.19322   3.657 0.000255 ***
+## snoring1_sq -0.06112    0.03652  -1.674 0.094189 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 65.904481  on 3  degrees of freedom
+## Residual deviance:  0.031563  on 1  degrees of freedom
+## AIC: 26.284
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre class="r"><code># modelo de tabela de (0,1)
+snor_sq &lt;- response_m[,2]^2
+response_m2 &lt;- cbind(response_m, snor_sq)
+
+mod_sq2 &lt;- glm(response_m2[,1] ~ response_m2[,2] + response_m2[,3], family=binomial(link=&quot;logit&quot;))
+
+summary(mod_sq2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = response_m2[, 1] ~ response_m2[, 2] + response_m2[, 
+##     3], family = binomial(link = &quot;logit&quot;))
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.4984  -0.3338  -0.1879  -0.1879   2.8446  
+## 
+## Coefficients:
+##                  Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)      -4.02812    0.20312 -19.832  &lt; 2e-16 ***
+## response_m2[, 2]  0.70657    0.19321   3.657 0.000255 ***
+## response_m2[, 3] -0.06112    0.03652  -1.674 0.094175 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 900.83  on 2483  degrees of freedom
+## Residual deviance: 834.95  on 2481  degrees of freedom
+## AIC: 840.95
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<p>Teste de Razão de Verossimilhanças nos dois casos:</p>
+<pre class="r"><code>library(lmtest)
+
+# caso1
+lrtest(logit_model1, mod_sq)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-11.53073","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"3","2":"-10.14206","3":"1","4":"2.777349","5":"0.09560631","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># caso2
+lrtest(logit_model2, mod_sq2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-418.8658","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"3","2":"-417.4771","3":"1","4":"2.777349","5":"0.09560631","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Temos sempre o mesmo resultado que eh o P(Z&gt;z) no summary do modelo. A um nível de significância <span class="math inline">\(\alpha\)</span> de <span class="math inline">\(5\%\)</span>, NÃO rejeitamos a hipótese nula de que o modelo mais simples é adequado e possui um bom <em>goodness of fit</em>. </strong></p>
+<hr />
+</div>
+<div id="item-f" class="section level4">
+<h4><strong>item f)</strong></h4>
+<p>O parâmetro <span class="math inline">\(\alpha\)</span> do modelo somente se altera, caso alteremos o nível inicial de nossa variável ordinal. Já o parâmetro <span class="math inline">\(\beta\)</span> se altera somente se alterarmos o espaçamento entre os níveis de nossa covariável (ver lista 1).</p>
+<hr />
+</div>
+</div>
+<div id="problema-21" class="section level3">
+<h3><strong>Problema 21)</strong></h3>
+<p>Considere o problema Horseshoe Crab visto em aula. Sejam largura (L), cor (C) e espinha (E) as variáveis preditoras e suponha que foi feito um procedimento de eliminação backward. O procedimento foi iniciado com o modelo mais complexo (modelo saturado: C ∗E ∗L). Este modeloo utilizou efeitos simples, interações de dois fatores e de três fatores. A tabela abaixo apresenta o ajuste para este modelo e outros modelos mais simples, na forma hierárquica.</p>
+<div class="figure">
+<img src="img/tab21.png" width="500" />
+
+</div>
+<ol style="list-style-type: lower-alpha">
+<li>Faça um teste de razão de verossimilhança comparando o modelo saturado com o modelo mais simples que remove apenas a interação de 3 fatores. O teste sugere que a interação de 3 fatores deve ser removida do modelo?</li>
+<li>Se queremos remover um termo no estágio seguinte, explique porque selecionariamos o modelo C ∗ E + C ∗ L.</li>
+<li>Considerando o modelo 3C, se você tiver de eliminar mais termos e escolher entre os modelos 4A ou 4B, qual modelo seria o escolhido?</li>
+<li>É razoável simplificar o modelo ainda mais? Justifique.</li>
+<li>Dos modelos considerados na tabela, qual seria o escolhido pelo critério AIC?</li>
+</ol>
+<hr />
+<div id="item-a-4" class="section level4">
+<h4><strong>item a)</strong></h4>
+<p>Preparando os dados:</p>
+<pre class="r"><code>library(readr)
+library(dplyr)
+
+crabs &lt;- read_table2(&quot;/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/exemplos/crab/crabs.txt&quot;, col_names = FALSE)
+
+crabs &lt;- crabs %&gt;%
+  magrittr::set_colnames(c(&quot;color&quot;, &quot;spine&quot;, &quot;width&quot;, &quot;satell&quot;, &quot;weight&quot;)) %&gt;%
+  na.omit() %&gt;%
+  dplyr::mutate(y = dplyr::if_else(satell &gt; 0, 1, 0), # resposta
+                L = weight/1000, # transformando peso em kg
+                C = color - 1,
+                E = spine) # para escala de color de 1 a 4 
+
+
+tibble::as.tibble(crabs)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["color"],"name":[1],"type":["int"],"align":["right"]},{"label":["spine"],"name":[2],"type":["int"],"align":["right"]},{"label":["width"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["satell"],"name":[4],"type":["int"],"align":["right"]},{"label":["weight"],"name":[5],"type":["int"],"align":["right"]},{"label":["y"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["L"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["C"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["E"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"3","2":"3","3":"28.3","4":"8","5":"3050","6":"1","7":"3.050","8":"2","9":"3"},{"1":"4","2":"3","3":"24.8","4":"0","5":"2100","6":"0","7":"2.100","8":"3","9":"3"},{"1":"2","2":"1","3":"26.5","4":"0","5":"2350","6":"0","7":"2.350","8":"1","9":"1"},{"1":"4","2":"3","3":"25.6","4":"0","5":"2150","6":"0","7":"2.150","8":"3","9":"3"},{"1":"3","2":"3","3":"28.2","4":"11","5":"3050","6":"1","7":"3.050","8":"2","9":"3"},{"1":"2","2":"1","3":"27.1","4":"8","5":"2950","6":"1","7":"2.950","8":"1","9":"1"},{"1":"5","2":"3","3":"24.7","4":"0","5":"2200","6":"0","7":"2.200","8":"4","9":"3"},{"1":"2","2":"2","3":"25.0","4":"3","5":"2300","6":"1","7":"2.300","8":"1","9":"2"},{"1":"5","2":"3","3":"25.8","4":"3","5":"2000","6":"1","7":"2.000","8":"4","9":"3"},{"1":"3","2":"1","3":"26.8","4":"5","5":"2700","6":"1","7":"2.700","8":"2","9":"1"},{"1":"2","2":"1","3":"29.3","4":"4","5":"3200","6":"1","7":"3.200","8":"1","9":"1"},{"1":"3","2":"1","3":"25.7","4":"8","5":"2000","6":"1","7":"2.000","8":"2","9":"1"},{"1":"3","2":"3","3":"26.8","4":"0","5":"2650","6":"0","7":"2.650","8":"2","9":"3"},{"1":"3","2":"3","3":"27.9","4":"6","5":"2800","6":"1","7":"2.800","8":"2","9":"3"},{"1":"2","2":"1","3":"27.7","4":"6","5":"2500","6":"1","7":"2.500","8":"1","9":"1"},{"1":"4","2":"3","3":"28.9","4":"4","5":"2800","6":"1","7":"2.800","8":"3","9":"3"},{"1":"3","2":"3","3":"28.5","4":"3","5":"3000","6":"1","7":"3.000","8":"2","9":"3"},{"1":"3","2":"3","3":"27.7","4":"5","5":"2900","6":"1","7":"2.900","8":"2","9":"3"},{"1":"3","2":"1","3":"25.7","4":"5","5":"2000","6":"1","7":"2.000","8":"2","9":"1"},{"1":"4","2":"3","3":"26.2","4":"3","5":"2300","6":"1","7":"2.300","8":"3","9":"3"},{"1":"4","2":"3","3":"27.1","4":"0","5":"2550","6":"0","7":"2.550","8":"3","9":"3"},{"1":"3","2":"3","3":"26.0","4":"5","5":"2150","6":"1","7":"2.150","8":"2","9":"3"},{"1":"3","2":"3","3":"29.0","4":"10","5":"3200","6":"1","7":"3.200","8":"2","9":"3"},{"1":"3","2":"3","3":"26.2","4":"3","5":"2400","6":"1","7":"2.400","8":"2","9":"3"},{"1":"4","2":"3","3":"23.0","4":"0","5":"1800","6":"0","7":"1.800","8":"3","9":"3"},{"1":"3","2":"2","3":"22.9","4":"0","5":"1600","6":"0","7":"1.600","8":"2","9":"2"},{"1":"4","2":"3","3":"25.7","4":"0","5":"1200","6":"0","7":"1.200","8":"3","9":"3"},{"1":"5","2":"3","3":"27.5","4":"0","5":"2900","6":"0","7":"2.900","8":"4","9":"3"},{"1":"3","2":"3","3":"25.8","4":"0","5":"2300","6":"0","7":"2.300","8":"2","9":"3"},{"1":"5","2":"1","3":"25.5","4":"0","5":"2750","6":"0","7":"2.750","8":"4","9":"1"},{"1":"3","2":"1","3":"29.7","4":"5","5":"3850","6":"1","7":"3.850","8":"2","9":"1"},{"1":"3","2":"1","3":"28.7","4":"0","5":"3200","6":"0","7":"3.200","8":"2","9":"1"},{"1":"4","2":"3","3":"25.5","4":"0","5":"2250","6":"0","7":"2.250","8":"3","9":"3"},{"1":"4","2":"3","3":"28.5","4":"1","5":"3000","6":"1","7":"3.000","8":"3","9":"3"},{"1":"3","2":"3","3":"27.5","4":"1","5":"2550","6":"1","7":"2.550","8":"2","9":"3"},{"1":"4","2":"3","3":"27.3","4":"1","5":"2900","6":"1","7":"2.900","8":"3","9":"3"},{"1":"3","2":"3","3":"25.3","4":"2","5":"1900","6":"1","7":"1.900","8":"2","9":"3"},{"1":"3","2":"3","3":"27.0","4":"6","5":"2500","6":"1","7":"2.500","8":"2","9":"3"},{"1":"3","2":"3","3":"31.9","4":"2","5":"3325","6":"1","7":"3.325","8":"2","9":"3"},{"1":"4","2":"3","3":"22.0","4":"0","5":"1400","6":"0","7":"1.400","8":"3","9":"3"},{"1":"4","2":"3","3":"23.8","4":"6","5":"1800","6":"1","7":"1.800","8":"3","9":"3"},{"1":"3","2":"3","3":"24.2","4":"2","5":"1650","6":"1","7":"1.650","8":"2","9":"3"},{"1":"4","2":"3","3":"28.4","4":"3","5":"3200","6":"1","7":"3.200","8":"3","9":"3"},{"1":"3","2":"1","3":"24.9","4":"6","5":"2300","6":"1","7":"2.300","8":"2","9":"1"},{"1":"3","2":"1","3":"28.0","4":"4","5":"2900","6":"1","7":"2.900","8":"2","9":"1"},{"1":"3","2":"3","3":"24.9","4":"0","5":"2200","6":"0","7":"2.200","8":"2","9":"3"},{"1":"3","2":"2","3":"25.0","4":"6","5":"2250","6":"1","7":"2.250","8":"2","9":"2"},{"1":"3","2":"3","3":"30.5","4":"3","5":"3325","6":"1","7":"3.325","8":"2","9":"3"},{"1":"3","2":"3","3":"25.8","4":"0","5":"2400","6":"0","7":"2.400","8":"2","9":"3"},{"1":"3","2":"3","3":"29.5","4":"4","5":"3025","6":"1","7":"3.025","8":"2","9":"3"},{"1":"3","2":"3","3":"27.6","4":"4","5":"2850","6":"1","7":"2.850","8":"2","9":"3"},{"1":"3","2":"1","3":"22.9","4":"0","5":"1600","6":"0","7":"1.600","8":"2","9":"1"},{"1":"3","2":"3","3":"28.3","4":"0","5":"3200","6":"0","7":"3.200","8":"2","9":"3"},{"1":"4","2":"2","3":"29.8","4":"4","5":"3500","6":"1","7":"3.500","8":"3","9":"2"},{"1":"3","2":"3","3":"28.2","4":"8","5":"3050","6":"1","7":"3.050","8":"2","9":"3"},{"1":"3","2":"3","3":"25.8","4":"0","5":"2200","6":"0","7":"2.200","8":"2","9":"3"},{"1":"4","2":"3","3":"26.1","4":"3","5":"2750","6":"1","7":"2.750","8":"3","9":"3"},{"1":"5","2":"3","3":"27.0","4":"0","5":"2625","6":"0","7":"2.625","8":"4","9":"3"},{"1":"4","2":"3","3":"22.5","4":"0","5":"1550","6":"0","7":"1.550","8":"3","9":"3"},{"1":"4","2":"3","3":"26.0","4":"4","5":"2600","6":"1","7":"2.600","8":"3","9":"3"},{"1":"4","2":"2","3":"24.7","4":"0","5":"1900","6":"0","7":"1.900","8":"3","9":"2"},{"1":"4","2":"3","3":"24.3","4":"0","5":"2150","6":"0","7":"2.150","8":"3","9":"3"},{"1":"5","2":"2","3":"21.0","4":"0","5":"1850","6":"0","7":"1.850","8":"4","9":"2"},{"1":"3","2":"3","3":"25.2","4":"1","5":"2000","6":"1","7":"2.000","8":"2","9":"3"},{"1":"3","2":"3","3":"27.4","4":"5","5":"2700","6":"1","7":"2.700","8":"2","9":"3"},{"1":"3","2":"1","3":"22.5","4":"1","5":"1600","6":"1","7":"1.600","8":"2","9":"1"},{"1":"5","2":"3","3":"26.2","4":"0","5":"1300","6":"0","7":"1.300","8":"4","9":"3"},{"1":"5","2":"3","3":"27.5","4":"0","5":"2600","6":"0","7":"2.600","8":"4","9":"3"},{"1":"2","2":"3","3":"25.8","4":"0","5":"2600","6":"0","7":"2.600","8":"1","9":"3"},{"1":"3","2":"1","3":"26.7","4":"5","5":"2700","6":"1","7":"2.700","8":"2","9":"1"},{"1":"3","2":"3","3":"27.5","4":"6","5":"3150","6":"1","7":"3.150","8":"2","9":"3"},{"1":"4","2":"3","3":"27.5","4":"3","5":"3100","6":"1","7":"3.100","8":"3","9":"3"},{"1":"3","2":"1","3":"30.0","4":"5","5":"3300","6":"1","7":"3.300","8":"2","9":"1"},{"1":"3","2":"3","3":"28.2","4":"6","5":"2600","6":"1","7":"2.600","8":"2","9":"3"},{"1":"3","2":"1","3":"30.3","4":"3","5":"3600","6":"1","7":"3.600","8":"2","9":"1"},{"1":"2","2":"1","3":"27.4","4":"6","5":"2700","6":"1","7":"2.700","8":"1","9":"1"},{"1":"3","2":"3","3":"28.3","4":"15","5":"3000","6":"1","7":"3.000","8":"2","9":"3"},{"1":"3","2":"1","3":"27.8","4":"0","5":"2750","6":"0","7":"2.750","8":"2","9":"1"},{"1":"4","2":"3","3":"24.5","4":"5","5":"2050","6":"1","7":"2.050","8":"3","9":"3"},{"1":"3","2":"3","3":"28.0","4":"1","5":"2800","6":"1","7":"2.800","8":"2","9":"3"},{"1":"3","2":"3","3":"26.2","4":"0","5":"2400","6":"0","7":"2.400","8":"2","9":"3"},{"1":"4","2":"3","3":"25.6","4":"7","5":"2800","6":"1","7":"2.800","8":"3","9":"3"},{"1":"3","2":"3","3":"25.4","4":"6","5":"2250","6":"1","7":"2.250","8":"2","9":"3"},{"1":"4","2":"2","3":"26.0","4":"3","5":"2200","6":"1","7":"2.200","8":"3","9":"2"},{"1":"3","2":"3","3":"25.1","4":"5","5":"2100","6":"1","7":"2.100","8":"2","9":"3"},{"1":"4","2":"3","3":"23.1","4":"0","5":"1650","6":"0","7":"1.650","8":"3","9":"3"},{"1":"5","2":"3","3":"27.0","4":"3","5":"2250","6":"1","7":"2.250","8":"4","9":"3"},{"1":"5","2":"3","3":"23.5","4":"0","5":"1900","6":"0","7":"1.900","8":"4","9":"3"},{"1":"3","2":"1","3":"26.8","4":"0","5":"2550","6":"0","7":"2.550","8":"2","9":"1"},{"1":"4","2":"3","3":"23.1","4":"0","5":"1550","6":"0","7":"1.550","8":"3","9":"3"},{"1":"4","2":"3","3":"26.5","4":"1","5":"1967","6":"1","7":"1.967","8":"3","9":"3"},{"1":"3","2":"3","3":"28.2","4":"1","5":"2867","6":"1","7":"2.867","8":"2","9":"3"},{"1":"3","2":"2","3":"24.7","4":"4","5":"2550","6":"1","7":"2.550","8":"2","9":"2"},{"1":"3","2":"3","3":"26.3","4":"1","5":"2400","6":"1","7":"2.400","8":"2","9":"3"},{"1":"3","2":"3","3":"26.5","4":"4","5":"2300","6":"1","7":"2.300","8":"2","9":"3"},{"1":"4","2":"3","3":"25.7","4":"0","5":"2100","6":"0","7":"2.100","8":"3","9":"3"},{"1":"5","2":"3","3":"23.7","4":"0","5":"1800","6":"0","7":"1.800","8":"4","9":"3"},{"1":"3","2":"3","3":"25.0","4":"5","5":"2400","6":"1","7":"2.400","8":"2","9":"3"},{"1":"2","2":"1","3":"30.2","4":"2","5":"3275","6":"1","7":"3.275","8":"1","9":"1"},{"1":"3","2":"3","3":"27.4","4":"3","5":"2900","6":"1","7":"2.900","8":"2","9":"3"},{"1":"5","2":"3","3":"22.5","4":"4","5":"1475","6":"1","7":"1.475","8":"4","9":"3"},{"1":"2","2":"2","3":"24.5","4":"6","5":"1950","6":"1","7":"1.950","8":"1","9":"2"},{"1":"5","2":"3","3":"25.8","4":"10","5":"2250","6":"1","7":"2.250","8":"4","9":"3"},{"1":"3","2":"1","3":"28.4","4":"5","5":"3100","6":"1","7":"3.100","8":"2","9":"1"},{"1":"3","2":"3","3":"27.5","4":"6","5":"2625","6":"1","7":"2.625","8":"2","9":"3"},{"1":"4","2":"3","3":"29.0","4":"3","5":"2925","6":"1","7":"2.925","8":"3","9":"3"},{"1":"5","2":"3","3":"25.0","4":"8","5":"2100","6":"1","7":"2.100","8":"4","9":"3"},{"1":"4","2":"3","3":"24.0","4":"10","5":"1900","6":"1","7":"1.900","8":"3","9":"3"},{"1":"3","2":"3","3":"26.2","4":"0","5":"2300","6":"0","7":"2.300","8":"2","9":"3"},{"1":"5","2":"3","3":"24.5","4":"0","5":"1900","6":"0","7":"1.900","8":"4","9":"3"},{"1":"3","2":"3","3":"23.9","4":"2","5":"1850","6":"1","7":"1.850","8":"2","9":"3"},{"1":"3","2":"3","3":"26.5","4":"4","5":"2350","6":"1","7":"2.350","8":"2","9":"3"},{"1":"5","2":"3","3":"25.7","4":"0","5":"2150","6":"0","7":"2.150","8":"4","9":"3"},{"1":"4","2":"3","3":"24.1","4":"0","5":"1800","6":"0","7":"1.800","8":"3","9":"3"},{"1":"4","2":"3","3":"29.0","4":"4","5":"3275","6":"1","7":"3.275","8":"3","9":"3"},{"1":"3","2":"2","3":"24.5","4":"0","5":"2000","6":"0","7":"2.000","8":"2","9":"2"},{"1":"2","2":"1","3":"26.0","4":"9","5":"2300","6":"1","7":"2.300","8":"1","9":"1"},{"1":"3","2":"3","3":"23.8","4":"0","5":"2100","6":"0","7":"2.100","8":"2","9":"3"},{"1":"3","2":"1","3":"23.7","4":"0","5":"1950","6":"0","7":"1.950","8":"2","9":"1"},{"1":"3","2":"3","3":"25.8","4":"0","5":"2650","6":"0","7":"2.650","8":"2","9":"3"},{"1":"3","2":"1","3":"26.0","4":"14","5":"2300","6":"1","7":"2.300","8":"2","9":"1"},{"1":"3","2":"3","3":"29.0","4":"1","5":"3000","6":"1","7":"3.000","8":"2","9":"3"},{"1":"3","2":"2","3":"23.2","4":"4","5":"1950","6":"1","7":"1.950","8":"2","9":"2"},{"1":"4","2":"3","3":"26.7","4":"2","5":"2600","6":"1","7":"2.600","8":"3","9":"3"},{"1":"3","2":"3","3":"28.7","4":"3","5":"3150","6":"1","7":"3.150","8":"2","9":"3"},{"1":"3","2":"3","3":"24.9","4":"0","5":"2100","6":"0","7":"2.100","8":"2","9":"3"},{"1":"3","2":"2","3":"25.7","4":"0","5":"2000","6":"0","7":"2.000","8":"2","9":"2"},{"1":"5","2":"3","3":"23.7","4":"0","5":"1850","6":"0","7":"1.850","8":"4","9":"3"},{"1":"5","2":"3","3":"23.4","4":"0","5":"1900","6":"0","7":"1.900","8":"4","9":"3"},{"1":"2","2":"1","3":"26.1","4":"5","5":"2800","6":"1","7":"2.800","8":"1","9":"1"},{"1":"4","2":"1","3":"28.5","4":"9","5":"3250","6":"1","7":"3.250","8":"3","9":"1"},{"1":"3","2":"3","3":"25.0","4":"4","5":"2100","6":"1","7":"2.100","8":"2","9":"3"},{"1":"5","2":"3","3":"24.7","4":"5","5":"2100","6":"1","7":"2.100","8":"4","9":"3"},{"1":"3","2":"3","3":"22.9","4":"4","5":"1600","6":"1","7":"1.600","8":"2","9":"3"},{"1":"3","2":"3","3":"27.2","4":"3","5":"2700","6":"1","7":"2.700","8":"2","9":"3"},{"1":"5","2":"3","3":"25.5","4":"0","5":"2250","6":"0","7":"2.250","8":"4","9":"3"},{"1":"4","2":"1","3":"27.0","4":"3","5":"2450","6":"1","7":"2.450","8":"3","9":"1"},{"1":"3","2":"3","3":"30.0","4":"8","5":"3050","6":"1","7":"3.050","8":"2","9":"3"},{"1":"3","2":"1","3":"26.5","4":"0","5":"1300","6":"0","7":"1.300","8":"2","9":"1"},{"1":"4","2":"3","3":"23.0","4":"1","5":"1650","6":"1","7":"1.650","8":"3","9":"3"},{"1":"4","2":"3","3":"24.2","4":"0","5":"1900","6":"0","7":"1.900","8":"3","9":"3"},{"1":"3","2":"3","3":"25.4","4":"4","5":"2250","6":"1","7":"2.250","8":"2","9":"3"},{"1":"4","2":"2","3":"24.5","4":"0","5":"2250","6":"0","7":"2.250","8":"3","9":"2"},{"1":"4","2":"1","3":"25.9","4":"4","5":"2550","6":"1","7":"2.550","8":"3","9":"1"},{"1":"3","2":"3","3":"28.5","4":"0","5":"3050","6":"0","7":"3.050","8":"2","9":"3"},{"1":"3","2":"2","3":"24.0","4":"0","5":"1700","6":"0","7":"1.700","8":"2","9":"2"},{"1":"5","2":"3","3":"26.7","4":"0","5":"2450","6":"0","7":"2.450","8":"4","9":"3"},{"1":"3","2":"1","3":"29.0","4":"1","5":"2800","6":"1","7":"2.800","8":"2","9":"1"},{"1":"4","2":"3","3":"24.5","4":"1","5":"2200","6":"1","7":"2.200","8":"3","9":"3"},{"1":"3","2":"3","3":"24.5","4":"1","5":"1600","6":"1","7":"1.600","8":"2","9":"3"},{"1":"3","2":"1","3":"25.2","4":"1","5":"2000","6":"1","7":"2.000","8":"2","9":"1"},{"1":"3","2":"3","3":"29.0","4":"1","5":"3100","6":"1","7":"3.100","8":"2","9":"3"},{"1":"3","2":"3","3":"27.8","4":"3","5":"3250","6":"1","7":"3.250","8":"2","9":"3"},{"1":"3","2":"3","3":"25.0","4":"2","5":"2100","6":"1","7":"2.100","8":"2","9":"3"},{"1":"5","2":"3","3":"29.3","4":"12","5":"3225","6":"1","7":"3.225","8":"4","9":"3"},{"1":"4","2":"3","3":"27.0","4":"6","5":"2500","6":"1","7":"2.500","8":"3","9":"3"},{"1":"4","2":"3","3":"26.2","4":"0","5":"2225","6":"0","7":"2.225","8":"3","9":"3"},{"1":"3","2":"2","3":"25.4","4":"0","5":"2300","6":"0","7":"2.300","8":"2","9":"2"},{"1":"3","2":"3","3":"26.2","4":"2","5":"2025","6":"1","7":"2.025","8":"2","9":"3"},{"1":"3","2":"3","3":"25.1","4":"0","5":"1800","6":"0","7":"1.800","8":"2","9":"3"},{"1":"3","2":"3","3":"27.9","4":"7","5":"3050","6":"1","7":"3.050","8":"2","9":"3"},{"1":"4","2":"3","3":"27.2","4":"5","5":"2400","6":"1","7":"2.400","8":"3","9":"3"},{"1":"3","2":"1","3":"33.5","4":"7","5":"5200","6":"1","7":"5.200","8":"2","9":"1"},{"1":"3","2":"1","3":"24.3","4":"0","5":"2000","6":"0","7":"2.000","8":"2","9":"1"},{"1":"3","2":"1","3":"31.7","4":"4","5":"3725","6":"1","7":"3.725","8":"2","9":"1"},{"1":"3","2":"3","3":"30.0","4":"9","5":"3000","6":"1","7":"3.000","8":"2","9":"3"},{"1":"3","2":"1","3":"23.1","4":"0","5":"2000","6":"0","7":"2.000","8":"2","9":"1"},{"1":"3","2":"3","3":"24.7","4":"4","5":"1950","6":"1","7":"1.950","8":"2","9":"3"},{"1":"4","2":"3","3":"23.8","4":"0","5":"1800","6":"0","7":"1.800","8":"3","9":"3"},{"1":"3","2":"3","3":"26.0","4":"3","5":"2275","6":"1","7":"2.275","8":"2","9":"3"},{"1":"3","2":"3","3":"26.5","4":"7","5":"2750","6":"1","7":"2.750","8":"2","9":"3"},{"1":"4","2":"3","3":"26.2","4":"2","5":"2175","6":"1","7":"2.175","8":"3","9":"3"},{"1":"2","2":"1","3":"28.0","4":"0","5":"2625","6":"0","7":"2.625","8":"1","9":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Ajustando os modelos:</p>
+<pre class="r"><code>mod_comp &lt;- glm(data=crabs, y ~ C + E + L + C*E + C*L + E*L + C*E*L, family=binomial(link=&quot;logit&quot;))
+
+mod_1 &lt;- glm(data=crabs, y ~ C*E*L, family=binomial(link=&quot;logit&quot;)) # daha na mesma! automaticamente ele faz todas as combinações possíveis
+# soh se tivesse um termo quadratico que nao funcionaria
+summary(mod_1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ C * E * L, family = binomial(link = &quot;logit&quot;), 
+##     data = crabs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.1506  -0.9718   0.5198   0.8249   2.0383  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -2.82147   13.93452  -0.202    0.840
+## C           -0.99277    6.69127  -0.148    0.882
+## E            1.11042    5.16596   0.215    0.830
+## L            1.75991    5.33366   0.330    0.741
+## C:E         -0.11865    2.38452  -0.050    0.960
+## C:L          0.16319    2.55087   0.064    0.949
+## E:L         -0.33559    2.00602  -0.167    0.867
+## C:E:L        0.04904    0.91950   0.053    0.957
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 225.76  on 172  degrees of freedom
+## Residual deviance: 188.37  on 165  degrees of freedom
+## AIC: 204.37
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>summary(mod_comp)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ C + E + L + C * E + C * L + E * L + C * E * 
+##     L, family = binomial(link = &quot;logit&quot;), data = crabs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.1506  -0.9718   0.5198   0.8249   2.0383  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -2.82147   13.93452  -0.202    0.840
+## C           -0.99277    6.69127  -0.148    0.882
+## E            1.11042    5.16596   0.215    0.830
+## L            1.75991    5.33366   0.330    0.741
+## C:E         -0.11865    2.38452  -0.050    0.960
+## C:L          0.16319    2.55087   0.064    0.949
+## E:L         -0.33559    2.00602  -0.167    0.867
+## C:E:L        0.04904    0.91950   0.053    0.957
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 225.76  on 172  degrees of freedom
+## Residual deviance: 188.37  on 165  degrees of freedom
+## AIC: 204.37
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>mod_simples &lt;- glm(data=crabs, y ~ C + E + L + C*E + C*L + E*L, family=binomial(link=&quot;logit&quot;))
+# ou
+mod_simples &lt;- glm(data=crabs, y ~ C*E + C*L + E*L, family=binomial(link=&quot;logit&quot;))
+
+summary(mod_simples)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = y ~ C * E + C * L + E * L, family = binomial(link = &quot;logit&quot;), 
+##     data = crabs)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.1535  -0.9727   0.5186   0.8255   2.0308  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept) -2.115969   4.380288  -0.483    0.629
+## C           -1.336002   1.856505  -0.720    0.472
+## E            0.844860   1.367191   0.618    0.537
+## L            1.487706   1.534265   0.970    0.332
+## C:E          0.007356   0.329321   0.022    0.982
+## C:L          0.295480   0.600732   0.492    0.623
+## E:L         -0.232018   0.494652  -0.469    0.639
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 225.76  on 172  degrees of freedom
+## Residual deviance: 188.37  on 166  degrees of freedom
+## AIC: 202.37
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Comparações - Teste Razão de Verossimilhanças:</p>
+<pre class="r"><code>AIC(mod_1)</code></pre>
+<pre><code>## [1] 204.3669</code></pre>
+<pre class="r"><code>AIC(mod_simples)</code></pre>
+<pre><code>## [1] 202.3698</code></pre>
+<pre class="r"><code>library(lmtest)
+lrtest(mod_1, mod_simples)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"8","2":"-94.18347","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"7","2":"-94.18489","3":"-1","4":"0.00283903","5":"0.9575068","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p></p>
+<p>Com um p-valor alto, conclui-se que o modelo mais simples <span class="math inline">\(y ~ C*E + C*L +E+L\)</span> possui um ajuste melhor do que o do modelo mais completo.</p>
+<hr />
+</div>
+<div id="item-b-4" class="section level4">
+<h4><strong>item b)</strong></h4>
+<p>Do estágio 2 para o 3, o modelo selecionado seria <span class="math inline">\(C*E + C*L\)</span>, pois ao remover o termo <span class="math inline">\(E*L\)</span>, tivemos a maior <strong>redução</strong> de <strong>deviance</strong> e <strong>AIC</strong> se em comparação com os modelos 3B e 3C. Além disso, houve um aumento nos graus de liberdade em relação ao modelo do nível 2.</p>
+<hr />
+</div>
+<div id="item-c-4" class="section level4">
+<h4><strong>item c)</strong></h4>
+<p>Partindo do modelo 3C para os modelos do nível 4, poderia haver uma certa ambiguidade nos critérios de escolha uma vez que:</p>
+<ol style="list-style-type: lower-roman">
+<li>o modelo 4A apresenta o menor AIC e mais graus de liberdade;</li>
+<li>o modelo 4B apresenta a menor deviance;</li>
+<li>ambos os modelos apresentaram um aumento na deviance em relação ao modelo 3C;</li>
+</ol>
+<p>Então, seria mais adequado conversar com o pesquisador sobre a importância de tais variáveis e sobre quais delas poderiam ser mais propícias a interação na prática. Isso poderia ajudar a identificar o melhor modelo entre os dois. Ainda sim, se não houvesse nenhuma informação adicional, compararia qual modelo apresentou a menor aumento percentual em deviance e maior redução percentual em AIC em comparação ao nível 3Não daria muita importância para os números de graus de liberdade são bem altos e não há tanta diferença entre os modelos nesse sentido .</p>
+<pre class="r"><code># AIC
+# modelo 4A
+(201.6-205.7)/205.7</code></pre>
+<pre><code>## [1] -0.01993194</code></pre>
+<pre class="r"><code># modelo 4B
+(203.6-205.7)/205.7</code></pre>
+<pre><code>## [1] -0.01020904</code></pre>
+<pre class="r"><code># deviance
+# modelo 4A
+(181.64-173.69)/173.69</code></pre>
+<pre><code>## [1] 0.0457712</code></pre>
+<pre class="r"><code># modelo 4B
+(177.61-173.69)/173.69</code></pre>
+<pre><code>## [1] 0.02256894</code></pre>
+<p>O modelo 4A será o escolhido por mim, pois, apresentou um aumento da deviance apenas de <span class="math inline">\(4\%\)</span>, mas com uma queda de <span class="math inline">\(\19%\)</span> no AIC.</p>
+<hr />
+</div>
+<div id="item-d-1" class="section level4">
+<h4><strong>item d)</strong></h4>
+<p>Em termos de valores de deviance, não seria tão razoável simplificar ainda mais o modelo removendo uma lateração. Embora o AIC cai no último nível, esta queda é bastante pequena se em comparação ao aumento da deviance. Na verdade, seria o modelo com maior deviance entre todos. Por isso não seria razoável simplificar ainda mais o modelo.</p>
+<hr />
+</div>
+<div id="item-e-1" class="section level4">
+<h4><strong>item e)</strong></h4>
+<p>Pelo critério AIC, o modelo escolhido seria aquele com menor valor de AIC, qual seja o modelo 5.</p>
+<hr />
+<hr />
+</div>
+</div>
+<div id="referencias-bibliograficas" class="section level3">
+<h3>Referências Bibliográficas</h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
