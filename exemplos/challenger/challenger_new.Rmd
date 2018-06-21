@@ -4,7 +4,7 @@ subtitle: "Regressão Logística - Análise de Dados Categorizados - Prova 3"
 author: 
 - Allan Vieira 14/0128492
 - Caio Balena
-- Frederico França
+- Frederico Lucca
 - José Cezário
 
 date: "`r format(Sys.time(), '%d %B %Y')`"
@@ -516,7 +516,7 @@ new.data$fit <- fit3$family$linkinv(new.data$fit)  # Rescale to 0-1
 ```{r, fig.width=9}
 
 plotly::plot_ly(x = ~x, y = ~y, name = 'fitted', type = 'scatter', mode = 'lines') %>%
-  plotly::add_trace(x= ~temp, y = ~resp, name = 'res', mode = 'markers', data=challenger) %>%
+  plotly::add_trace(x= ~temp, y = ~resp, name = 'resp', mode = 'markers', data=challenger) %>%
   plotly::add_ribbons(data = new.data,
               ymin = ~ymin,
               ymax = ~ymax,
