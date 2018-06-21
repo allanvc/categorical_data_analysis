@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira 14/0128492" />
+
+
+<title>Exemplo - Challenger</title>
+
+<script src="challenger_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="challenger_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="challenger_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="challenger_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="challenger_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="challenger_files/navigation-1.1/tabsets.js"></script>
+<link href="challenger_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="challenger_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="challenger_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="challenger_files/pagedtable-1.1/js/pagedtable.js"></script>
+<script src="challenger_files/htmlwidgets-1.0/htmlwidgets.js"></script>
+<script src="challenger_files/plotly-binding-4.7.1/plotly.js"></script>
+<script src="challenger_files/typedarray-0.1/typedarray.min.js"></script>
+<link href="challenger_files/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="challenger_files/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+<link href="challenger_files/plotlyjs-1.29.2/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="challenger_files/plotlyjs-1.29.2/plotly-latest.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Exemplo - Challenger</h1>
+<h3 class="subtitle"><em>Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira 14/0128492</em></h4>
+<h4 class="date"><em>Jun 19, 2018</em></h4>
+
+</div>
+
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+<!-- incluir no cabecalho: -->
+<!-- always_allow_html: yes  -->
+<!--para quando formos passar para pdf -->
+<style>
+body {
+text-align: justify}
+</style>
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<!-- <style> -->
+<!--   .col2 { -->
+<!--     columns: 2 200px;         /* number of columns and width in pixels*/ -->
+<!--     -webkit-columns: 2 200px; /* chrome, safari */ -->
+<!--     -moz-columns: 2 200px;    /* firefox */ -->
+<!--   } -->
+<!--   .col3 { -->
+<!--     columns: 3 100px; -->
+<!--     -webkit-columns: 3 100px; -->
+<!--     -moz-columns: 3 100px; -->
+<!--   } -->
+<!-- </style> -->
+<!-- esse de cima funciona no output do RStudio, mas nao nos browsers -->
+<!-- tb em: https://stackoverflow.com/questions/31753897/2-column-section-in-r-markdown -->
+<hr />
+<hr />
+<p><strong>Carregamento de pacotes:</strong></p>
+<pre class="r"><code># dplyr -- para facilitar manipulacao de dados
+if (!require(&#39;dplyr&#39;)) install.packages(&#39;dplyr&#39;); library(&#39;dplyr&#39;)
+
+# magrittr -- para facilitar manipulacao de dados
+if (!require(&#39;magrittr&#39;)) install.packages(&#39;magrittr&#39;); library(&#39;magrittr&#39;)
+
+# tibble -- para facilitar manipulacao de dados
+if (!require(&#39;tibble&#39;)) install.packages(&#39;tibble&#39;); library(&#39;tibble&#39;)
+
+# plotly -- para os plots
+if (!require(&#39;plotly&#39;)) install.packages(&#39;plotly&#39;); library(&#39;plotly&#39;)
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require(&#39;lmtest&#39;)) install.packages(&#39;plotly&#39;); library(&#39;lmtest&#39;)
+
+
+# list.of.packages &lt;- c(&quot;dplyr&quot;, &quot;magrittr&quot;, &quot;plotly&quot;, &quot;mclust&quot;)
+# new.packages &lt;- list.of.packages[!(list.of.packages %in% installed.packages()[,&quot;Package&quot;])]
+# if(length(new.packages)) install.packages(new.packages); sapply(list.of.packages, library, character.only=TRUE)</code></pre>
+<p><strong>Carregamento dos dados:</strong></p>
+<pre class="r"><code>falhas &lt;- c(2, 0, 0, 1, 0, 0, 1, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0)
+
+temp &lt;- c(53, 66, 68, 70, 75, 78, 57, 67, 69, 70, 75, 79, 58, 67, 70, 72, 76, 80, 63, 67, 70, 73, 76)
+
+challenger &lt;- tibble::data_frame(falhas, temp)
+
+challenger</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["falhas"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["temp"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"53"},{"1":"0","2":"66"},{"1":"0","2":"68"},{"1":"1","2":"70"},{"1":"0","2":"75"},{"1":"0","2":"78"},{"1":"1","2":"57"},{"1":"0","2":"67"},{"1":"0","2":"69"},{"1":"1","2":"70"},{"1":"2","2":"75"},{"1":"0","2":"79"},{"1":"1","2":"58"},{"1":"0","2":"67"},{"1":"0","2":"70"},{"1":"0","2":"72"},{"1":"0","2":"76"},{"1":"0","2":"80"},{"1":"1","2":"63"},{"1":"0","2":"67"},{"1":"0","2":"70"},{"1":"0","2":"73"},{"1":"0","2":"76"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p></p>
+<p><strong>Plot:</strong></p>
+<pre class="r"><code>challenger %&gt;%
+  #dplyr::mutate(color = factor(falhas)) %&gt;%
+  
+  plotly::plot_ly(x=~temp, y=~falhas, #group=~color,
+                           type=&quot;scatter&quot;, mode=&quot;markers&quot;, #color=~color, 
+          split=~falhas) %&gt;%
+  plotly::layout(title = &quot;Análises do Space Shuttle Data&quot;)</code></pre>
+<div id="96b953a43521" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b953a43521">{"x":{"visdat":{"96b93ca0488b":["function () ","plotlyVisDat"]},"cur_data":"96b93ca0488b","attrs":{"96b93ca0488b":{"x":{},"y":{},"mode":"markers","split":{},"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Análises do Space Shuttle Data","xaxis":{"domain":[0,1],"title":"temp"},"yaxis":{"domain":[0,1],"title":"falhas"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[66,68,75,78,67,69,79,67,70,72,76,80,67,70,73,76],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"mode":"markers","type":"scatter","name":"0","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[70,57,70,58,63],"y":[1,1,1,1,1],"mode":"markers","type":"scatter","name":"1","marker":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,75],"y":[2,2],"mode":"markers","type":"scatter","name":"2","marker":{"fillcolor":"rgba(44,160,44,1)","color":"rgba(44,160,44,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<hr />
+<p></p>
+<p></p>
+<hr />
+<div id="erro1" class="section level3">
+<h3>Erro1</h3>
+<hr />
+<div id="analise-incorreta-1---regressao-linear-sem-zeros" class="section level4">
+<h4>Análise Incorreta 1 - Regressão Linear <strong>SEM</strong> zeros</h4>
+<p><strong>Dados:</strong></p>
+<pre class="r"><code># removendo os zeros
+challenger2 &lt;- challenger %&gt;%
+  dplyr::filter(falhas != 0)
+  
+challenger2</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["falhas"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["temp"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"53"},{"1":"1","2":"70"},{"1":"1","2":"57"},{"1":"1","2":"70"},{"1":"2","2":"75"},{"1":"1","2":"58"},{"1":"1","2":"63"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Plot:</strong></p>
+<pre class="r"><code>challenger2 %&gt;%
+  #dplyr::mutate(color = factor(falhas)) %&gt;%
+  
+  plotly::plot_ly(x=~temp, y=~falhas, #group=~color,
+                           type=&quot;scatter&quot;, mode=&quot;markers&quot;, #color=~color, 
+          split=~falhas) %&gt;%
+  plotly::layout(title = &quot;Análises do Space Shuttle Data\nAnálise Incorreta 1\nDados SEM zeros&quot;)</code></pre>
+<div id="96b96e11b8c1" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b96e11b8c1">{"x":{"visdat":{"96b965c9c0cd":["function () ","plotlyVisDat"]},"cur_data":"96b965c9c0cd","attrs":{"96b965c9c0cd":{"x":{},"y":{},"mode":"markers","split":{},"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Análises do Space Shuttle Data<br />Análise Incorreta 1<br />Dados SEM zeros","xaxis":{"domain":[0,1],"title":"temp"},"yaxis":{"domain":[0,1],"title":"falhas"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[70,57,70,58,63],"y":[1,1,1,1,1],"mode":"markers","type":"scatter","name":"1","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,75],"y":[2,2],"mode":"markers","type":"scatter","name":"2","marker":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<p></p>
+<p><strong>Regressão Linear SEM zeros:</strong></p>
+<pre class="r"><code>orings = 6
+challenger2 &lt;- challenger2 %&gt;%
+  dplyr::mutate(resp = falhas/orings)
+
+# sum of squares
+aov(resp ~ temp, data = challenger2)</code></pre>
+<pre><code>## Call:
+##    aov(formula = resp ~ temp, data = challenger2)
+## 
+## Terms:
+##                       temp  Residuals
+## Sum of Squares  0.00002271 0.03965983
+## Deg. of Freedom          1          5
+## 
+## Residual standard error: 0.08906159
+## Estimated effects may be unbalanced</code></pre>
+<pre class="r"><code># regressao
+fit1 &lt;- lm(resp ~ temp, data = challenger2)
+summary(fit1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = resp ~ temp, data = challenger2)
+## 
+## Residuals:
+##        1        2        3        4        5        6        7 
+##  0.12160 -0.04912 -0.04602 -0.04912  0.11636 -0.04626 -0.04745 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)
+## (Intercept) 0.1990939  0.2859162   0.696    0.517
+## temp        0.0002384  0.0044563   0.054    0.959
+## 
+## Residual standard error: 0.08906 on 5 degrees of freedom
+## Multiple R-squared:  0.0005722,  Adjusted R-squared:  -0.1993 
+## F-statistic: 0.002863 on 1 and 5 DF,  p-value: 0.9594</code></pre>
+<p></p>
+<p><strong>Plot:</strong></p>
+<pre class="r"><code>challenger2 %&gt;% 
+  plotly::plot_ly(x = ~temp) %&gt;%
+  plotly::add_markers(y = ~resp, name = &quot;resp&quot;) %&gt;% 
+  plotly::add_lines(x = ~temp, y = fitted(fit1), name = &quot;fit&quot;) %&gt;%
+  plotly::layout(title = &quot;NASA Space Shuttle O-Ring Failures - Erro 1&quot;, yaxis=list(title=&quot;Prob. Estimada de Falha&quot;))</code></pre>
+<div id="96b9f4a0f13" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b9f4a0f13">{"x":{"visdat":{"96b97c8e1375":["function () ","plotlyVisDat"]},"cur_data":"96b97c8e1375","attrs":{"96b97c8e1375":{"x":{},"alpha":1,"sizes":[10,100],"y":{},"type":"scatter","mode":"markers","name":"resp"},"96b97c8e1375.1":{"x":{},"alpha":1,"sizes":[10,100],"y":[0.21173104434907,0.215784453981879,0.212684787792084,0.215784453981879,0.216976633285646,0.212923223652837,0.214115402956605],"type":"scatter","mode":"lines","name":"fit"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"NASA Space Shuttle O-Ring Failures - Erro 1","yaxis":{"domain":[0,1],"title":"Prob. Estimada de Falha"},"xaxis":{"domain":[0,1],"title":"temp"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[53,70,57,70,75,58,63],"y":[0.333333333333333,0.166666666666667,0.166666666666667,0.166666666666667,0.333333333333333,0.166666666666667,0.166666666666667],"type":"scatter","mode":"markers","name":"resp","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,57,58,63,70,70,75],"y":[0.21173104434907,0.212684787792084,0.212923223652837,0.214115402956605,0.215784453981879,0.215784453981879,0.216976633285646],"type":"scatter","mode":"lines","name":"fit","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<p></p>
+<p><strong>Função para automatizar plots diagnósticos:</strong></p>
+<pre class="r"><code>RegressionPlots &lt;- function(fit){
+  
+  # Extract fitted values from lm() object
+  Fitted.Values &lt;-  fitted(fit)
+  
+  # Extract residuals from lm() object
+  Residuals &lt;-  resid(fit)
+  
+  # Extract standardized residuals from lm() object
+  Standardized.Residuals &lt;- MASS::stdres(fit)  
+  
+  # Extract fitted values for lm() object
+  Theoretical.Quantiles &lt;- qqnorm(Residuals, plot.it = F)$x
+  
+  # Square root of abs(residuals)
+  Root.Residuals &lt;- sqrt(abs(Standardized.Residuals))
+  
+  # Calculate Leverage
+  Leverage &lt;- lm.influence(fit)$hat
+  
+  #Cook&#39;s Distance
+  Cooks.d &lt;- cooks.distance(fit)
+  # Cook.d &lt;- influence.measures(fit)$infmat[,&quot;cook.d&quot;]
+  
+
+  # Create data frame 
+  # Will be used as input to plot_ly
+  
+  regMat &lt;- data.frame(Fitted.Values, 
+                       Residuals, 
+                       Standardized.Residuals, 
+                       Theoretical.Quantiles,
+                       Root.Residuals,
+                       Leverage,
+                       Cooks.d)
+  
+  
+  plt1 &lt;- regMat %&gt;% 
+    plotly::plot_ly(x = ~Fitted.Values, y = ~Residuals, 
+            type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;%
+    #layout(title = &quot;Residuals vs Fitted Values&quot;, plot_bgcolor = &quot;#e6e6e6&quot;, width = 1000) 
+    plotly::layout(title = &quot;Residuals vs Fitted Values&quot;) # usar backgorund branco
+    
+  plt2 &lt;- regMat %&gt;% 
+    plotly::plot_ly(x = ~Fitted.Values, y = ~Standardized.Residuals, 
+            type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;%
+    plotly::layout(title = &quot;Standardized Residuals vs Fitted Values&quot;)
+    
+  plt3 &lt;- regMat %&gt;% 
+    plotly::plot_ly(x = ~Leverage, y = ~Standardized.Residuals, 
+            type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;%
+    plotly::layout(title = &quot;Residuals vs Fitted Values&quot;)
+  
+  plt4 &lt;- regMat %&gt;% 
+    plotly::plot_ly(x = ~Theoretical.Quantiles) %&gt;% 
+    plotly::add_markers(y = ~Standardized.Residuals, name = &quot;std.res&quot;, type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;%
+    plotly::add_lines(x = Theoretical.Quantiles, y = Theoretical.Quantiles, type=&quot;scatter&quot;, mode = &quot;lines&quot;, name=&quot;qq&quot;) %&gt;%
+    plotly::layout(title = &quot;Standardized Residuals vs Theoretical Quantiles&quot;) # usar backgorund branco
+  
+  
+  # a &lt;- list(autotick = FALSE, ticks = &quot;outside&quot;, tick0 = 0, dtick = 0.25, ticklen = 5, tickwidth = 2, tickcolor = toRGB(&quot;blue&quot;))
+  
+  #Fitted.axis &lt;- list(autotick = FALSE, ticks = &quot;outside&quot;, tick0 = 0, ticklen = 0.5, dtick = 0.1)
+  
+  plt5 &lt;- regMat %&gt;% 
+    plotly::plot_ly(x = ~Fitted.Values) %&gt;%
+    plotly::add_markers(y = ~resp, name = &quot;resp&quot;, data = challenger2, type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;%
+    plotly::add_trace(x = c(0.15, .35), y= c(0.15, .35), mode = &quot;lines&quot;, name=&quot;abline&quot;) %&gt;% # ate 0.5 para a escala nao ficar ruim
+    plotly::layout(title = &quot;Resp vs Fitted Values&quot;) # usar backgorund branco
+  #ok!
+  
+  plt6 &lt;- regMat %&gt;% 
+    plotly::plot_ly( y = ~Cooks.d, 
+            type = &quot;scatter&quot;, mode = &quot;markers&quot;, hoverinfo = &quot;x+y&quot;, name = &quot;Data&quot;,
+            marker = list(size = 10, opacity = 0.5), showlegend = F) %&gt;% 
+    layout(title = &quot;Cook&#39;s distance&quot;)
+  
+  return(list(plt1, plt2, plt3, plt4, plt5, plt6))
+
+}</code></pre>
+<p><strong>Plots diagnósticos:</strong></p>
+<pre class="r"><code>plt &lt;- RegressionPlots(fit1)</code></pre>
+<div class="row">
+<div class="col-md-6">
+<pre class="r"><code>plt[[1]]</code></pre>
+<div id="96b973b1ce22" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b973b1ce22">{"x":{"visdat":{"96b939a7cf0c":["function () ","plotlyVisDat"]},"cur_data":"96b939a7cf0c","attrs":{"96b939a7cf0c":{"x":{},"y":{},"mode":"markers","hoverinfo":"x+y","name":"Data","marker":{"size":10,"opacity":0.5},"showlegend":false,"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Residuals vs Fitted Values","xaxis":{"domain":[0,1],"title":"Fitted.Values"},"yaxis":{"domain":[0,1],"title":"Residuals"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[0.21173104434907,0.215784453981879,0.212684787792084,0.215784453981879,0.216976633285646,0.212923223652837,0.214115402956605],"y":[0.121602288984263,-0.0491177873152122,-0.0460181211254172,-0.0491177873152122,0.116356700047687,-0.0462565569861707,-0.047448736289938],"mode":"markers","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"name":"Data","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"type":"scatter","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>plt[[3]]</code></pre>
+<div id="96b95292921" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b95292921">{"x":{"visdat":{"96b97ffa6775":["function () ","plotlyVisDat"]},"cur_data":"96b97ffa6775","attrs":{"96b97ffa6775":{"x":{},"y":{},"mode":"markers","hoverinfo":"x+y","name":"Data","marker":{"size":10,"opacity":0.5},"showlegend":false,"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Residuals vs Fitted Values","xaxis":{"domain":[0,1],"title":"Leverage"},"yaxis":{"domain":[0,1],"title":"Standardized.Residuals"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[0.430257510729614,0.241773962804006,0.255722460658083,0.241773962804006,0.46173104434907,0.224606580829757,0.144134477825465],"y":[1.80888940649607,-0.633357644979848,-0.598923006611071,-0.633357644979848,1.78074321892866,-0.589823155416138,-0.57587928171428],"mode":"markers","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"name":"Data","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"type":"scatter","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>plt[[5]]</code></pre>
+<div id="96b974b956f5" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b974b956f5">{"x":{"visdat":{"96b91ee4b2af":["function () ","plotlyVisDat"],"96b93a338d72":["function () ","data"]},"cur_data":"96b93a338d72","attrs":{"96b93a338d72":{"x":{},"alpha":1,"sizes":[10,100],"y":{},"type":"scatter","mode":"markers","name":"resp","hoverinfo":"x+y","marker":{"size":10,"opacity":0.5},"showlegend":false},"96b93a338d72.1":{"x":[0.15,0.35],"alpha":1,"sizes":[10,100],"y":[0.15,0.35],"mode":"lines","name":"abline"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Resp vs Fitted Values","xaxis":{"domain":[0,1],"title":"Fitted.Values"},"yaxis":{"domain":[0,1],"title":"resp"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[0.21173104434907,0.215784453981879,0.212684787792084,0.215784453981879,0.216976633285646,0.212923223652837,0.214115402956605],"y":[0.333333333333333,0.166666666666667,0.166666666666667,0.166666666666667,0.333333333333333,0.166666666666667,0.166666666666667],"type":"scatter","mode":"markers","name":"resp","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","frame":null},{"x":[0.15,0.35],"y":[0.15,0.35],"mode":"lines","name":"abline","type":"scatter","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+</div>
+<div class="col-md-6">
+<pre class="r"><code>plt[[2]]</code></pre>
+<div id="96b97848afd1" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b97848afd1">{"x":{"visdat":{"96b95595cb4":["function () ","plotlyVisDat"]},"cur_data":"96b95595cb4","attrs":{"96b95595cb4":{"x":{},"y":{},"mode":"markers","hoverinfo":"x+y","name":"Data","marker":{"size":10,"opacity":0.5},"showlegend":false,"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Standardized Residuals vs Fitted Values","xaxis":{"domain":[0,1],"title":"Fitted.Values"},"yaxis":{"domain":[0,1],"title":"Standardized.Residuals"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[0.21173104434907,0.215784453981879,0.212684787792084,0.215784453981879,0.216976633285646,0.212923223652837,0.214115402956605],"y":[1.80888940649607,-0.633357644979848,-0.598923006611071,-0.633357644979848,1.78074321892866,-0.589823155416138,-0.57587928171428],"mode":"markers","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"name":"Data","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"type":"scatter","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>plt[[4]]</code></pre>
+<div id="96b97d9344e6" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b97d9344e6">{"x":{"visdat":{"96b92afa950c":["function () ","plotlyVisDat"]},"cur_data":"96b92afa950c","attrs":{"96b92afa950c":{"x":{},"alpha":1,"sizes":[10,100],"y":{},"type":"scatter","mode":"markers","name":"std.res","hoverinfo":"x+y","marker":{"size":10,"opacity":0.5},"showlegend":false},"96b92afa950c.1":{"x":[1.36448874817033,-1.36448874817033,0.352933986126917,-0.758292556991152,0.758292556991152,0,-0.352933986126916],"alpha":1,"sizes":[10,100],"y":[1.36448874817033,-1.36448874817033,0.352933986126917,-0.758292556991152,0.758292556991152,0,-0.352933986126916],"type":"scatter","mode":"lines","name":"qq"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Standardized Residuals vs Theoretical Quantiles","xaxis":{"domain":[0,1],"title":"Theoretical.Quantiles"},"yaxis":{"domain":[0,1],"title":"Standardized.Residuals"},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[1.36448874817033,-1.36448874817033,0.352933986126917,-0.758292556991152,0.758292556991152,0,-0.352933986126916],"y":[1.80888940649607,-0.633357644979848,-0.598923006611071,-0.633357644979848,1.78074321892866,-0.589823155416138,-0.57587928171428],"type":"scatter","mode":"markers","name":"std.res","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","frame":null},{"x":[-1.36448874817033,-0.758292556991152,-0.352933986126916,0,0.352933986126917,0.758292556991152,1.36448874817033],"y":[-1.36448874817033,-0.758292556991152,-0.352933986126916,0,0.352933986126917,0.758292556991152,1.36448874817033],"type":"scatter","mode":"lines","name":"qq","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>plt[[6]]</code></pre>
+<div id="96b9ae24b19" style="width:432px;height:384px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b9ae24b19">{"x":{"visdat":{"96b97288e7d0":["function () ","plotlyVisDat"]},"cur_data":"96b97288e7d0","attrs":{"96b97288e7d0":{"y":{},"mode":"markers","hoverinfo":"x+y","name":"Data","marker":{"size":10,"opacity":0.5},"showlegend":false,"alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Cook's distance","yaxis":{"domain":[0,1],"title":"Cooks.d"},"xaxis":{"domain":[0,1]},"hovermode":"closest","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"y":[1.23550323432996,0.0639556435762234,0.0616234428186815,0.0639556435762234,1.36007339454574,0.0503864784893106,0.0279251336574227],"mode":"markers","hoverinfo":["x+y","x+y","x+y","x+y","x+y","x+y","x+y"],"name":"Data","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","size":10,"opacity":0.5,"line":{"color":"transparent"}},"showlegend":false,"type":"scatter","xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+</div>
+</div>
+<hr />
+</div>
+<div id="analise-incorreta-2---regressao-linear-com-zeros" class="section level4">
+<h4>Análise Incorreta 2 - Regressão Linear <strong>COM</strong> zeros</h4>
+<p><strong>Regressão Linear COM zeros:</strong></p>
+<pre class="r"><code># dados
+orings = 6
+challenger &lt;- challenger %&gt;%
+  dplyr::mutate(resp = falhas/orings)
+
+# removendo os zeros
+# sum of squares
+aov(resp ~ temp, data = challenger)</code></pre>
+<pre><code>## Call:
+##    aov(formula = resp ~ temp, data = challenger)
+## 
+## Terms:
+##                      temp Residuals
+## Sum of Squares  0.0691364 0.1941486
+## Deg. of Freedom         1        21
+## 
+## Residual standard error: 0.09615182
+## Estimated effects may be unbalanced</code></pre>
+<pre class="r"><code># regressao
+fit2 &lt;- lm(resp ~ temp, data = challenger)
+summary(fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = resp ~ temp, data = challenger)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.09348 -0.06539 -0.01323  0.01485  0.31207 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept)  0.623077   0.204982   3.040  0.00623 **
+## temp        -0.008024   0.002934  -2.735  0.01242 * 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.09615 on 21 degrees of freedom
+## Multiple R-squared:  0.2626, Adjusted R-squared:  0.2275 
+## F-statistic: 7.478 on 1 and 21 DF,  p-value: 0.01242</code></pre>
+<p><strong>Plot:</strong></p>
+<pre class="r"><code>challenger %&gt;% 
+  plotly::plot_ly(x = ~temp) %&gt;%
+  plotly::add_markers(y = ~resp, name = &quot;resp&quot;) %&gt;% 
+  plotly::add_lines(x = ~temp, y = fitted(fit2), name = &quot;fit&quot;) %&gt;%
+  plotly::add_ribbons(data = broom::augment(fit2),
+              ymin = ~.fitted - qnorm(0.975) * .se.fit,
+              ymax = ~.fitted + qnorm(0.975) * .se.fit,
+              line = list(color = &#39;rgba(138,43,226, 0.05)&#39;, opacity = 0.1),
+              fillcolor = &#39;rgba(138,43,226, 0.2)&#39;, opacity = 0.25,
+              name = &quot;95% conf.&quot;) %&gt;%
+  plotly::layout(title = &quot;NASA Space Shuttle O-Ring Failures - Erro&quot;, yaxis=list(title=&quot;Prob. Estimada de Falha&quot;))</code></pre>
+<div id="96b93407ad1f" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b93407ad1f">{"x":{"visdat":{"96b950d794c":["function () ","plotlyVisDat"],"96b94a452a5d":["function () ","data"]},"cur_data":"96b94a452a5d","attrs":{"96b950d794c":{"x":{},"alpha":1,"sizes":[10,100],"y":{},"type":"scatter","mode":"markers","name":"resp"},"96b950d794c.1":{"x":{},"alpha":1,"sizes":[10,100],"y":[0.197791815138755,0.0934766763848396,0.077428193499622,0.0613797106144045,0.0212585034013605,-0.00281422092646589,0.165694849368319,0.0854524349422308,0.0694039520570132,0.0613797106144045,0.0212585034013604,-0.0108384623690747,0.15767060792571,0.0854524349422308,0.0613797106144045,0.0453312277291869,0.0132342619587517,-0.0188627038116835,0.117549400712666,0.0854524349422308,0.0613797106144045,0.0373069862865781,0.0132342619587517],"type":"scatter","mode":"lines","name":"fit"},"96b94a452a5d":{"x":{},"alpha":1,"sizes":[10,100],"ymin":{},"ymax":{},"type":"scatter","mode":"lines","hoveron":"points","fill":"toself","line":{"color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25,"name":"95% conf."}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"NASA Space Shuttle O-Ring Failures - Erro","yaxis":{"domain":[0,1],"title":"Prob. Estimada de Falha"},"xaxis":{"domain":[0,1],"title":"temp"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[53,66,68,70,75,78,57,67,69,70,75,79,58,67,70,72,76,80,63,67,70,73,76],"y":[0.333333333333333,0,0,0.166666666666667,0,0,0.166666666666667,0,0,0.166666666666667,0.333333333333333,0,0.166666666666667,0,0,0,0,0,0.166666666666667,0,0,0,0],"type":"scatter","mode":"markers","name":"resp","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,57,58,63,66,67,67,67,68,69,70,70,70,70,72,73,75,75,76,76,78,79,80],"y":[0.197791815138755,0.165694849368319,0.15767060792571,0.117549400712666,0.0934766763848396,0.0854524349422308,0.0854524349422308,0.0854524349422308,0.077428193499622,0.0694039520570132,0.0613797106144045,0.0613797106144045,0.0613797106144045,0.0613797106144045,0.0453312277291869,0.0373069862865781,0.0212585034013605,0.0212585034013604,0.0132342619587517,0.0132342619587517,-0.00281422092646589,-0.0108384623690747,-0.0188627038116835],"type":"scatter","mode":"lines","name":"fit","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,57,58,63,66,67,67,67,68,69,70,70,70,70,72,73,75,75,76,76,78,79,80,80,80,79,78,76,76,75,75,73,72,70,70,70,70,69,68,67,67,67,66,63,58,57,53],"type":"scatter","mode":"lines","hoveron":"points","fill":"toself","line":{"fillcolor":"rgba(44,160,44,1)","color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25,"name":"95% conf.","y":[0.0949676849904617,0.0836568196353977,0.0806318043542334,0.0632267475274758,0.0492685587285286,0.0435661145476588,0.0435661145476588,0.0435661145476588,0.0371700027701005,0.0299941573281947,0.0219881653863232,0.0219881653863232,0.0219881653863232,0.0219881653863232,0.00353082808231068,-0.00678712977138135,-0.0291079749044244,-0.0291079749044244,-0.0409160431431329,-0.0409160431431329,-0.0654373644073965,-0.0780365817664147,-0.0908048216341413,-0.0908048216341413,0.0530794140107743,0.0563596570282653,0.0598089225544647,0.0673845670606362,0.0673845670606362,0.0716249817071454,0.0716249817071454,0.0814011023445374,0.087131627376063,0.100771255842486,0.100771255842486,0.100771255842486,0.100771255842486,0.108813746785832,0.117686384229144,0.127338755336803,0.127338755336803,0.127338755336803,0.137684794041151,0.171872053897856,0.234709411497187,0.24773287910124,0.300615945287046],"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<hr />
+</div>
+<div id="analise-correta-2---regressao-logistica-com-zeros" class="section level4">
+<h4>Análise Correta 2 - Regressão <strong>Logística</strong> com zeros</h4>
+<p><strong>Regressão Logística:</strong></p>
+<pre class="r"><code>fit3 &lt;- glm(resp ~ temp, data = challenger, family=binomial(link=&quot;logit&quot;))
+summary(fit3)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = resp ~ temp, family = binomial(link = &quot;logit&quot;), 
+##     data = challenger)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -0.38848  -0.31934  -0.22060  -0.01782   1.08330  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)
+## (Intercept)   5.0940     7.4838   0.681    0.496
+## temp         -0.1158     0.1153  -1.004    0.315
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 4.0384  on 22  degrees of freedom
+## Residual deviance: 3.0177  on 21  degrees of freedom
+## AIC: 7.2026
+## 
+## Number of Fisher Scoring iterations: 6</code></pre>
+<pre class="r"><code># AIC nao bate com SAS!</code></pre>
+<p><strong>Testes:</strong></p>
+<pre class="r"><code># testes para existência de regressão
+
+# 1) razao de verossimilhancas
+#library(lmtest)
+lmtest::lrtest(fit3)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-1.601284","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-1.551149","3":"-1","4":"0.1002696","5":"0.7515063","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 2) teste de Wald
+lmtest::waldtest(fit3)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"21","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"22","2":"-1","3":"1.008181","4":"0.3267691","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># 3) Score
+anova(fit3,test=&quot;Rao&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["Deviance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Resid. Df"],"name":[3],"type":["int"],"align":["right"]},{"label":["Resid. Dev"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Rao"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"NA","2":"NA","3":"22","4":"4.038394","5":"NA","6":"NA","_rn_":"NULL"},{"1":"1","2":"1.020662","3":"21","4":"3.017732","5":"1.134084","6":"0.286906","_rn_":"temp"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Plot:</strong></p>
+<pre class="r"><code># x_limits &lt;- challenger %&gt;%
+#   summarise(min(temp)-2, max(temp)+2) # obtendo os limites do eixo x
+
+x_limits &lt;- challenger %&gt;%
+  summarise(min = 30, max = max(temp)+2) # obtendo os limites do eixo x
+
+x &lt;- seq(x_limits[[1]], x_limits[[2]], by=0.5) # criando varios ptos entre esses limites
+
+# x &lt;- seq(20,35, by=0.1)
+
+# ajustando as probabilidades (y_i&#39;s) para cada nivel de cor i
+# temos mais dois coeficientes no modelo agora, mas cuja o valor que multiplica eh 1
+
+
+y &lt;- plogis(fit3$coefficients[1]+fit3$coefficients[2]*x) # modelo com color 0 0 0 (base 4 - Dark)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# Generate data
+mydata &lt;- data.frame(Ft = c(1, 6, 11, 16, 21, 2, 7, 12, 17, 22, 3, 8, 
+                            13, 18, 23, 4, 9, 14, 19, 5, 10, 15, 20),
+                     Temp = c(66, 72, 70, 75, 75, 70, 73, 78, 70, 76, 69, 70, 
+                              67, 81, 58, 68, 57, 53, 76, 67, 63, 67, 79),
+                     TD = c(0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
+                            0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0))
+
+# Run logistic regression model
+model &lt;- glm(TD ~ Temp, data=mydata, family=binomial(link=&quot;logit&quot;))
+
+# Create a temporary data frame of hypothetical values
+temp.data &lt;- data.frame(Temp = seq(53, 81, 0.5))
+
+# Predict the fitted values given the model and hypothetical data
+predicted.data &lt;- as.data.frame(predict(model, newdata = temp.data, 
+                                        type=&quot;link&quot;, se=TRUE))
+
+# Combine the hypothetical data and predicted values
+new.data &lt;- cbind(temp.data, predicted.data)
+
+# Calculate confidence intervals
+std &lt;- qnorm(0.95 / 2 + 0.5)
+new.data$ymin &lt;- model$family$linkinv(new.data$fit - std * new.data$se)
+new.data$ymax &lt;- model$family$linkinv(new.data$fit + std * new.data$se)
+new.data$fit &lt;- model$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+# Plot everything
+p &lt;- ggplot(mydata, aes(x=Temp, y=TD)) 
+p + geom_point() + 
+  geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+  geom_line(data=new.data, aes(y=fit)) + 
+  labs(x=&quot;Temperature&quot;, y=&quot;Thermal Distress&quot;) </code></pre>
+<pre><code>## Warning: Ignoring unknown aesthetics: y</code></pre>
+<p><img src="challenger_files/figure-html/unnamed-chunk-17-1.png" width="864" /></p>
+<pre class="r"><code># newdata %&gt;%
+# ggplot(aes(x=x,y=y)) + geom_point() + xlim(0,100) +
+# stat_smooth(method=&quot;glm&quot;, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# Generate data
+mydata &lt;- data.frame(Ft = c(1, 6, 11, 16, 21, 2, 7, 12, 17, 22, 3, 8, 
+                            13, 18, 23, 4, 9, 14, 19, 5, 10, 15, 20),
+                     Temp = c(66, 72, 70, 75, 75, 70, 73, 78, 70, 76, 69, 70, 
+                              67, 81, 58, 68, 57, 53, 76, 67, 63, 67, 79),
+                     TD = c(0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
+                            0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0))
+
+mydata = as.data.frame(challenger)
+# Run logistic regression model
+# model &lt;- glm(TD ~ Temp, data=mydata, family=binomial(link=&quot;logit&quot;))
+model &lt;- glm(resp ~ temp, data=mydata, family=binomial(link=&quot;logit&quot;))</code></pre>
+<pre><code>## Warning in eval(family$initialize): non-integer #successes in a binomial
+## glm!</code></pre>
+<pre class="r"><code># Create a temporary data frame of hypothetical values
+temp.data &lt;- data.frame(Temp = seq(53, 81, 0.5))
+temp.data = data.frame(temp = x)
+
+# Predict the fitted values given the model and hypothetical data
+predicted.data &lt;- as.data.frame(predict(model, newdata = temp.data, 
+                                        type=&quot;link&quot;, se=TRUE))
+
+# Combine the hypothetical data and predicted values
+new.data &lt;- cbind(temp.data, predicted.data)
+
+# Calculate confidence intervals
+std &lt;- qnorm(0.95 / 2 + 0.5)
+new.data$ymin &lt;- model$family$linkinv(new.data$fit - std * new.data$se)
+new.data$ymax &lt;- model$family$linkinv(new.data$fit + std * new.data$se)
+new.data$fit &lt;- model$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+# Plot everything
+# p &lt;- ggplot(mydata, aes(x=Temp, y=TD)) 
+# p + geom_point() + 
+#   geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+#   geom_line(data=new.data, aes(y=fit)) + 
+#   labs(x=&quot;Temperature&quot;, y=&quot;Thermal Distress&quot;) 
+
+
+p &lt;- ggplot(mydata, aes(x=temp, y=resp)) 
+p + geom_point() + 
+  geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+  geom_line(data=new.data, aes(y=fit)) + 
+  labs(x=&quot;Temperature&quot;, y=&quot;Thermal Distress&quot;) </code></pre>
+<pre><code>## Warning: Ignoring unknown aesthetics: y</code></pre>
+<p><img src="challenger_files/figure-html/unnamed-chunk-18-1.png" width="864" /></p>
+<pre class="r"><code># newdata %&gt;%
+# ggplot(aes(x=x,y=y)) + geom_point() + xlim(0,100) +
+# geom_smooth(method = &quot;glm&quot;, method.args = list(family = &quot;binomial&quot;))
+
+# funcionando mais ou menos</code></pre>
+<pre class="r"><code>library(ggplot2)
+
+# Generate data
+mydata &lt;- data.frame(Ft = c(1, 6, 11, 16, 21, 2, 7, 12, 17, 22, 3, 8, 
+                            13, 18, 23, 4, 9, 14, 19, 5, 10, 15, 20),
+                     Temp = c(66, 72, 70, 75, 75, 70, 73, 78, 70, 76, 69, 70, 
+                              67, 81, 58, 68, 57, 53, 76, 67, 63, 67, 79),
+                     TD = c(0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 
+                            0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0))
+
+mydata = as.data.frame(challenger)
+#mydata = as.data.frame(challenger3)
+# Run logistic regression model
+# model &lt;- glm(TD ~ Temp, data=mydata, family=binomial(link=&quot;logit&quot;))
+model &lt;- glm(resp ~ temp, data=mydata, family=binomial(link=&quot;logit&quot;))</code></pre>
+<pre><code>## Warning in eval(family$initialize): non-integer #successes in a binomial
+## glm!</code></pre>
+<pre class="r"><code># Create a temporary data frame of hypothetical values
+temp.data &lt;- data.frame(Temp = seq(53, 81, 0.5))
+temp.data = data.frame(temp = x) # se nao passar o mesmo nome da variavel nao funciona
+temp.data = data.frame(temp = c(31, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75))
+
+# Predict the fitted values given the model and hypothetical data
+predicted.data &lt;- as.data.frame(predict(model, newdata = temp.data, 
+                                        type=&quot;link&quot;, se=TRUE))
+
+# Combine the hypothetical data and predicted values
+new.data &lt;- cbind(temp.data, predicted.data)
+
+# Calculate confidence intervals
+std &lt;- qnorm(0.95 / 2 + 0.5)
+new.data$ymin &lt;- model$family$linkinv(new.data$fit - std * new.data$se)
+new.data$ymax &lt;- model$family$linkinv(new.data$fit + std * new.data$se)
+new.data$fit &lt;- model$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+
+# new.data$ymin &lt;- new.data$fit - std * new.data$se
+# new.data$ymax &lt;- new.data$fit + std * new.data$se
+# new.data$fit &lt;- model$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+
+# Plot everything
+# p &lt;- ggplot(mydata, aes(x=Temp, y=TD)) 
+# p + geom_point() + 
+#   geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+#   geom_line(data=new.data, aes(y=fit)) + 
+#   labs(x=&quot;Temperature&quot;, y=&quot;Thermal Distress&quot;) 
+
+
+p &lt;- ggplot(mydata, aes(x=temp, y=resp)) 
+p + geom_point() + 
+  geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+  geom_line(data=new.data, aes(y=fit)) + 
+  labs(x=&quot;Temperature&quot;, y=&quot;Thermal Distress&quot;) </code></pre>
+<pre><code>## Warning: Ignoring unknown aesthetics: y</code></pre>
+<p><img src="challenger_files/figure-html/unnamed-chunk-19-1.png" width="864" /></p>
+<pre class="r"><code># newdata %&gt;%
+# ggplot(aes(x=x,y=y)) + geom_point() + xlim(0,100) +
+# geom_smooth(method = &quot;glm&quot;, method.args = list(family = &quot;binomial&quot;))
+
+# funcionando mais ou menos</code></pre>
+<pre class="r"><code>plotly::plot_ly(x = ~x, y = ~y, name = &#39;prob&#39;, type = &#39;scatter&#39;, mode = &#39;lines&#39;) %&gt;%
+  plotly::add_trace(x= ~temp, y = ~resp, name = &#39;prob&#39;, mode = &#39;markers&#39;, data=challenger) %&gt;%
+  # plotly::add_ribbons(data = broom::augment(fake.fit),
+  #             ymin = ~.fitted - qnorm(0.975) * .se.fit,
+  #             ymax = ~.fitted + qnorm(0.975) * .se.fit,
+  #             line = list(color = &#39;rgba(138,43,226, 0.05)&#39;, opacity = 0.1),
+  #             fillcolor = &#39;rgba(138,43,226, 0.2)&#39;, opacity = 0.25,
+  #             name = &quot;Conf Int&quot;) %&gt;%
+  plotly::layout(title = &quot;Curva Logística Ajustada&quot;)</code></pre>
+<div id="96b91b85bd66" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b91b85bd66">{"x":{"visdat":{"96b957dec0f0":["function () ","plotlyVisDat"],"96b965055095":["function () ","data"]},"cur_data":"96b965055095","attrs":{"96b957dec0f0":{"x":{},"y":{},"name":"prob","mode":"lines","alpha":1,"sizes":[10,100],"type":"scatter"},"96b965055095":{"x":{},"y":{},"name":"prob","mode":"markers","alpha":1,"sizes":[10,100],"type":"scatter"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Curva Logística Ajustada","xaxis":{"domain":[0,1],"title":"x"},"yaxis":{"domain":[0,1],"title":"y"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[30,30.5,31,31.5,32,32.5,33,33.5,34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,45.5,46,46.5,47,47.5,48,48.5,49,49.5,50,50.5,51,51.5,52,52.5,53,53.5,54,54.5,55,55.5,56,56.5,57,57.5,58,58.5,59,59.5,60,60.5,61,61.5,62,62.5,63,63.5,64,64.5,65,65.5,66,66.5,67,67.5,68,68.5,69,69.5,70,70.5,71,71.5,72,72.5,73,73.5,74,74.5,75,75.5,76,76.5,77,77.5,78,78.5,79,79.5,80,80.5,81,81.5,82],"y":[0.83495533213593,0.826823825492796,0.818378836802796,0.809616851261064,0.800535186398024,0.791132069708544,0.781406715163267,0.771359397539334,0.760991523422068,0.750305697657648,0.739305783983182,0.727996958528984,0.716385754881866,0.704480099421463,0.692289335696706,0.679824236698788,0.667097004011396,0.654121252978675,0.64091198322509,0.627485534086456,0.613859524763883,0.600052779286877,0.586085236661647,0.571977846878061,0.557752453745134,0.543431665811267,0.529038716892535,0.514597317971182,0.500131502428844,0.485665466737744,0.471223408842466,0.456829366520835,0.442507058012972,0.428279727152603,0.414169995126329,0.400199720828662,0.386389871579023,0.372760405728599,0.359330168418364,0.346116801463431,0.333136668042635,0.320404792574743,0.307934815872685,0.29573896539237,0.28382804013971,0.272211409573846,0.260897025650258,0.249891446987132,0.239199874013251,0.228826193865878,0.218773033751313,0.209041821457123,0.199632851710471,0.190545357108206,0.181777582397554,0.173326860957585,0.165189692416972,0.157361820439303,0.149838309809602,0.142613622061593,0.135681688991736,0.129035983510664,0.122669587383361,0.116575255504655,0.110745476445034,0.105172529082752,0.099848535210962,0.0947655080731283,0.0899153968360979,0.0852901270582824,0.0808816372506434,0.076681911661178,0.0726830094398407,0.0688770903609669,0.0652564372948959,0.061813475630271,0.058540789854055,0.0554311374982274,0.0524774606610129,0.0496728953068295,0.0470107785434443,0.0444846540674941,0.0420882759609659,0.0398156110117649,0.0376608397214286,0.0356183561526038,0.0336827667583217,0.031848888324539,0.0301117451470152,0.0284665655534709,0.0269087778722142,0.0254340059390938,0.0240380642257874,0.022716952664093,0.0214668512330739,0.0202841143686298,0.019165265248316,0.018106989998003,0.017106131861253,0.0161596853670513,0.0152647905267686,0.0144187270869015,0.0136189088602253,0.0128628781544747,0.0121483003145009],"name":"prob","mode":"lines","type":"scatter","line":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,66,68,70,75,78,57,67,69,70,75,79,58,67,70,72,76,80,63,67,70,73,76],"y":[0.333333333333333,0,0,0.166666666666667,0,0,0.166666666666667,0,0,0.166666666666667,0.333333333333333,0,0.166666666666667,0,0,0,0,0,0.166666666666667,0,0,0,0],"name":"prob","mode":"markers","type":"scatter","marker":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>temp.data = data.frame(temp = x) # se nao passar o mesmo nome da variavel nao funciona
+
+
+
+# Predict the fitted values given the model and hypothetical data
+predicted.data &lt;- as.data.frame(predict(model, newdata = temp.data, 
+                                        type=&quot;link&quot;, se=TRUE))
+
+# Combine the hypothetical data and predicted values
+new.data &lt;- cbind(temp.data, predicted.data)
+
+# Calculate confidence intervals
+std &lt;- qnorm(0.95 / 2 + 0.5)
+new.data$ymin &lt;- model$family$linkinv(new.data$fit - std * new.data$se)
+new.data$ymax &lt;- model$family$linkinv(new.data$fit + std * new.data$se)
+new.data$fit &lt;- model$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+plotly::plot_ly(x = ~x, y = ~y, name = &#39;prob&#39;, type = &#39;scatter&#39;, mode = &#39;lines&#39;) %&gt;%
+  plotly::add_trace(x= ~temp, y = ~resp, name = &#39;prob&#39;, mode = &#39;markers&#39;, data=challenger) %&gt;%
+  plotly::add_ribbons(data = new.data,
+              ymin = ~ymin,
+              ymax = ~ymax,
+              line = list(color = &#39;rgba(138,43,226, 0.05)&#39;, opacity = 0.1),
+              fillcolor = &#39;rgba(138,43,226, 0.2)&#39;, opacity = 0.25,
+              name = &quot;Conf Int&quot;) %&gt;%
+  plotly::layout(title = &quot;Curva Logística Ajustada&quot;)</code></pre>
+<div id="96b93692eb33" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b93692eb33">{"x":{"visdat":{"96b9a2ea080":["function () ","plotlyVisDat"],"96b937181724":["function () ","data"],"96b9244cccdb":["function () ","data"]},"cur_data":"96b9244cccdb","attrs":{"96b9a2ea080":{"x":{},"y":{},"name":"prob","mode":"lines","alpha":1,"sizes":[10,100],"type":"scatter"},"96b937181724":{"x":{},"y":{},"name":"prob","mode":"markers","alpha":1,"sizes":[10,100],"type":"scatter"},"96b9244cccdb":{"x":{},"y":{},"name":"Conf Int","mode":"lines","alpha":1,"sizes":[10,100],"type":"scatter","ymin":{},"ymax":{},"hoveron":"points","fill":"toself","line":{"color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Curva Logística Ajustada","xaxis":{"domain":[0,1],"title":"x"},"yaxis":{"domain":[0,1],"title":"y"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[30,30.5,31,31.5,32,32.5,33,33.5,34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,45.5,46,46.5,47,47.5,48,48.5,49,49.5,50,50.5,51,51.5,52,52.5,53,53.5,54,54.5,55,55.5,56,56.5,57,57.5,58,58.5,59,59.5,60,60.5,61,61.5,62,62.5,63,63.5,64,64.5,65,65.5,66,66.5,67,67.5,68,68.5,69,69.5,70,70.5,71,71.5,72,72.5,73,73.5,74,74.5,75,75.5,76,76.5,77,77.5,78,78.5,79,79.5,80,80.5,81,81.5,82],"y":[0.83495533213593,0.826823825492796,0.818378836802796,0.809616851261064,0.800535186398024,0.791132069708544,0.781406715163267,0.771359397539334,0.760991523422068,0.750305697657648,0.739305783983182,0.727996958528984,0.716385754881866,0.704480099421463,0.692289335696706,0.679824236698788,0.667097004011396,0.654121252978675,0.64091198322509,0.627485534086456,0.613859524763883,0.600052779286877,0.586085236661647,0.571977846878061,0.557752453745134,0.543431665811267,0.529038716892535,0.514597317971182,0.500131502428844,0.485665466737744,0.471223408842466,0.456829366520835,0.442507058012972,0.428279727152603,0.414169995126329,0.400199720828662,0.386389871579023,0.372760405728599,0.359330168418364,0.346116801463431,0.333136668042635,0.320404792574743,0.307934815872685,0.29573896539237,0.28382804013971,0.272211409573846,0.260897025650258,0.249891446987132,0.239199874013251,0.228826193865878,0.218773033751313,0.209041821457123,0.199632851710471,0.190545357108206,0.181777582397554,0.173326860957585,0.165189692416972,0.157361820439303,0.149838309809602,0.142613622061593,0.135681688991736,0.129035983510664,0.122669587383361,0.116575255504655,0.110745476445034,0.105172529082752,0.099848535210962,0.0947655080731283,0.0899153968360979,0.0852901270582824,0.0808816372506434,0.076681911661178,0.0726830094398407,0.0688770903609669,0.0652564372948959,0.061813475630271,0.058540789854055,0.0554311374982274,0.0524774606610129,0.0496728953068295,0.0470107785434443,0.0444846540674941,0.0420882759609659,0.0398156110117649,0.0376608397214286,0.0356183561526038,0.0336827667583217,0.031848888324539,0.0301117451470152,0.0284665655534709,0.0269087778722142,0.0254340059390938,0.0240380642257874,0.022716952664093,0.0214668512330739,0.0202841143686298,0.019165265248316,0.018106989998003,0.017106131861253,0.0161596853670513,0.0152647905267686,0.0144187270869015,0.0136189088602253,0.0128628781544747,0.0121483003145009],"name":"prob","mode":"lines","type":"scatter","line":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,66,68,70,75,78,57,67,69,70,75,79,58,67,70,72,76,80,63,67,70,73,76],"y":[0.333333333333333,0,0,0.166666666666667,0,0,0.166666666666667,0,0,0.166666666666667,0.333333333333333,0,0.166666666666667,0,0,0,0,0,0.166666666666667,0,0,0,0],"name":"prob","mode":"markers","type":"scatter","marker":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[30,30.5,31,31.5,32,32.5,33,33.5,34,34.5,35,35.5,36,36.5,37,37.5,38,38.5,39,39.5,40,40.5,41,41.5,42,42.5,43,43.5,44,44.5,45,45.5,46,46.5,47,47.5,48,48.5,49,49.5,50,50.5,51,51.5,52,52.5,53,53.5,54,54.5,55,55.5,56,56.5,57,57.5,58,58.5,59,59.5,60,60.5,61,61.5,62,62.5,63,63.5,64,64.5,65,65.5,66,66.5,67,67.5,68,68.5,69,69.5,70,70.5,71,71.5,72,72.5,73,73.5,74,74.5,75,75.5,76,76.5,77,77.5,78,78.5,79,79.5,80,80.5,81,81.5,82,82,82,81.5,81,80.5,80,79.5,79,78.5,78,77.5,77,76.5,76,75.5,75,74.5,74,73.5,73,72.5,72,71.5,71,70.5,70,69.5,69,68.5,68,67.5,67,66.5,66,65.5,65,64.5,64,63.5,63,62.5,62,61.5,61,60.5,60,59.5,59,58.5,58,57.5,57,56.5,56,55.5,55,54.5,54,53.5,53,52.5,52,51.5,51,50.5,50,49.5,49,48.5,48,47.5,47,46.5,46,45.5,45,44.5,44,43.5,43,42.5,42,41.5,41,40.5,40,39.5,39,38.5,38,37.5,37,36.5,36,35.5,35,34.5,34,33.5,33,32.5,32,31.5,31,30.5,30],"y":[0.00173875048283906,0.00183221682676813,0.00193055077405867,0.0020339899785133,0.0021427819759795,0.00225718438840786,0.00237746510206605,0.00250390241428084,0.00263678514227122,0.00277641268672003,0.00292309504169497,0.00307715274135729,0.00323891673256926,0.00340872816101036,0.00358693805671378,0.00377390690301333,0.00397000407071828,0.00417560709687599,0.00439110078470376,0.00461687609813111,0.00485332882084494,0.00510085794572273,0.00535986375601647,0.00563074555454932,0.00591389899144325,0.0062097129344333,0.00651856581856949,0.00684082140397875,0.00717682386128075,0.00752689209414645,0.0078913131972942,0.00827033493589313,0.00866415711887569,0.0090729217240963,0.00949670161773306,0.00993548769405881,0.0103891742451162,0.0108575423535806,0.0113402410871821,0.0118367662609614,0.0123464365265018,0.0128683665481394,0.0134014370392776,0.0139442614632157,0.0144951492603734,0.0150520655583318,0.0156125874670795,0.0161738572780914,0.0167325331963656,0.0172847386691859,0.0178260119698211,0.0183512584889087,0.0188547092221559,0.0193298902549798,0.0197696096473044,0.0201659699863577,0.0205104168956296,0.0207938357318745,0.0210067101523126,0.0211393565325585,0.0211822464354455,0.021126424330429,0.0209640183930109,0.0206888277455577,0.0202969502974319,0.0197873936346133,0.0191625918226474,0.018428740243892,0.0175958658575234,0.016677576172213,0.0156904755473963,0.0146532934882931,0.0135858219043235,0.0125077917704035,0.0114378247928472,0.0103925725688888,0.0093861132650897,0.00842962738542267,0.00753133204716405,0.00669662480053171,0.00592837519923933,0.00522730256033848,0.00459238714164226,0.00402127475210837,0.0035106480844193,0.00305654968039189,0.00265465046525606,0.0023004640986103,0.00198951132918155,0.00171744063100776,0.00148011217512112,0.0012736521132002,0.0010944835736359,0.000939339949551108,0.000805265160359029,0.000689604695898521,0.000589990461055277,0.00050432175408048,0.000430744139176592,0.000367627507755475,0.000313544251793051,0.000267248183374476,0.000227654613151484,0.000193821834301705,0.000164934136483226,0.000164934136483226,0.478291844064204,0.4669110433044,0.455688075255014,0.44464237838659,0.433793240035207,0.423159799880308,0.412761070783276,0.402615978973164,0.392743425717913,0.383162372817512,0.373891954505231,0.364951618647504,0.356361300490483,0.348141632602879,0.340314195089806,0.33290181056319,0.325928888686691,0.319421825265881,0.313409460673058,0.307923601654497,0.302999608945735,0.2986770501814,0.295000412762898,0.292019863946756,0.289792034664608,0.288380788743744,0.287857919781453,0.288303694061636,0.28980713079817,0.292465883459646,0.296385562752989,0.301678329652978,0.308460593236182,0.316849679700324,0.326959399290365,0.338894525343717,0.35274430766293,0.36857526140239,0.386423593508256,0.406287744611157,0.428121628725136,0.451829235211855,0.477261297107059,0.504214698087167,0.532435157016454,0.561623476714628,0.591445281650462,0.6215437415101,0.65155435822434,0.681120570834033,0.709908781784235,0.737621470295856,0.764007324058625,0.78886773288544,0.812059460560966,0.833493752982649,0.853132480314523,0.870982110318552,0.88708636683972,0.901518366568396,0.914372888198958,0.925759252461252,0.935795113855882,0.944601308819611,0.952297782664608,0.959000531947887,0.964819446777337,0.969856912596916,0.974207025921361,0.977955286504663,0.981178643932051,0.983945795451474,0.986317651170126,0.98834790079316,0.990083631955923,0.991565963545189,0.992830668225855,0.993908766898824,0.99482708432192,0.995608759965164,0.996273711668297,0.99683905211134,0.997319459744806,0.997727506857395,0.998073948047674,0.99836797263878,0.998617424628466,0.998828993673554,0.99900838042174,0.999160439263486,0.999289301309959,0.999398480128513,0.99949096249781,0.99956928618827,0.999635606534912,0.999691753351245,0.999739279535469,0.999779502543594,0.999813539747329,0.999842338556346,0.9998667020633,0.999887310864092,0.999904741613861,0.999919482799311,0.999931948139028],"name":"Conf Int","mode":"lines","type":"scatter","hoveron":"points","fill":"toself","line":{"fillcolor":"rgba(44,160,44,1)","color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25,"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<pre class="r"><code>new.data = broom::augment(model)
+
+challenger %&gt;% 
+  plotly::plot_ly(x = ~temp) %&gt;%
+  plotly::add_markers(y = ~resp, name = &quot;resp&quot;) %&gt;% 
+  plotly::add_lines(x = ~temp, y = fitted(model), name = &quot;fit&quot;) %&gt;%
+  plotly::add_ribbons(data = new.data,
+              ymin = ~.fitted - qnorm(0.975) * .se.fit,
+              ymax = ~.fitted + qnorm(0.975) * .se.fit,
+              line = list(color = &#39;rgba(138,43,226, 0.05)&#39;, opacity = 0.1),
+              fillcolor = &#39;rgba(138,43,226, 0.2)&#39;, opacity = 0.25,
+              name = &quot;Conf Int&quot;) %&gt;%
+  plotly::layout(title = &quot;NASA Space Shuttle O-Ring Failures - Erro&quot;, yaxis=list(title=&quot;Prob. Estimada de Falha&quot;))</code></pre>
+<div id="96b97cb07824" style="width:864px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="96b97cb07824">{"x":{"visdat":{"96b94d8c6cb1":["function () ","plotlyVisDat"],"96b96a397c79":["function () ","data"]},"cur_data":"96b96a397c79","attrs":{"96b94d8c6cb1":{"x":{},"alpha":1,"sizes":[10,100],"y":{},"type":"scatter","mode":"markers","name":"resp"},"96b94d8c6cb1.1":{"x":{},"alpha":1,"sizes":[10,100],"y":[0.260897025650258,0.0726830094398407,0.058540789854055,0.0470107785434443,0.0269087778722142,0.019165265248316,0.181777582397554,0.0652564372948959,0.0524774606610129,0.0470107785434443,0.0269087778722142,0.017106131861253,0.165189692416972,0.0652564372948959,0.0470107785434443,0.0376608397214286,0.0240380642257874,0.0152647905267686,0.099848535210962,0.0652564372948959,0.0470107785434443,0.0336827667583217,0.0240380642257874],"type":"scatter","mode":"lines","name":"fit"},"96b96a397c79":{"x":{},"alpha":1,"sizes":[10,100],"ymin":{},"ymax":{},"type":"scatter","mode":"lines","hoveron":"points","fill":"toself","line":{"color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25,"name":"Conf Int"}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"NASA Space Shuttle O-Ring Failures - Erro","yaxis":{"domain":[0,1],"title":"Prob. Estimada de Falha"},"xaxis":{"domain":[0,1],"title":"temp"},"hovermode":"closest","showlegend":true},"source":"A","config":{"modeBarButtonsToAdd":[{"name":"Collaborate","icon":{"width":1000,"ascent":500,"descent":-50,"path":"M487 375c7-10 9-23 5-36l-79-259c-3-12-11-23-22-31-11-8-22-12-35-12l-263 0c-15 0-29 5-43 15-13 10-23 23-28 37-5 13-5 25-1 37 0 0 0 3 1 7 1 5 1 8 1 11 0 2 0 4-1 6 0 3-1 5-1 6 1 2 2 4 3 6 1 2 2 4 4 6 2 3 4 5 5 7 5 7 9 16 13 26 4 10 7 19 9 26 0 2 0 5 0 9-1 4-1 6 0 8 0 2 2 5 4 8 3 3 5 5 5 7 4 6 8 15 12 26 4 11 7 19 7 26 1 1 0 4 0 9-1 4-1 7 0 8 1 2 3 5 6 8 4 4 6 6 6 7 4 5 8 13 13 24 4 11 7 20 7 28 1 1 0 4 0 7-1 3-1 6-1 7 0 2 1 4 3 6 1 1 3 4 5 6 2 3 3 5 5 6 1 2 3 5 4 9 2 3 3 7 5 10 1 3 2 6 4 10 2 4 4 7 6 9 2 3 4 5 7 7 3 2 7 3 11 3 3 0 8 0 13-1l0-1c7 2 12 2 14 2l218 0c14 0 25-5 32-16 8-10 10-23 6-37l-79-259c-7-22-13-37-20-43-7-7-19-10-37-10l-248 0c-5 0-9-2-11-5-2-3-2-7 0-12 4-13 18-20 41-20l264 0c5 0 10 2 16 5 5 3 8 6 10 11l85 282c2 5 2 10 2 17 7-3 13-7 17-13z m-304 0c-1-3-1-5 0-7 1-1 3-2 6-2l174 0c2 0 4 1 7 2 2 2 4 4 5 7l6 18c0 3 0 5-1 7-1 1-3 2-6 2l-173 0c-3 0-5-1-8-2-2-2-4-4-4-7z m-24-73c-1-3-1-5 0-7 2-2 3-2 6-2l174 0c2 0 5 0 7 2 3 2 4 4 5 7l6 18c1 2 0 5-1 6-1 2-3 3-5 3l-174 0c-3 0-5-1-7-3-3-1-4-4-5-6z"},"click":"function(gd) { \n        // is this being viewed in RStudio?\n        if (location.search == '?viewer_pane=1') {\n          alert('To learn about plotly for collaboration, visit:\\n https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html');\n        } else {\n          window.open('https://cpsievert.github.io/plotly_book/plot-ly-for-collaboration.html', '_blank');\n        }\n      }"}],"cloud":false},"data":[{"x":[53,66,68,70,75,78,57,67,69,70,75,79,58,67,70,72,76,80,63,67,70,73,76],"y":[0.333333333333333,0,0,0.166666666666667,0,0,0.166666666666667,0,0,0.166666666666667,0.333333333333333,0,0.166666666666667,0,0,0,0,0,0.166666666666667,0,0,0,0],"type":"scatter","mode":"markers","name":"resp","marker":{"fillcolor":"rgba(31,119,180,1)","color":"rgba(31,119,180,1)","line":{"color":"transparent"}},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,57,58,63,66,67,67,67,68,69,70,70,70,70,72,73,75,75,76,76,78,79,80],"y":[0.260897025650258,0.181777582397554,0.165189692416972,0.099848535210962,0.0726830094398407,0.0652564372948959,0.0652564372948959,0.0652564372948959,0.058540789854055,0.0524774606610129,0.0470107785434443,0.0470107785434443,0.0470107785434443,0.0470107785434443,0.0376608397214286,0.0336827667583217,0.0269087778722142,0.0269087778722142,0.0240380642257874,0.0240380642257874,0.019165265248316,0.017106131861253,0.0152647905267686],"type":"scatter","mode":"lines","name":"fit","line":{"fillcolor":"rgba(255,127,14,1)","color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[53,57,58,63,66,67,67,67,68,69,70,70,70,70,72,73,75,75,76,76,78,79,80,80,80,79,78,76,76,75,75,73,72,70,70,70,70,69,68,67,67,67,66,63,58,57,53],"type":"scatter","mode":"lines","hoveron":"points","fill":"toself","line":{"fillcolor":"rgba(44,160,44,1)","color":"rgba(138,43,226, 0.05)","opacity":0.1},"fillcolor":"rgba(138,43,226, 0.2)","opacity":0.25,"name":"Conf Int","y":[-4.14394205368076,-3.90364174394263,-3.86609870408219,-3.93544666895412,-4.28504958340461,-4.45932571178574,-4.45932571178574,-4.45932571178574,-4.65909355381493,-4.88112351838894,-5.12205908249413,-5.12205908249413,-5.12205908249413,-5.12205908249413,-5.64843779424244,-5.9287841041612,-6.51415619145438,-6.51415619145438,-6.81637756625458,-6.81637756625458,-7.43481402432421,-7.74956545180304,-8.06725646039071,-8.06725646039071,-0.266391296653987,-0.352562867005547,-0.43579485624827,-0.5911924378457,-0.5911924378457,-0.661894374409794,-0.661894374409794,-0.784227585230779,-0.83305445691343,-0.896394292189531,-0.896394292189531,-0.896394292189531,-0.896394292189531,-0.905810418058624,-0.896320944396527,-0.864569348189619,-0.864569348189619,-0.864569348189619,-0.807326038334647,-0.46237063807683,0.625878588231762,0.894941066328297,2.06131912901084],"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1}},"base_url":"https://plot.ly"},"evals":["config.modeBarButtonsToAdd.0.click"],"jsHooks":{"render":[{"code":"function(el, x) { var ctConfig = crosstalk.var('plotlyCrosstalkOpts').set({\"on\":\"plotly_click\",\"persistent\":false,\"dynamic\":false,\"selectize\":false,\"opacityDim\":0.2,\"selected\":{\"opacity\":1}}); }","data":null}]}}</script>
+<hr />
+<hr />
+</div>
+</div>
+<div id="referencias-bibliograficas" class="section level3">
+<h3>Referências Bibliográficas</h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
