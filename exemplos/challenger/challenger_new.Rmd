@@ -73,7 +73,7 @@ text-align: justify}
 
 **Carregamento de pacotes:**
 
-Neste exemplo são utilizados os seguintes pacotes: *dplyr*, *magrittr*, *tibble*, *plotly* e *lmtest*. Para a confecção do documento html, é necessário o pacote *rmarkdown*.
+Neste exemplo são utilizados os seguintes pacotes: *dplyr*, *magrittr*, *tibble*, *broom*, *plotly* e *lmtest*. Para a confecção do documento html, é necessário o pacote *rmarkdown*.
 
 ```{r, message=FALSE, warning=FALSE}
 # dplyr -- para facilitar manipulacao de dados
@@ -85,11 +85,14 @@ if (!require('magrittr')) install.packages('magrittr'); library('magrittr')
 # tibble -- para facilitar manipulacao de dados
 if (!require('tibble')) install.packages('tibble'); library('tibble')
 
+# broom -- para facilitar manipulacao de dados
+if (!require('broom')) install.packages('broom'); library('broom')
+
 # plotly -- para os plots
 if (!require('plotly')) install.packages('plotly'); library('plotly')
 
 # lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
-if (!require('lmtest')) install.packages('plotly'); library('lmtest')
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
 
 ```
 
@@ -271,7 +274,7 @@ RegressionPlots <- function(fit, range.plt5){
     plotly::add_markers(y = ~Standardized.Residuals, name = "std.res", type = "scatter", mode = "markers", hoverinfo = "x+y", name = "Data",
             marker = list(size = 10, opacity = 0.5), showlegend = F) %>%
     plotly::add_lines(x = Theoretical.Quantiles, y = Theoretical.Quantiles, type="scatter", mode = "lines", name="qq") %>%
-    plotly::layout(title = "Standardized Residuals vs Theoretical Quantiles") # usar backgorund branco
+    plotly::layout(title = "Standardized Residuals vs Theoretical Quantiles") # usar background branco
   
   
   # a <- list(autotick = FALSE, ticks = "outside", tick0 = 0, dtick = 0.25, ticklen = 5, tickwidth = 2, tickcolor = toRGB("blue"))
@@ -283,7 +286,7 @@ RegressionPlots <- function(fit, range.plt5){
     plotly::add_markers(y = ~resp, name = "resp", data = fit$model, type = "scatter", mode = "markers", hoverinfo = "x+y", name = "Data",
             marker = list(size = 10, opacity = 0.5), showlegend = F) %>%
     #plotly::add_trace(x = c(0.15, .35), y= c(0.15, .35), mode = "lines", name="abline") %>% # ate 0.5 para a escala nao ficar ruim
-    plotly::add_trace(x = range.plt5, y= range.plt5, mode = "lines", name="abline") %>% # ate 0.5 para a escala nao ficar ruim
+    plotly::add_trace(x = range.plt5, y= range.plt5, mode = "lines", name="abline") %>% 
     plotly::layout(title = "Resp vs Fitted Values") # usar backgorund branco
   #ok!
   
@@ -453,7 +456,7 @@ summary(fit3)
 
 **Testes e demais estatísticas do modelo:**
 ```{r, message=FALSE, warning=FALSE}
-# logLik
+# -2logLik
 -2*logLik(fit3)
 
 # OR
@@ -481,7 +484,7 @@ anova(fit3,test="Rao")
 
 # criando obs artificiais para suavizar a curva
 x_limits <- challenger %>%
-  summarise(min = 30, max = max(temp)+2) # obtendo os limites do eixo x
+  dplyr::summarise(min = 30, max = max(temp)+2) # obtendo os limites do eixo x
 
 x <- seq(x_limits[[1]], x_limits[[2]], by=0.5) # criando varios ptos entre esses limites
 
