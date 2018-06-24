@@ -30,6 +30,8 @@ Esta página foi elaborada como parte do Trabalho Final da **Disciplina de Anál
 Nos links abaixo você encontrará exemplos com aplicações dos conceitos trabalhados na disciplina - todos implementados em linguagem **R**.
 
 
+<!-- {target="_blank"} -- serve para abrir o link em outra aba -->
+
 ---
 
 #### **Regressão Logística**
@@ -58,7 +60,7 @@ Nos links abaixo você encontrará exemplos com aplicações dos conceitos traba
 
 - [**Credo em vida após a morte**](https://allanvc.github.io/categorical_data_analysis/exemplos/afterlife/){target="_blank"}
 
-- [**Uso de álcoo, cigarro e maconha**](https://allanvc.github.io/categorical_data_analysis/exemplos/drugs/){target="_blank"}
+- [**Uso de álcool, cigarro e maconha**](https://allanvc.github.io/categorical_data_analysis/exemplos/drugs/){target="_blank"}
 
 ---
 
