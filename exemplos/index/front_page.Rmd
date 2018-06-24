@@ -34,35 +34,35 @@ Nos links abaixo você encontrará exemplos com aplicações dos conceitos traba
 
 #### **Regressão Logística**
 
-- [**Challenger**](https://allanvc.github.io/categorical_data_analysis/exemplos/challenger/)
+- [**Challenger**](https://allanvc.github.io/categorical_data_analysis/exemplos/challenger/){target="_blank"}
 
-- [**Beetles**](https://allanvc.github.io/categorical_data_analysis/exemplos/beetles/)
+- [**Beetles**](https://allanvc.github.io/categorical_data_analysis/exemplos/beetles/){target="_blank"}
 
-- [**Horseshoe Crabs**](https://allanvc.github.io/categorical_data_analysis/exemplos/crabs/)
+- [**Horseshoe Crabs**](https://allanvc.github.io/categorical_data_analysis/exemplos/crabs/){target="_blank"}
 
-- [**Renal**](https://allanvc.github.io/categorical_data_analysis/exemplos/renal/)
+- [**Renal**](https://allanvc.github.io/categorical_data_analysis/exemplos/renal/){target="_blank"}
 
 ---
 
 #### **Modelos Logito Multicategorizados**
 
-- [**Alligator**](https://allanvc.github.io/categorical_data_analysis/exemplos/alligator/)
+- [**Alligator**](https://allanvc.github.io/categorical_data_analysis/exemplos/alligator/){target="_blank"}
 
-- [**Ideologia**](https://allanvc.github.io/categorical_data_analysis/exemplos/ideologia/)
+- [**Ideologia**](https://allanvc.github.io/categorical_data_analysis/exemplos/ideologia/){target="_blank"}
 
-- [**Saúde Mental**](https://allanvc.github.io/categorical_data_analysis/exemplos/mental/)
+- [**Saúde Mental**](https://allanvc.github.io/categorical_data_analysis/exemplos/mental/){target="_blank"}
 
 ---
 
 #### **Modelos Log-Lineares**
 
-- [**Credo em vida após a morte**](https://allanvc.github.io/categorical_data_analysis/exemplos/afterlife/)
+- [**Credo em vida após a morte**](https://allanvc.github.io/categorical_data_analysis/exemplos/afterlife/){target="_blank"}
 
-- [**Uso de álcoo, cigarro e maconha**](https://allanvc.github.io/categorical_data_analysis/exemplos/drugs/)
+- [**Uso de álcoo, cigarro e maconha**](https://allanvc.github.io/categorical_data_analysis/exemplos/drugs/){target="_blank"}
 
 ---
 
 #### **Modelos para Dados Pareados**
 
-- [**Avaliação de Político**](https://allanvc.github.io/categorical_data_analysis/exemplos/politico/)
+- [**Avaliação de Político**](https://allanvc.github.io/categorical_data_analysis/exemplos/politico/){target="_blank"}
 
