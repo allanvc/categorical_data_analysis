@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira - 14/0128492" />
+<meta name="author" content="Caio Balena - 13/0104566" />
+<meta name="author" content="Frederico de Lucca - 15/0072139" />
+<meta name="author" content="José Cezário - 15/0072414" />
+
+<meta name="date" content="2018-06-24" />
+
+<title>Tabelas Tridimensionais - Uso de Álcool, Cigarro e Maconha</title>
+
+<script src="drugs-html_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="drugs-html_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="drugs-html_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="drugs-html_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="drugs-html_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="drugs-html_files/navigation-1.1/tabsets.js"></script>
+<script src="drugs-html_files/navigation-1.1/codefolding.js"></script>
+<link href="drugs-html_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="drugs-html_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore"><strong>Tabelas Tridimensionais - Uso de Álcool, Cigarro e Maconha</strong></h1>
+<h3 class="subtitle"><em>Modelos Log-Lineares - Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira - 14/0128492</em></h4>
+<h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
+<h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
+<h4 class="author"><em>José Cezário - 15/0072414</em></h4>
+<h4 class="date"><em>24 June 2018</em></h4>
+
+</div>
+
+
+<style>
+body{
+  text-align: justify
+}
+</style>
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+<hr />
+<hr />
+<p><strong>Carregamento dos dados:</strong></p>
+<pre class="r"><code>dados &lt;- array(data = c(911, 3, 44, 2, 538, 43, 456, 279),
+               dim = c(2,2,2),
+               dimnames = list(&quot;Alcohol&quot; = c(&quot;Yes&quot;,&quot;No&quot;),
+                               &quot;Cigarette&quot; = c(&quot;Yes&quot;,&quot;No&quot;),
+                               &quot;Marijuana&quot; = c(&quot;Yes&quot;,&quot;No&quot;)))
+ftable(dados, row.vars = c(&quot;Marijuana&quot;,&quot;Alcohol&quot;))</code></pre>
+<pre><code>##                   Cigarette Yes  No
+## Marijuana Alcohol                  
+## Yes       Yes               911  44
+##           No                  3   2
+## No        Yes               538 456
+##           No                 43 279</code></pre>
+<p>Verificando as frequências marginais:</p>
+<pre class="r"><code>addmargins(dados)</code></pre>
+<pre><code>## , , Marijuana = Yes
+## 
+##        Cigarette
+## Alcohol Yes No Sum
+##     Yes 911 44 955
+##     No    3  2   5
+##     Sum 914 46 960
+## 
+## , , Marijuana = No
+## 
+##        Cigarette
+## Alcohol Yes  No  Sum
+##     Yes 538 456  994
+##     No   43 279  322
+##     Sum 581 735 1316
+## 
+## , , Marijuana = Sum
+## 
+##        Cigarette
+## Alcohol  Yes  No  Sum
+##     Yes 1449 500 1949
+##     No    46 281  327
+##     Sum 1495 781 2276</code></pre>
+<p>Verificando as proporções ao longo das linhas:</p>
+<pre class="r"><code>prop.table(dados, margin = c(1,3))</code></pre>
+<pre><code>## , , Marijuana = Yes
+## 
+##        Cigarette
+## Alcohol       Yes        No
+##     Yes 0.9539267 0.0460733
+##     No  0.6000000 0.4000000
+## 
+## , , Marijuana = No
+## 
+##        Cigarette
+## Alcohol       Yes        No
+##     Yes 0.5412475 0.4587525
+##     No  0.1335404 0.8664596</code></pre>
+<p>Convertendo para o formato <em>data.frame</em> para usar a função <em>glm</em> e definindo o nível de referência como <em>No</em> para as três variáveis:</p>
+<pre class="r"><code>dados.df &lt;- as.data.frame(as.table(dados))
+dados.df[,-4] &lt;- lapply(dados.df[,-4], relevel, ref = &#39;No&#39;)
+dados.df</code></pre>
+<pre><code>##   Alcohol Cigarette Marijuana Freq
+## 1     Yes       Yes       Yes  911
+## 2      No       Yes       Yes    3
+## 3     Yes        No       Yes   44
+## 4      No        No       Yes    2
+## 5     Yes       Yes        No  538
+## 6      No       Yes        No   43
+## 7     Yes        No        No  456
+## 8      No        No        No  279</code></pre>
+<hr />
+<div id="modelos-log-lineares" class="section level3">
+<h3><strong>Modelos Log-Lineares</strong></h3>
+<hr />
+<p>Serão construídos os seguintes modelos:</p>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="29%" />
+<col width="58%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Notação</th>
+<th>Tipo de associação</th>
+<th>Modelo log-linear</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>(ACM)</td>
+<td>Associação conjunta</td>
+<td><span class="math inline">\(log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ} + \lambda_{jk}^{YZ} + \lambda_{ijk}^{XYZ}\)</span></td>
+</tr>
+<tr class="even">
+<td>(AC,AM,CM)</td>
+<td>Associação homogênea</td>
+<td><span class="math inline">\(log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ} + \lambda_{jk}^{YZ}\)</span></td>
+</tr>
+<tr class="odd">
+<td>(AC,AM), (AC,CM), (AM,CM)</td>
+<td>Independência condicional</td>
+<td><span class="math inline">\(log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ}\)</span></td>
+</tr>
+<tr class="even">
+<td>(A,CM), (C,AM), (M,AC)</td>
+<td>Independência conjunta</td>
+<td><span class="math inline">\(log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY}\)</span></td>
+</tr>
+<tr class="odd">
+<td>(A,C,M)</td>
+<td>Independência completa</td>
+<td><span class="math inline">\(log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z\)</span></td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>mod.ACM &lt;- glm(Freq ~ Cigarette*Marijuana*Alcohol, data = dados.df,
+               family = poisson(link = &#39;log&#39;))
+mod.AC.AM.CM &lt;- update(mod.ACM, .~. - Cigarette:Marijuana:Alcohol)
+mod.AC.AM &lt;- update(mod.AC.AM.CM, .~. - Cigarette:Marijuana)
+mod.AC.CM &lt;- update(mod.AC.AM.CM, .~. - Alcohol:Marijuana)
+mod.AM.CM &lt;- update(mod.AC.AM.CM, .~. - Cigarette:Alcohol)
+mod.A.CM &lt;- update(mod.AM.CM, .~. - Alcohol:Marijuana)
+mod.C.AM &lt;- update(mod.AC.AM, .~. - Cigarette:Alcohol)
+mod.M.AC &lt;- update(mod.AC.AM, .~. - Alcohol:Marijuana)
+mod.A.C.M &lt;- update(mod.M.AC, .~. - Cigarette:Alcohol)</code></pre>
+<p>As contagens estimadas para cada modelo podem ser acessadas usando a função <em>fitted</em>. Assim, pode-se resumir em um único <em>data.frame</em> as contagens estimadas para os modelos ajustados:</p>
+<pre class="r"><code>estimado &lt;- data.frame(dados.df[,-4],
+                       ACM = fitted(mod.ACM),
+                       AC.AM.CM = fitted(mod.AC.AM.CM),
+                       AC.AM = fitted(mod.AC.AM),
+                       AC.CM = fitted(mod.AC.CM),
+                       AM.CM = fitted(mod.AM.CM),
+                       A.CM = fitted(mod.A.CM),
+                       C.AM = fitted(mod.C.AM),
+                       M.AC = fitted(mod.M.AC),
+                       A.C.M = fitted(mod.A.C.M))
+estimado</code></pre>
+<pre><code>##   Alcohol Cigarette Marijuana ACM  AC.AM.CM       AC.AM     AC.CM
+## 1     Yes       Yes       Yes 911 910.38317 710.0025654 885.87692
+## 2      No       Yes       Yes   3   3.61683   0.7033639  28.12308
+## 3     Yes        No       Yes  44  44.61683 244.9974346  29.44942
+## 4      No        No       Yes   2   1.38317   4.2966361  16.55058
+## 5     Yes       Yes        No 538 538.61683 738.9974346 563.12308
+## 6      No       Yes        No  43  42.38317  45.2966361  17.87692
+## 7     Yes        No        No 456 455.38317 255.0025655 470.55058
+## 8      No        No        No 279 279.61683 276.7033639 264.44942
+##         AM.CM       A.CM       C.AM      M.AC     A.C.M
+## 1 909.2395833 782.682777 627.295694 611.17750 539.98258
+## 2   4.7604167 131.317223   3.284271  19.40246  90.59739
+## 3  45.7604167  39.391037 327.704306 210.89631 282.09123
+## 4   0.2395833   6.608963   1.715729 118.52373  47.32880
+## 5 438.8404255 497.525923 652.913005 837.82250 740.22612
+## 6 142.1595745  83.474077 211.507030  26.59754 124.19392
+## 7 555.1595745 629.400264 341.086995 289.10369 386.70007
+## 8 179.8404255 105.599736 110.492970 162.47627  64.87990</code></pre>
+<p>Para o modelo de independência condicional entre Álcool e Cigarro, controlado por Maconha (AM,CM), a razão de chances condicional para AC é a mesma nos dois níveis de M:</p>
+<pre class="r"><code>estimado.AM.CM &lt;- dados
+estimado.AM.CM[,,] &lt;- mod.AM.CM$fitted.values
+estimado.AM.CM</code></pre>
+<pre><code>## , , Marijuana = Yes
+## 
+##        Cigarette
+## Alcohol        Yes         No
+##     Yes 909.239583 45.7604167
+##     No    4.760417  0.2395833
+## 
+## , , Marijuana = No
+## 
+##        Cigarette
+## Alcohol      Yes       No
+##     Yes 438.8404 555.1596
+##     No  142.1596 179.8404</code></pre>
+<pre class="r"><code>OR &lt;- function(x){x[1,1]*x[2,2]/(x[2,1]*x[1,2])}
+apply(estimado.AM.CM,&#39;Marijuana&#39;,OR) #AC|M</code></pre>
+<pre><code>## Yes  No 
+##   1   1</code></pre>
+<p>A razão de chances marginal para AC deve desconsiderar M do modelo, ou seja,</p>
+<pre class="r"><code>marginal &lt;- rowSums(estimado.AM.CM, dims = 2)
+OR(marginal)</code></pre>
+<pre><code>## [1] 2.749689</code></pre>
+<p>Calculando as razões de chances condicionais nos modelos ajustados:</p>
+<pre class="r"><code>modelos &lt;- list(ACM = mod.ACM,
+                AC.AM.CM = mod.AC.AM.CM,
+                AC.AM = mod.AC.AM,
+                AC.CM = mod.AC.CM,
+                AM.CM = mod.AM.CM,
+                A.CM = mod.A.CM,
+                C.AM = mod.C.AM,
+                M.AC = mod.M.AC,
+                A.C.M = mod.A.C.M)
+
+ORC &lt;- function(x,condicional){
+  est &lt;- dados
+  est[,,] &lt;- fitted(x)
+  odds.ratio &lt;- apply(est,condicional,OR)
+  return(odds.ratio)
+}</code></pre>
+<pre class="r"><code>orc.AC_M &lt;- lapply(modelos,ORC,&#39;Marijuana&#39;) #AC|M
+orc.AC_M</code></pre>
+<pre><code>## $ACM
+##       Yes        No 
+## 13.803030  7.655141 
+## 
+## $AC.AM.CM
+##      Yes       No 
+## 7.803201 7.803201 
+## 
+## $AC.AM
+##    Yes     No 
+## 17.703 17.703 
+## 
+## $AC.CM
+##    Yes     No 
+## 17.703 17.703 
+## 
+## $AM.CM
+## Yes  No 
+##   1   1 
+## 
+## $A.CM
+## Yes  No 
+##   1   1 
+## 
+## $C.AM
+## Yes  No 
+##   1   1 
+## 
+## $M.AC
+##    Yes     No 
+## 17.703 17.703 
+## 
+## $A.C.M
+## Yes  No 
+##   1   1</code></pre>
+<pre class="r"><code>orc.AM_c &lt;- lapply(modelos,ORC,&#39;Cigarette&#39;) #AM|C
+orc.AM_c</code></pre>
+<pre><code>## $ACM
+##      Yes       No 
+## 24.27076 13.46053 
+## 
+## $AC.AM.CM
+##      Yes       No 
+## 19.80658 19.80658 
+## 
+## $AC.AM
+##      Yes       No 
+## 61.87324 61.87324 
+## 
+## $AC.CM
+## Yes  No 
+##   1   1 
+## 
+## $AM.CM
+##      Yes       No 
+## 61.87324 61.87324 
+## 
+## $A.CM
+## Yes  No 
+##   1   1 
+## 
+## $C.AM
+##      Yes       No 
+## 61.87324 61.87324 
+## 
+## $M.AC
+## Yes  No 
+##   1   1 
+## 
+## $A.C.M
+## Yes  No 
+##   1   1</code></pre>
+<pre class="r"><code>orc.CM_A &lt;- lapply(modelos,ORC,&#39;Alcohol&#39;) #CM|A
+orc.CM_A</code></pre>
+<pre><code>## $ACM
+##       Yes        No 
+## 17.548834  9.732558 
+## 
+## $AC.AM.CM
+##      Yes       No 
+## 17.25133 17.25133 
+## 
+## $AC.AM
+## Yes  No 
+##   1   1 
+## 
+## $AC.CM
+##     Yes      No 
+## 25.1362 25.1362 
+## 
+## $AM.CM
+##     Yes      No 
+## 25.1362 25.1362 
+## 
+## $A.CM
+##     Yes      No 
+## 25.1362 25.1362 
+## 
+## $C.AM
+## Yes  No 
+##   1   1 
+## 
+## $M.AC
+## Yes  No 
+##   1   1 
+## 
+## $A.C.M
+## Yes  No 
+##   1   1</code></pre>
+<p>Calculando as razões de chances marginais nos modelos ajustados:</p>
+<pre class="r"><code>ORM &lt;- function(x,condicional){
+  est &lt;- dados
+  est[,,] &lt;- fitted(x)
+  est &lt;- aperm(est,condicional)
+  odds.ratio&lt;- OR(rowSums(est, dims = 2))
+  return(odds.ratio)
+}</code></pre>
+<pre class="r"><code>orm.AC_M &lt;- lapply(modelos,ORM,c(1,2,3)) #AC
+orm.AC_M</code></pre>
+<pre><code>## $ACM
+## [1] 17.703
+## 
+## $AC.AM.CM
+## [1] 17.703
+## 
+## $AC.AM
+## [1] 17.703
+## 
+## $AC.CM
+## [1] 17.703
+## 
+## $AM.CM
+## [1] 2.749689
+## 
+## $A.CM
+## [1] 1
+## 
+## $C.AM
+## [1] 1
+## 
+## $M.AC
+## [1] 17.703
+## 
+## $A.C.M
+## [1] 1</code></pre>
+<pre class="r"><code>orm.AM_c &lt;- lapply(modelos,ORM,c(1,3,2)) #AM
+orm.AM_c</code></pre>
+<pre><code>## $ACM
+## [1] 61.87324
+## 
+## $AC.AM.CM
+## [1] 61.87324
+## 
+## $AC.AM
+## [1] 61.87324
+## 
+## $AC.CM
+## [1] 5.59619
+## 
+## $AM.CM
+## [1] 61.87324
+## 
+## $A.CM
+## [1] 1
+## 
+## $C.AM
+## [1] 61.87324
+## 
+## $M.AC
+## [1] 1
+## 
+## $A.C.M
+## [1] 1</code></pre>
+<pre class="r"><code>orm.CM_A &lt;- lapply(modelos,ORM,c(2,3,1)) #CM
+orm.CM_A</code></pre>
+<pre><code>## $ACM
+## [1] 25.1362
+## 
+## $AC.AM.CM
+## [1] 25.1362
+## 
+## $AC.AM
+## [1] 1.932727
+## 
+## $AC.CM
+## [1] 25.1362
+## 
+## $AM.CM
+## [1] 25.1362
+## 
+## $A.CM
+## [1] 25.1362
+## 
+## $C.AM
+## [1] 1
+## 
+## $M.AC
+## [1] 1
+## 
+## $A.C.M
+## [1] 1</code></pre>
+<p>Os valores estimados dos parâmetros podem ser usados para obter as razões de chances condicionais. Por exemplo, para o modelo (AM,CM), tem-se:</p>
+<pre class="r"><code>summary(mod.AM.CM)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Freq ~ Cigarette + Marijuana + Alcohol + Cigarette:Marijuana + 
+##     Marijuana:Alcohol, family = poisson(link = &quot;log&quot;), data = dados.df)
+## 
+## Deviance Residuals: 
+##       1        2        3        4        5        6        7        8  
+##  0.0584  -0.8663  -0.2619   2.2287   4.5702  -9.7716  -4.3441   6.8353  
+## 
+## Coefficients:
+##                           Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)                5.19207    0.06088  85.285  &lt; 2e-16 ***
+## CigaretteYes              -0.23512    0.05551  -4.235 2.28e-05 ***
+## MarijuanaYes              -6.62092    0.47370 -13.977  &lt; 2e-16 ***
+## AlcoholYes                 1.12719    0.06412  17.579  &lt; 2e-16 ***
+## CigaretteYes:MarijuanaYes  3.22431    0.16098  20.029  &lt; 2e-16 ***
+## MarijuanaYes:AlcoholYes    4.12509    0.45294   9.107  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 2851.46  on 7  degrees of freedom
+## Residual deviance:  187.75  on 2  degrees of freedom
+## AIC: 248.8
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<pre class="r"><code>coeficientes &lt;- mod.AM.CM$coefficients
+coeficientes</code></pre>
+<pre><code>##               (Intercept)              CigaretteYes 
+##                 5.1920699                -0.2351197 
+##              MarijuanaYes                AlcoholYes 
+##                -6.6209239                 1.1271857 
+## CigaretteYes:MarijuanaYes   MarijuanaYes:AlcoholYes 
+##                 3.2243089                 4.1250878</code></pre>
+<p>A razão de chances condicional para AC no modelo (AM,CM) é <span class="math inline">\(e^{0} = 1\)</span>.</p>
+<p>A razão de chances condicional para AM no modelo (AM,CM) é <span class="math inline">\(e^{4.125} = 61.873\)</span>.</p>
+<p>A razão de chances condicional para CM no modelo (AM,CM) é <span class="math inline">\(e^{3.224} = 25.136\)</span>.</p>
+<hr />
+<div id="qualidade-do-ajuste" class="section level4">
+<h4><strong>Qualidade do ajuste</strong></h4>
+<p>As estatísticas <span class="math inline">\(\chi^2\)</span> e <span class="math inline">\(G^2\)</span> podem ser usadas para comparar os valores observados com os ajustados (para grandes amostras).</p>
+<p>Uma razão elevada para <span class="math inline">\(\chi^2/gl\)</span> e <span class="math inline">\(G^2/gl\)</span>, com <span class="math inline">\(gl\)</span>: número de graus de liberdade (diferença entre o número de células e o número de parâmetros no modelo), indica rejeição de <strong><span class="math inline">\(H_0\)</span>: Modelo log-linear é adequado</strong>.</p>
+<p>Para os modelos ajustados, tem-se:</p>
+<pre class="r"><code>GoF &lt;- function(x){
+  G2 &lt;- round(x$deviance, 1)
+  X2 &lt;- round(sum(resid(x, type = &quot;pearson&quot;)^2), 1)
+  df &lt;- round(x$df.residual, 1)
+  p.valor &lt;- round(1 - pchisq(G2,df), 1)
+  AIC &lt;- round(x$aic, 1)
+  return(c(G2 = G2, X2 = X2, gl = df, p.valor.G2 = p.valor, AIC = AIC))
+}
+
+QdA &lt;- lapply(modelos, GoF)
+t(rbind.data.frame(QdA))</code></pre>
+<pre><code>##              G2     X2 gl p.valor.G2    AIC
+## ACM         0.0    0.0  0        1.0   65.0
+## AC.AM.CM    0.4    0.4  1        0.5   63.4
+## AC.AM     497.4  443.8  2        0.0  558.4
+## AC.CM      92.0   80.8  2        0.0  153.1
+## AM.CM     187.8  177.6  2        0.0  248.8
+## A.CM      534.2  505.6  3        0.0  593.3
+## C.AM      939.6  824.2  3        0.0  998.6
+## M.AC      843.8  704.9  3        0.0  902.9
+## A.C.M    1286.0 1411.4  4        0.0 1343.1</code></pre>
+<hr />
+<hr />
+</div>
+</div>
+<div id="referencias-bibliograficas" class="section level3">
+<h3><strong>Referências Bibliográficas</strong></h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

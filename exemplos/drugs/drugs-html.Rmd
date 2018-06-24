@@ -1,0 +1,236 @@
+---
+title: '**Tabelas Tridimensionais - Uso de Álcool, Cigarro e Maconha**'
+subtitle: 'Modelos Log-Lineares - Análise de Dados Categorizados - Prova 3'
+author:
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: no
+---
+
+<style>
+body{
+  text-align: justify
+}
+</style>
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+
+---
+
+---
+
+**Carregamento dos dados:**
+
+```{r, message=FALSE, warning=FALSE}
+dados <- array(data = c(911, 3, 44, 2, 538, 43, 456, 279),
+               dim = c(2,2,2),
+               dimnames = list("Alcohol" = c("Yes","No"),
+                               "Cigarette" = c("Yes","No"),
+                               "Marijuana" = c("Yes","No")))
+ftable(dados, row.vars = c("Marijuana","Alcohol"))
+```
+
+Verificando as frequências marginais:
+```{r, message=FALSE, warning=FALSE}
+addmargins(dados)
+```
+
+Verificando as proporções ao longo das linhas:
+```{r, message=FALSE, warning=FALSE}
+prop.table(dados, margin = c(1,3))
+```
+
+Convertendo para o formato *data.frame* para usar a função *glm* e definindo o nível de referência como *No* para as três variáveis:
+```{r, message=FALSE, warning=FALSE}
+dados.df <- as.data.frame(as.table(dados))
+dados.df[,-4] <- lapply(dados.df[,-4], relevel, ref = 'No')
+dados.df
+```
+
+---
+
+### **Modelos Log-Lineares**
+
+---
+
+Serão construídos os seguintes modelos:
+
+
+Notação   | Tipo de associação     | Modelo log-linear
+----------|------------------------|-------------------------------------------------
+(ACM) | Associação conjunta | $log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ} + \lambda_{jk}^{YZ} + \lambda_{ijk}^{XYZ}$
+(AC,AM,CM) | Associação homogênea | $log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ} + \lambda_{jk}^{YZ}$
+(AC,AM), (AC,CM), (AM,CM) | Independência condicional | $log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY} + \lambda_{ik}^{XZ}$
+(A,CM), (C,AM), (M,AC) | Independência conjunta | $log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z + \lambda_{ij}^{XY}$
+(A,C,M) | Independência completa | $log(\mu_{ijk}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_k^Z$
+
+```{r, message=FALSE, warning=FALSE}
+mod.ACM <- glm(Freq ~ Cigarette*Marijuana*Alcohol, data = dados.df,
+               family = poisson(link = 'log'))
+mod.AC.AM.CM <- update(mod.ACM, .~. - Cigarette:Marijuana:Alcohol)
+mod.AC.AM <- update(mod.AC.AM.CM, .~. - Cigarette:Marijuana)
+mod.AC.CM <- update(mod.AC.AM.CM, .~. - Alcohol:Marijuana)
+mod.AM.CM <- update(mod.AC.AM.CM, .~. - Cigarette:Alcohol)
+mod.A.CM <- update(mod.AM.CM, .~. - Alcohol:Marijuana)
+mod.C.AM <- update(mod.AC.AM, .~. - Cigarette:Alcohol)
+mod.M.AC <- update(mod.AC.AM, .~. - Alcohol:Marijuana)
+mod.A.C.M <- update(mod.M.AC, .~. - Cigarette:Alcohol)
+```
+
+As contagens estimadas para cada modelo podem ser acessadas usando a função *fitted*. Assim, pode-se resumir em um único *data.frame* as contagens estimadas para os modelos ajustados:
+```{r, message=FALSE, warning=FALSE}
+estimado <- data.frame(dados.df[,-4],
+                       ACM = fitted(mod.ACM),
+                       AC.AM.CM = fitted(mod.AC.AM.CM),
+                       AC.AM = fitted(mod.AC.AM),
+                       AC.CM = fitted(mod.AC.CM),
+                       AM.CM = fitted(mod.AM.CM),
+                       A.CM = fitted(mod.A.CM),
+                       C.AM = fitted(mod.C.AM),
+                       M.AC = fitted(mod.M.AC),
+                       A.C.M = fitted(mod.A.C.M))
+estimado
+```
+
+Para o modelo de independência condicional entre Álcool e Cigarro, controlado por Maconha (AM,CM), a razão de chances condicional para AC é a mesma nos dois níveis de M:
+```{r, message=FALSE, warning=FALSE}
+estimado.AM.CM <- dados
+estimado.AM.CM[,,] <- mod.AM.CM$fitted.values
+estimado.AM.CM
+OR <- function(x){x[1,1]*x[2,2]/(x[2,1]*x[1,2])}
+apply(estimado.AM.CM,'Marijuana',OR) #AC|M
+```
+
+A razão de chances marginal para AC deve desconsiderar M do modelo, ou seja,
+```{r, message=FALSE, warning=FALSE}
+marginal <- rowSums(estimado.AM.CM, dims = 2)
+OR(marginal)
+```
+
+Calculando as razões de chances condicionais nos modelos ajustados:
+```{r, message=FALSE, warning=FALSE}
+modelos <- list(ACM = mod.ACM,
+                AC.AM.CM = mod.AC.AM.CM,
+                AC.AM = mod.AC.AM,
+                AC.CM = mod.AC.CM,
+                AM.CM = mod.AM.CM,
+                A.CM = mod.A.CM,
+                C.AM = mod.C.AM,
+                M.AC = mod.M.AC,
+                A.C.M = mod.A.C.M)
+
+ORC <- function(x,condicional){
+  est <- dados
+  est[,,] <- fitted(x)
+  odds.ratio <- apply(est,condicional,OR)
+  return(odds.ratio)
+}
+```
+
+```{r, message=FALSE, warning=FALSE}
+orc.AC_M <- lapply(modelos,ORC,'Marijuana') #AC|M
+orc.AC_M
+```
+
+```{r, message=FALSE, warning=FALSE}
+orc.AM_c <- lapply(modelos,ORC,'Cigarette') #AM|C
+orc.AM_c
+```
+
+```{r, message=FALSE, warning=FALSE}
+orc.CM_A <- lapply(modelos,ORC,'Alcohol') #CM|A
+orc.CM_A
+```
+
+Calculando as razões de chances marginais nos modelos ajustados:
+```{r, message=FALSE, warning=FALSE}
+ORM <- function(x,condicional){
+  est <- dados
+  est[,,] <- fitted(x)
+  est <- aperm(est,condicional)
+  odds.ratio<- OR(rowSums(est, dims = 2))
+  return(odds.ratio)
+}
+```
+
+```{r, message=FALSE, warning=FALSE}
+orm.AC_M <- lapply(modelos,ORM,c(1,2,3)) #AC
+orm.AC_M
+```
+
+```{r, message=FALSE, warning=FALSE}
+orm.AM_c <- lapply(modelos,ORM,c(1,3,2)) #AM
+orm.AM_c
+```
+
+```{r, message=FALSE, warning=FALSE}
+orm.CM_A <- lapply(modelos,ORM,c(2,3,1)) #CM
+orm.CM_A
+```
+
+Os valores estimados dos parâmetros podem ser usados para obter as razões de chances condicionais. Por exemplo, para o modelo (AM,CM), tem-se:
+```{r, message=FALSE, warning=FALSE}
+summary(mod.AM.CM)
+coeficientes <- mod.AM.CM$coefficients
+coeficientes
+```
+
+A razão de chances condicional para AC no modelo (AM,CM) é $e^{0} = `r round(exp(0), 3)`$.
+
+A razão de chances condicional para AM no modelo (AM,CM) é $e^{`r round(coeficientes[6], 3)`} = `r round(exp(coeficientes[6]), 3)`$.
+
+A razão de chances condicional para CM no modelo (AM,CM) é $e^{`r round(coeficientes[5], 3)`} = `r round(exp(coeficientes[5]), 3)`$.
+
+
+---
+
+#### **Qualidade do ajuste**
+
+As estatísticas $\chi^2$ e $G^2$ podem ser usadas para comparar os valores observados com os ajustados (para grandes amostras).
+
+Uma razão elevada para $\chi^2/gl$ e $G^2/gl$, com $gl$: número de graus de liberdade (diferença entre o número de células e o número de parâmetros no modelo), indica rejeição de **$H_0$: Modelo log-linear é adequado**.
+
+Para os modelos ajustados, tem-se:
+```{r, message=FALSE, warning=FALSE}
+GoF <- function(x){
+  G2 <- round(x$deviance, 1)
+  X2 <- round(sum(resid(x, type = "pearson")^2), 1)
+  df <- round(x$df.residual, 1)
+  p.valor <- round(1 - pchisq(G2,df), 1)
+  AIC <- round(x$aic, 1)
+  return(c(G2 = G2, X2 = X2, gl = df, p.valor.G2 = p.valor, AIC = AIC))
+}
+
+QdA <- lapply(modelos, GoF)
+t(rbind.data.frame(QdA))
+```
+
+---
+
+---
+
+### **Referências Bibliográficas**
+
+---
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---

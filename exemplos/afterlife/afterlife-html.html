@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira - 14/0128492" />
+<meta name="author" content="Caio Balena - 13/0104566" />
+<meta name="author" content="Frederico de Lucca - 15/0072139" />
+<meta name="author" content="José Cezário - 15/0072414" />
+
+
+<title>Tabelas Bidimensionais - Credo na vida após a morte</title>
+
+<script src="afterlife-html_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="afterlife-html_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="afterlife-html_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="afterlife-html_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="afterlife-html_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="afterlife-html_files/navigation-1.1/tabsets.js"></script>
+<script src="afterlife-html_files/navigation-1.1/codefolding.js"></script>
+<link href="afterlife-html_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="afterlife-html_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore"><strong>Tabelas Bidimensionais - Credo na vida após a morte</strong></h1>
+<h3 class="subtitle"><em>Modelos Log-Lineares - Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira - 14/0128492</em></h4>
+<h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
+<h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
+<h4 class="author"><em>José Cezário - 15/0072414</em></h4>
+<h4 class="date"><em>24 June de 2018</em></h4>
+
+</div>
+
+
+<style>
+body{
+  text-align: justify
+}
+</style>
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+<hr />
+<hr />
+<p><strong>Carregamento dos dados:</strong></p>
+<pre class="r"><code>dados &lt;- array(data = c(1339, 260, 88, 300, 55, 22),
+               dim = c(3, 2),
+               dimnames = list(&#39;Race&#39; = c(&#39;White&#39;, &#39;Black&#39;, &#39;Others&#39;),
+                               &#39;Belief&#39; = c(&#39;Yes&#39;, &#39;No&#39;)))
+dados</code></pre>
+<pre><code>##         Belief
+## Race      Yes  No
+##   White  1339 300
+##   Black   260  55
+##   Others   88  22</code></pre>
+<p>Verificando as frequências marginais:</p>
+<pre class="r"><code>addmargins(dados)</code></pre>
+<pre><code>##         Belief
+## Race      Yes  No  Sum
+##   White  1339 300 1639
+##   Black   260  55  315
+##   Others   88  22  110
+##   Sum    1687 377 2064</code></pre>
+<p>Verificando as proporções ao longo das linhas:</p>
+<pre class="r"><code>prop.table(dados, margin = 1)</code></pre>
+<pre><code>##         Belief
+## Race           Yes        No
+##   White  0.8169616 0.1830384
+##   Black  0.8253968 0.1746032
+##   Others 0.8000000 0.2000000</code></pre>
+<p>Convertendo para o formato <em>data.frame</em> para usar a função <em>glm</em> e definindo o último nível como nível de referência:</p>
+<pre class="r"><code>dados.df &lt;- as.data.frame(as.table(dados))
+dados.df$Race &lt;- relevel(dados.df$Race, ref = &#39;Others&#39;)
+dados.df$Belief &lt;- relevel(dados.df$Belief, ref = &#39;No&#39;)
+dados.df</code></pre>
+<pre><code>##     Race Belief Freq
+## 1  White    Yes 1339
+## 2  Black    Yes  260
+## 3 Others    Yes   88
+## 4  White     No  300
+## 5  Black     No   55
+## 6 Others     No   22</code></pre>
+<hr />
+<div id="modelo-de-independencia" class="section level3">
+<h3>Modelo de Independência</h3>
+<hr />
+<p>Construindo o modelo log-linear de independência da forma <span class="math inline">\(log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y \quad i = 1,2,3 \quad j = 1,2\)</span>, com <span class="math inline">\(\lambda\)</span>: efeito geral, <span class="math inline">\(\lambda_i^X\)</span>: efeito marginal da raça (1: White, 2: Black, 3: Others) e <span class="math inline">\(\lambda_j^Y\)</span>: efeito marginal da crença (1: Yes, 2: No), tem-se:</p>
+<pre class="r"><code>mod.ind &lt;- glm(Freq ~ Race + Belief, data = dados.df, family = poisson(link = &#39;log&#39;))
+summary(mod.ind)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Freq ~ Race + Belief, family = poisson(link = &quot;log&quot;), 
+##     data = dados.df)
+## 
+## Deviance Residuals: 
+##        1         2         3         4         5         6  
+## -0.01717   0.15781  -0.20194   0.03631  -0.33688   0.41917  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  3.00032    0.10611   28.28   &lt;2e-16 ***
+## RaceWhite    2.70136    0.09849   27.43   &lt;2e-16 ***
+## RaceBlack    1.05209    0.11075    9.50   &lt;2e-16 ***
+## BeliefYes    1.49846    0.05697   26.30   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 2849.21758  on 5  degrees of freedom
+## Residual deviance:    0.35649  on 2  degrees of freedom
+## AIC: 49.437
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre class="r"><code>coeficientes &lt;- summary(mod.ind)$coef</code></pre>
+<p>O R utiliza restrições do tipo <em>set-to-zero</em> (codificação dummy), definindo por construção o nível de referência igual a zero e portanto, não mostrando seu valor junto aos coeficientes estimados.</p>
+<p>Para o modelo log-linear de independência, com restrição <em>set-to-zero</em> no último nível (referência), os coeficientes estimados são <span class="math inline">\(\lambda^X_1\)</span> = 2.7013612, <span class="math inline">\(\lambda^X_2\)</span> = 1.0520923, <span class="math inline">\(\lambda^X_3\)</span> = 0 (referência), <span class="math inline">\(\lambda^Y_1\)</span> = 1.4984619 e <span class="math inline">\(\lambda^Y_2\)</span> = 0 (referência).</p>
+<p>Assim, a chance estimada de crença em vida após a morte é igual a <span class="math inline">\(e^{\lambda^Y_1} = e^{1.498} = 4.475\)</span>.</p>
+<p>Como foi usado um modelo de independência, a razão de chance é igual a 1 para toda sub-tabela 2x2 das contagens estimadas:</p>
+<pre class="r"><code>estimado &lt;- dados
+estimado[,] &lt;- mod.ind$fitted.values
+estimado</code></pre>
+<pre><code>##         Belief
+## Race            Yes        No
+##   White  1339.62839 299.37161
+##   Black   257.46366  57.53634
+##   Others   89.90795  20.09205</code></pre>
+<pre class="r"><code>estimado[1,1]*estimado[2,2]/(estimado[2,1]*estimado[1,2])</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>estimado[1,1]*estimado[3,2]/(estimado[3,1]*estimado[1,2])</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>estimado[2,1]*estimado[3,2]/(estimado[3,1]*estimado[2,2])</code></pre>
+<pre><code>## [1] 1</code></pre>
+<hr />
+<div id="qualidade-do-ajuste" class="section level4">
+<h4><strong>Qualidade do ajuste:</strong></h4>
+<p>A estatística <span class="math inline">\(G^2\)</span> é mostrada diretamente no resultado do modelo ajustado:</p>
+<pre class="r"><code>G2 &lt;- mod.ind$deviance # estatística G2
+G2</code></pre>
+<pre><code>## [1] 0.3564851</code></pre>
+<pre class="r"><code>G2.df &lt;- mod.ind$df.residual # graus de liberdade
+G2.df</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>G2.pv &lt;- 1 - pchisq(G2, G2.df) # p-valor
+G2.pv</code></pre>
+<pre><code>## [1] 0.8367395</code></pre>
+<pre class="r"><code>G2/G2.df</code></pre>
+<pre><code>## [1] 0.1782425</code></pre>
+<p>A estatística <span class="math inline">\(\chi^2\)</span> pode ser obtida fazendo:</p>
+<pre class="r"><code>X2 &lt;- sum(resid(mod.ind, type = &quot;pearson&quot;)^2) # estatística X2
+X2</code></pre>
+<pre><code>## [1] 0.3600752</code></pre>
+<pre class="r"><code>X2.df &lt;- mod.ind$df.residual # graus de liberdade
+X2.df</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>X2.pv &lt;- 1 - pchisq(X2, X2.df) # p-valor
+X2.pv</code></pre>
+<pre><code>## [1] 0.8352388</code></pre>
+<pre class="r"><code>X2/X2.df</code></pre>
+<pre><code>## [1] 0.1800376</code></pre>
+<hr />
+</div>
+</div>
+<div id="modelo-saturado" class="section level3">
+<h3><strong>Modelo Saturado</strong></h3>
+<hr />
+<p>Construindo o modelo log-linear saturado da forma <span class="math inline">\(log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_{ij}^{XY} \quad i = 1,2,3 \quad j = 1,2\)</span>, com <span class="math inline">\(\lambda\)</span>: efeito geral, <span class="math inline">\(\lambda_i^X\)</span>: efeito marginal da raça (1: White, 2: Black, 3: Others), <span class="math inline">\(\lambda_j^Y\)</span>: efeito marginal da crença (1: Yes, 2: No) e <span class="math inline">\(\lambda_{ij}^{XY}\)</span>: parâmetros de associação que refletem o desvio de independência, tem-se:</p>
+<pre class="r"><code>mod.sat &lt;- glm(Freq ~ Race*Belief, data = dados.df, family = poisson(link = &#39;log&#39;))
+summary(mod.sat)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Freq ~ Race * Belief, family = poisson(link = &quot;log&quot;), 
+##     data = dados.df)
+## 
+## Deviance Residuals: 
+## [1]  0  0  0  0  0  0
+## 
+## Coefficients:
+##                     Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)           3.0910     0.2132  14.498  &lt; 2e-16 ***
+## RaceWhite             2.6127     0.2209  11.829  &lt; 2e-16 ***
+## RaceBlack             0.9163     0.2523   3.632 0.000281 ***
+## BeliefYes             1.3863     0.2384   5.816 6.03e-09 ***
+## RaceWhite:BeliefYes   0.1096     0.2468   0.444 0.656946    
+## RaceBlack:BeliefYes   0.1671     0.2808   0.595 0.551889    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance:  2.8492e+03  on 5  degrees of freedom
+## Residual deviance: -9.4813e-14  on 0  degrees of freedom
+## AIC: 53.081
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre class="r"><code>coeficientes &lt;- summary(mod.sat)$coef</code></pre>
+<p>A razão de chances estimada entre crença e raça é igual a <span class="math inline">\(e^{\lambda^{XY}_{11}} = e^{0.1096} = 1.1158\)</span> para brancos e outros e <span class="math inline">\(e^{\lambda^{XY}_{21}} = e^{0.1671} = 1.1818\)</span>.</p>
+<p>Assim, a razão de chances estimada entre crença e raça é igual a <span class="math inline">\(e^{\lambda^{XY}_{11} - \lambda^{XY}_{21}} = e^{-0.0575} = 0.9442\)</span> para brancos e negros.</p>
+<p>Para o modelo saturado, as estatísticas <span class="math inline">\(\chi^2\)</span> e <span class="math inline">\(G^2\)</span> são nulas, com número de graus de liberdade igual a zero.</p>
+<hr />
+<hr />
+</div>
+<div id="referencias-bibliograficas" class="section level3">
+<h3><strong>Referências Bibliográficas</strong></h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
