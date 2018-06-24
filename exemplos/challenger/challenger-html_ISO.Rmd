@@ -1,0 +1,616 @@
+---
+title: "**Challenger** "
+subtitle: "Regressão Logística - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+
+
+<!-- ```{r, echo=FALSE} -->
+
+<!-- htmltools::img(src = knitr::image_uri(file.path(R.home("doc"), "html", "logo.jpg")),  -->
+<!--                alt = 'logo',  -->
+<!--                style = 'position:absolute; top:0; right:0; padding:1px;') -->
+
+<!-- ``` -->
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *dplyr*, *magrittr*, *tibble*, *broom*, *plotly* e *lmtest*. Para a confecção do documento html, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# dplyr -- para facilitar manipulacao de dados
+if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+
+# magrittr -- para facilitar manipulacao de dados
+if (!require('magrittr')) install.packages('magrittr'); library('magrittr')
+
+# tibble -- para facilitar manipulacao de dados
+if (!require('tibble')) install.packages('tibble'); library('tibble')
+
+# broom -- para facilitar manipulacao de dados
+if (!require('broom')) install.packages('broom'); library('broom')
+
+# plotly -- para os plots
+if (!require('plotly')) install.packages('plotly'); library('plotly')
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+```
+
+
+
+**Carregamento dos dados:**
+
+```{r, message=FALSE, warning=FALSE}
+falhas <- c(2, 0, 0, 1, 0, 0, 1, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0)
+
+temp <- c(53, 66, 68, 70, 75, 78, 57, 67, 69, 70, 75, 79, 58, 67, 70, 72, 76, 80, 63, 67, 70, 73, 76)
+
+challenger <- tibble::data_frame(falhas, temp)
+
+challenger
+
+```
+
+
+
+\s\s
+
+**Plot:**
+
+```{r, fig.width=9}
+
+
+plotly_pallette <- c('#1F77B4', '#FF7F0E', '#2CA02C')#, '#D62728')
+
+# library(ggplot2)
+p1 <- challenger %>%
+  ggplot()+
+  geom_point(aes(x = temp, y = falhas, colour = factor(falhas)))+
+  labs(x="Temperature", y="Falhas")+
+  ggtitle("Análises do Space Shuttle Data")+
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+  theme(plot.title = element_text(hjust=0.5))
+
+plotly::ggplotly(p1)
+
+```
+
+
+---
+
+\s\s
+
+\s\s
+
+---
+
+### Análises Incorretas 
+
+---
+
+#### Análise Incorreta 1 - Regressão Linear **SEM** zeros
+
+**Dados:**
+```{r, message=FALSE, warning=FALSE}
+
+# removendo os zeros
+challenger2 <- challenger %>%
+  dplyr::filter(falhas != 0)
+  
+challenger2
+
+
+```
+
+
+**Plot:**
+```{r, fig.width=9}
+
+plotly_pallette <- c('#1F77B4', '#FF7F0E', '#2CA02C')#, '#D62728')
+
+# library(ggplot2)
+p2 <- challenger2 %>%
+  ggplot()+
+  geom_point(aes(x = temp, y = falhas, colour = factor(falhas)))+
+  labs(x="Temperature", y="Falhas")+
+  ggtitle("Análises do Space Shuttle Data - Análise Incorreta 1 - Dados SEM zeros")+
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+  theme(plot.title = element_text(hjust=0.5))
+
+plotly::ggplotly(p2)
+
+
+```
+
+\s\s
+
+**Modelo de Regressão Linear SEM zeros:**
+```{r, message=FALSE, warning=FALSE}
+
+orings = 6
+challenger2 <- challenger2 %>%
+  dplyr::mutate(resp = falhas/orings)
+
+# sum of squares
+aov(resp ~ temp, data = challenger2)
+
+# regressao
+fit1 <- lm(resp ~ temp, data = challenger2)
+summary(fit1)
+
+```
+
+\s\s
+
+**Plot:**
+
+```{r, fig.width=9}
+
+
+
+plotly_pallette <- c('#1F77B4', '#FF7F0E', '#2CA02C')#, '#D62728')
+
+# library(ggplot2)
+p3 <- challenger2 %>%
+  ggplot()+
+  # geom_point(aes(x = temp, y = falhas, colour = factor(falhas)))+
+  geom_point(aes(x = temp, y = resp), colour = plotly_pallette[1])+
+  geom_line(aes(x=temp, y = fitted(fit1)), colour = plotly_pallette[2])+
+  labs(x="Temperature", y="Prob. Estimada de Falha")+
+  ggtitle("NASA Space Shuttle O-Ring Failures - Erro 1")+
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+  theme(plot.title = element_text(hjust=0.5))
+
+plotly::ggplotly(p3)
+
+
+
+```
+
+
+\s\s
+
+**Função para automatizar plots diagnósticos:**
+
+Neste exemplo, foi confeccionada uma função parar automatizar os plots diagnósticos para regressão linear.
+
+```{r, fig.width=9}
+
+RegressionPlots <- function(fit, range.plt5){
+  
+  model.data <- broom::augment(fit)
+
+  Theoretical.Quantiles <- qqnorm(model.data$.resid, plot.it = F)$x
+
+  model.data <- cbind(model.data, Theoretical.Quantiles)
+
+  # selecionar soh os que interessam
+  
+  regMat <- model.data %>%
+    dplyr::select(resp, .fitted, .resid, .hat, .cooksd, .std.resid, Theoretical.Quantiles ) #%>%
+    # magrittr::set_colnames()
+  
+  plotly_pallette <- c('#1F77B4', '#FF7F0E', '#2CA02C', '#D62728')
+  
+  plt1 <- regMat %>%
+    ggplot()+
+    geom_point(aes(x = .fitted, y = .resid), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_hline(yintercept = 0, alpha = 0.5, size=0.4)+
+    ggtitle("Residuals vs Fitted Values")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+    
+  
+  plt2 <- regMat %>%
+    ggplot()+
+    geom_point(aes(x = .fitted, y = .std.resid), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_hline(yintercept = 0, alpha = 0.5, size=0.4)+
+    ggtitle("Standardized Residuals vs Fitted Values")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+  
+  
+  plt3 <- regMat %>%
+    ggplot()+
+    geom_point(aes(x = .hat, y = .std.resid), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_hline(yintercept = 0, alpha = 0.5, size=0.4)+
+    ggtitle("Leverage vs Standardized Residuals")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+  
+  
+  plt4 <- regMat %>%
+    ggplot()+
+    geom_point(aes(x = Theoretical.Quantiles, y = .std.resid), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_line(aes(x = Theoretical.Quantiles, y = Theoretical.Quantiles), colour = plotly_pallette[2])+
+    geom_hline(yintercept = 0, alpha = 0.5, size=0.4)+
+    geom_vline(xintercept=0, alpha = 0.5, size=0.4)+
+    ggtitle("Standardized Residuals vs Theoretical Quantiles")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+  
+  
+  plt5 <- regMat %>%
+    ggplot()+
+    scale_x_continuous(limits = range.plt5)+
+    geom_point(aes(x = .fitted, y = resp), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_abline(intercept=0, slope=1, colour = plotly_pallette[2])+
+    ggtitle("Resp vs Fitted Values")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+  
+
+  obs <- seq(1, nrow(fit$model), by =1)
+  
+  plt6 <- regMat %>%
+    ggplot()+
+    geom_point(aes(x = obs, y = .cooksd), colour = plotly_pallette[1], alpha = 0.7)+
+    geom_segment(aes(x= obs, xend = obs, y = 0, yend = .cooksd), colour="grey")+
+    ggtitle("Cook's distance")+
+    theme_bw()+
+    theme(panel.border = element_blank())+ # para ficar igual o plotly
+    guides(color=guide_legend(title=NULL))+
+    scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+    theme(plot.title = element_text(hjust=0.5))
+  
+  
+  
+  
+  return(list(plt1, plt2, plt3, plt4, plt5, plt6))
+
+}
+
+```
+
+
+**Plots diagnósticos:**
+
+```{r, fig.width=9}
+plt <- RegressionPlots(fit1, range.plt5 = c(0.15, 0.35))
+
+```
+
+
+<div class = "row">
+<div class = "col-md-6">
+
+```{r, fig.height=4, fig.width=4.5, warning=FALSE, message=FALSE}
+plotly::ggplotly(plt[[1]])
+
+plotly::ggplotly(plt[[3]])
+
+plotly::ggplotly(plt[[5]])
+```
+
+</div>
+<div class = "col-md-6">
+
+
+```{r, fig.height=4, fig.width=4.5, warning=FALSE, message=FALSE}
+plotly::ggplotly(plt[[2]])
+
+plotly::ggplotly(plt[[4]])
+
+plotly::ggplotly(plt[[6]])
+```
+
+</div>
+</div>
+
+
+
+
+---
+
+
+#### Análise Incorreta 2 - Regressão Linear **COM** zeros
+
+**Modelo de Regressão Linear COM zeros:**
+```{r, message=FALSE, warning=FALSE}
+# dados
+orings = 6
+challenger <- challenger %>%
+  dplyr::mutate(resp = falhas/orings)
+
+# removendo os zeros
+# sum of squares
+aov(resp ~ temp, data = challenger)
+
+# regressao
+fit2 <- lm(resp ~ temp, data = challenger)
+summary(fit2)
+
+
+```
+
+
+**Plot:**
+```{r, fig.width=9, warning=FALSE, message=FALSE}
+
+# library(ggplot2)
+p4 <- challenger %>%
+  ggplot()+
+  # geom_point(aes(x = temp, y = falhas, colour = factor(falhas)))+
+  geom_point(aes(x = temp, y = resp), colour = plotly_pallette[1])+
+  geom_line(aes(x=temp, y = fitted(fit2)), colour = plotly_pallette[2])+
+  # geom_ribbon(data=new.data, aes(y=fit, ymin=ymin, ymax=ymax), alpha=0.5) + 
+  geom_ribbon(data=broom::augment(fit2),
+              aes(x = temp, y = .fitted, ymin = .fitted - qnorm(0.975) * .se.fit,
+              ymax = .fitted + qnorm(0.975) * .se.fit), alpha = 0.5, 
+              fill = '#FFF0F5')+
+  labs(x="Temperature", y="Prob. Estimada de Falha")+
+  ggtitle("NASA Space Shuttle O-Ring Failures - Erro")+
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+ # NAO FUNCIONA NO GGPLOTLY
+  theme(plot.title = element_text(hjust=0.5))
+
+plotly::ggplotly(p4)
+
+
+
+```
+
+
+**Plots diagnósticos:**
+
+```{r, fig.width=9}
+plt2 <- RegressionPlots(fit2, range.plt5 = c(0, 0.35))
+
+```
+
+
+<div class = "row">
+<div class = "col-md-6">
+
+```{r, fig.height=4, fig.width=4.5, warning=FALSE, message=FALSE}
+plotly::ggplotly(plt2[[1]])
+
+plotly::ggplotly(plt2[[3]])
+
+
+plotly::ggplotly(plt2[[5]])
+```
+
+</div>
+<div class = "col-md-6">
+
+
+```{r, fig.height=4, fig.width=4.5, warning=FALSE, message=FALSE}
+plotly::ggplotly(plt2[[2]])
+
+plotly::ggplotly(plt2[[4]])
+
+plotly::ggplotly(plt2[[6]])
+```
+
+</div>
+</div>
+
+
+---
+
+---
+
+### Análise Correta
+
+---
+
+#### Regressão **Logística** com zeros
+
+\s\s
+
+\s\s
+
+**Modelo de Regressão Logística (Binomial Regression):**
+```{r, message=FALSE, warning=FALSE}
+# precisamos passar os pesos - contagens para a funcao glm!!!
+# eh um caso de utilizacao da funcao de veross da binomial mesmo (k sucessos em n trials)
+#...e nao da bernoulli (sucesso ou fracasso para cada trial)
+# ver: https://stats.stackexchange.com/questions/90622/regression-model-where-output-is-a-probability
+# e https://www.r-bloggers.com/binomial-regression-model/
+# como dividimos todas as falhas por 6 -- nossos pesos sao todos 6
+# ai bate exatamente com o SAS, inclusive SE e AIC
+
+fit3 <- glm(resp ~ temp, data = challenger, weights = rep(6, nrow(challenger)),  family=binomial(link="logit"))
+
+summary(fit3)
+
+```
+
+\s\s
+
+**-2logLik:**
+
+\s\s
+
+```{r, message=FALSE, warning=FALSE}
+# -2logLik
+-2*logLik(fit3)
+```
+
+\s\s
+
+**Int. Conf. OR:**
+```{r, message=FALSE, warning=FALSE}
+# OR
+exp(confint.default(fit3)) # o metodo *.default* assume normalidade assintotica, por isso eh utilizado.
+```
+
+\s\s
+
+**Teste de Razão de Verossimilhanças:**
+```{r, message=FALSE, warning=FALSE}
+# 1) razao de verossimilhancas
+#library(lmtest)
+lmtest::lrtest(fit3)
+```
+
+\s\s
+
+**Teste de Wald:**
+```{r, message=FALSE, warning=FALSE}
+# 2) teste de Wald
+lmtest::waldtest(fit3)
+```
+
+\s\s
+
+**Teste Score:**
+```{r, message=FALSE, warning=FALSE}
+# 3) Score
+anova(fit3,test="Rao")
+```
+
+
+\s\s
+
+\s\s
+
+**Ajustes pré-plotagem:**
+
+```{r}
+
+# criando obs artificiais para suavizar a curva
+x_limits <- challenger %>%
+  dplyr::summarise(min = 30, max = max(temp)+2) # obtendo os limites do eixo x
+
+x <- seq(x_limits[[1]], x_limits[[2]], by=0.5) # criando varios ptos entre esses limites
+
+# obtendo os valores de y de acordo com os parametros da reg logist
+# y <- plogis(fit3$coefficients[1]+fit3$coefficients[2]*x)
+
+
+# fazendo a predicao das obs artificiais
+# ver sol: https://stackoverflow.com/questions/26694931/how-to-plot-logit-and-probit-in-ggplot2
+temp.data = data.frame(temp = x) # se nao passar a coluna com o mesmo nome da variavel nao funciona
+
+
+# Predict the fitted values given the model and hypothetical data
+predicted.data <- as.data.frame(predict(fit3, newdata = temp.data, 
+                                        type="link", se=TRUE))
+
+# Combine the hypothetical data and predicted values
+new.data <- cbind(temp.data, predicted.data)
+
+# Calculate confidence intervals
+std <- qnorm(0.95 / 2 + 0.5)
+new.data$ymin <- fit3$family$linkinv(new.data$fit - std * new.data$se)
+new.data$ymax <- fit3$family$linkinv(new.data$fit + std * new.data$se)
+new.data$fit <- fit3$family$linkinv(new.data$fit)  # Rescale to 0-1
+
+
+```
+
+\s\s
+
+**Plot:**
+```{r, fig.width=9, warning=FALSE, message=FALSE}
+
+
+p5 <- ggplot(challenger, aes(x=temp, y=resp)) 
+p5 <- p5 + geom_point(colour = plotly_pallette[1]) + 
+  geom_ribbon(data=new.data, 
+              aes(y=fit, 
+                  ymin=ymin, ymax=ymax), alpha = 0.5, 
+              fill = '#FFF0F5')+
+  geom_line(data=new.data, aes(y=fit), colour = plotly_pallette[2]) + 
+  labs(x="Temperature", y="Prob. Estimada de Falha")+
+  ggtitle("Predicted Probabilities for falhas/orings With 95% Confidence Limits")+
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  theme(plot.title = element_text(hjust=0.5))
+  
+
+plotly::ggplotly(p5)
+```
+
+
+
+
+
+
+
+
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---
