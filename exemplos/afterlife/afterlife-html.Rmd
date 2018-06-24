@@ -1,11 +1,11 @@
 ---
-title: '**Tabelas Bidimensionais - Credo na vida apÛs a morte**'
-subtitle: 'Modelos Log-Lineares - An·lise de Dados Categorizados - Prova 3'
+title: '**Tabelas Bidimensionais - Credo na vida ap√≥s a morte**'
+subtitle: 'Modelos Log-Lineares - An√°lise de Dados Categorizados - Prova 3'
 author:
 - Allan Vieira - 14/0128492
 - Caio Balena - 13/0104566
 - Frederico de Lucca - 15/0072139
-- JosÈ Cez·rio - 15/0072414
+- Jos√© Cez√°rio - 15/0072414
 date: "`r format(Sys.time(), '%d %B de %Y')`"
 output:
   html_document:
@@ -20,7 +20,7 @@ body{
 </style>
 
 
-<!-- para acrescentar logo da unb no cabeÁalho -->
+<!-- para acrescentar logo da unb no cabe√ßalho -->
 <script>
    $(document).ready(function() {
      $head = $('#header');
@@ -44,17 +44,17 @@ dados <- array(data = c(1339, 260, 88, 300, 55, 22),
 dados
 ```
 
-Verificando as frequÍncias marginais:
+Verificando as frequ√™ncias marginais:
 ```{r, message=FALSE, warning=FALSE}
 addmargins(dados)
 ```
 
-Verificando as proporÁıes ao longo das linhas:
+Verificando as propor√ß√µes ao longo das linhas:
 ```{r, message=FALSE, warning=FALSE}
 prop.table(dados, margin = 1)
 ```
 
-Convertendo para o formato *data.frame* para usar a funÁ„o *glm* e definindo o ˙ltimo nÌvel como nÌvel de referÍncia:
+Convertendo para o formato *data.frame* para usar a fun√ß√£o *glm* e definindo o √∫ltimo n√≠vel como n√≠vel de refer√™ncia:
 ```{r, message=FALSE, warning=FALSE}
 dados.df <- as.data.frame(as.table(dados))
 dados.df$Race <- relevel(dados.df$Race, ref = 'Others')
@@ -64,11 +64,11 @@ dados.df
 
 ---
 
-### Modelo de IndependÍncia
+### Modelo de Independ√™ncia
 
 ---
 
-Construindo o modelo log-linear de independÍncia da forma $log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y \quad i = 1,2,3 \quad j = 1,2$, com $\lambda$: efeito geral, $\lambda_i^X$: efeito marginal da raÁa (1: White, 2: Black, 3: Others) e $\lambda_j^Y$: efeito marginal da crenÁa (1: Yes, 2: No), tem-se:
+Construindo o modelo log-linear de independ√™ncia da forma $log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y \quad i = 1,2,3 \quad j = 1,2$, com $\lambda$: efeito geral, $\lambda_i^X$: efeito marginal da ra√ßa (1: White, 2: Black, 3: Others) e $\lambda_j^Y$: efeito marginal da cren√ßa (1: Yes, 2: No), tem-se:
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -77,13 +77,13 @@ summary(mod.ind)
 coeficientes <- summary(mod.ind)$coef
 ```
 
-O R utiliza restriÁıes do tipo *set-to-zero* (codificaÁ„o dummy), definindo por construÁ„o o nÌvel de referÍncia igual a zero e portanto, n„o mostrando seu valor junto aos coeficientes estimados.
+O R utiliza restri√ß√µes do tipo *set-to-zero* (codifica√ß√£o dummy), definindo por constru√ß√£o o n√≠vel de refer√™ncia igual a zero e portanto, n√£o mostrando seu valor junto aos coeficientes estimados.
 
-Para o modelo log-linear de independÍncia, com restriÁ„o *set-to-zero* no ˙ltimo nÌvel (referÍncia), os coeficientes estimados s„o $\lambda^X_1$ = `r coeficientes[2,1]`, $\lambda^X_2$ = `r coeficientes[3,1]`, $\lambda^X_3$ = 0 (referÍncia), $\lambda^Y_1$ = `r coeficientes[4,1]` e $\lambda^Y_2$ = 0 (referÍncia).
+Para o modelo log-linear de independ√™ncia, com restri√ß√£o *set-to-zero* no √∫ltimo n√≠vel (refer√™ncia), os coeficientes estimados s√£o $\lambda^X_1$ = `r coeficientes[2,1]`, $\lambda^X_2$ = `r coeficientes[3,1]`, $\lambda^X_3$ = 0 (refer√™ncia), $\lambda^Y_1$ = `r coeficientes[4,1]` e $\lambda^Y_2$ = 0 (refer√™ncia).
 
-Assim, a chance estimada de crenÁa em vida apÛs a morte È igual a $e^{\lambda^Y_1} = e^{`r round(coeficientes[4,1], 3)`} = `r round(exp(coeficientes[4,1]), 3)`$.
+Assim, a chance estimada de cren√ßa em vida ap√≥s a morte √© igual a $e^{\lambda^Y_1} = e^{`r round(coeficientes[4,1], 3)`} = `r round(exp(coeficientes[4,1]), 3)`$.
 
-Como foi usado um modelo de independÍncia, a raz„o de chance È igual a 1 para toda sub-tabela 2x2 das contagens estimadas:
+Como foi usado um modelo de independ√™ncia, a raz√£o de chance √© igual a 1 para toda sub-tabela 2x2 das contagens estimadas:
 ```{r, message=FALSE, warning=FALSE}
 estimado <- dados
 estimado[,] <- mod.ind$fitted.values
@@ -98,9 +98,9 @@ estimado[2,1]*estimado[3,2]/(estimado[3,1]*estimado[2,2])
 
 #### **Qualidade do ajuste:**
 
-A estatÌstica $G^2$ È mostrada diretamente no resultado do modelo ajustado:
+A estat√≠stica $G^2$ √© mostrada diretamente no resultado do modelo ajustado:
 ```{r, message=FALSE, warning=FALSE}
-G2 <- mod.ind$deviance # estatÌstica G2
+G2 <- mod.ind$deviance # estat√≠stica G2
 G2
 
 G2.df <- mod.ind$df.residual # graus de liberdade
@@ -112,9 +112,9 @@ G2.pv
 G2/G2.df
 ```
 
-A estatÌstica $\chi^2$ pode ser obtida fazendo:
+A estat√≠stica $\chi^2$ pode ser obtida fazendo:
 ```{r, message=FALSE, warning=FALSE}
-X2 <- sum(resid(mod.ind, type = "pearson")^2) # estatÌstica X2
+X2 <- sum(resid(mod.ind, type = "pearson")^2) # estat√≠stica X2
 X2
 
 X2.df <- mod.ind$df.residual # graus de liberdade
@@ -132,7 +132,7 @@ X2/X2.df
 
 ---
 
-Construindo o modelo log-linear saturado da forma $log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_{ij}^{XY} \quad i = 1,2,3 \quad j = 1,2$, com $\lambda$: efeito geral, $\lambda_i^X$: efeito marginal da raÁa (1: White, 2: Black, 3: Others), $\lambda_j^Y$: efeito marginal da crenÁa (1: Yes, 2: No) e $\lambda_{ij}^{XY}$: par‚metros de associaÁ„o que refletem o desvio de independÍncia, tem-se:
+Construindo o modelo log-linear saturado da forma $log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y + \lambda_{ij}^{XY} \quad i = 1,2,3 \quad j = 1,2$, com $\lambda$: efeito geral, $\lambda_i^X$: efeito marginal da ra√ßa (1: White, 2: Black, 3: Others), $\lambda_j^Y$: efeito marginal da cren√ßa (1: Yes, 2: No) e $\lambda_{ij}^{XY}$: par√¢metros de associa√ß√£o que refletem o desvio de independ√™ncia, tem-se:
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -141,23 +141,23 @@ summary(mod.sat)
 coeficientes <- summary(mod.sat)$coef
 ```
 
-A raz„o de chances estimada entre crenÁa e raÁa È igual a $e^{\lambda^{XY}_{11}} = e^{`r round(coeficientes[5,1], 4)`} = `r round(exp(coeficientes[5,1]), 4)`$ para brancos e outros e $e^{\lambda^{XY}_{21}} = e^{`r round(coeficientes[6,1], 4)`} = `r round(exp(coeficientes[6,1]), 4)`$.
+A raz√£o de chances estimada entre cren√ßa e ra√ßa √© igual a $e^{\lambda^{XY}_{11}} = e^{`r round(coeficientes[5,1], 4)`} = `r round(exp(coeficientes[5,1]), 4)`$ para brancos e outros e $e^{\lambda^{XY}_{21}} = e^{`r round(coeficientes[6,1], 4)`} = `r round(exp(coeficientes[6,1]), 4)`$.
 
-Assim, a raz„o de chances estimada entre crenÁa e raÁa È igual a $e^{\lambda^{XY}_{11} - \lambda^{XY}_{21}} = e^{`r round(coeficientes[5,1] - coeficientes[6,1], 4)`} = `r round(exp(coeficientes[5,1] - coeficientes[6,1]), 4)`$ para brancos e negros.
+Assim, a raz√£o de chances estimada entre cren√ßa e ra√ßa √© igual a $e^{\lambda^{XY}_{11} - \lambda^{XY}_{21}} = e^{`r round(coeficientes[5,1] - coeficientes[6,1], 4)`} = `r round(exp(coeficientes[5,1] - coeficientes[6,1]), 4)`$ para brancos e negros.
 
-Para o modelo saturado, as estatÌsticas $\chi^2$ e $G^2$ s„o nulas, com n˙mero de graus de liberdade igual a zero.
-
----
+Para o modelo saturado, as estat√≠sticas $\chi^2$ e $G^2$ s√£o nulas, com n√∫mero de graus de liberdade igual a zero.
 
 ---
 
-### **ReferÍncias Bibliogr·ficas**
+---
+
+### **Refer√™ncias Bibliogr√°ficas**
 
 ---
 
 AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
 
-NOTAS DE AULA. *An·lise de Dados Categorizados*. Curso de GraduaÁ„o em EstatÌstica, UnB, 2018.
+NOTAS DE AULA. *An√°lise de Dados Categorizados*. Curso de Gradua√ß√£o em Estat√≠stica, UnB, 2018.
 
 R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
 
