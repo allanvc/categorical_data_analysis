@@ -1,0 +1,10 @@
+name: roc_app
+title:
+username:
+account: allanvc
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 366525
+bundleId: 1446615
+url: https://allanvc.shinyapps.io/roc_app/
+when: 1529900123.30869

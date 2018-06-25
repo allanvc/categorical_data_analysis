@@ -2,11 +2,10 @@
 title: "**Horseshoe Crab 01 e 02**"
 subtitle: "Regressão Logística - Análise de Dados Categorizados - Prova 3"
 author: 
-- Allan Vieira 14/0128492
-- Caio Balena 13/0104566
-- Frederico Lucca 15/0072139
-- José Cezário 15/0072414
-
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   html_document:
@@ -82,9 +81,14 @@ if (!require('pROC')) install.packages('pROC'); library('pROC')
 
 **Carregamento dos dados**:
 
+Os dados utilizados neste exemplo são importados diretamente do repositório no GitHub e podem ser acessados no link abaixo:
+
+- [**Dataset Crabs.txt**](https://raw.githubusercontent.com/allanvc/categorical_data_analysis/master/exemplos/crabs/crabs.txt){target="_blank"}
+
+
 ```{r, message=FALSE, warning=FALSE}
 #options(scipen=999)
-crabs <- readr::read_table2("/home/allan/Documents/1S2018/A_DADOS_CATEGORIZADOS/PARTE_GEORGE/parte2/exemplos/html/com_ggplot/crabs/crabs.txt", col_names = FALSE)
+crabs <- readr::read_table2("https://raw.githubusercontent.com/allanvc/categorical_data_analysis/master/exemplos/crabs/crabs.txt", col_names = FALSE)
 
 crabs <- crabs %>%
   magrittr::set_colnames(c("color", "spine", "width", "satell", "weight")) %>%

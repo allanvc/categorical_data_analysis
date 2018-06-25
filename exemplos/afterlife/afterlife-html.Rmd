@@ -64,7 +64,7 @@ dados.df
 
 ---
 
-### Modelo de Independência
+### **Modelo de Independência**
 
 ---
 

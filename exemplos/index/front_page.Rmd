@@ -68,3 +68,9 @@ Nos links abaixo você encontrará exemplos com aplicações dos conceitos traba
 
 - [**Avaliação de Político**](https://allanvc.github.io/categorical_data_analysis/exemplos/politico/){target="_blank"}
 
+---
+
+#### **EXTRA -- Demonstação**
+
+- [**Shiny App Curva ROC**](https://allanvc.shinyapps.io/roc_app/){target="_blank"}
+
