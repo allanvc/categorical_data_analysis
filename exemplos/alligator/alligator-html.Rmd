@@ -6,7 +6,7 @@ author:
 - Caio Balena - 13/0104566
 - Frederico de Lucca - 15/0072139
 - José Cezário - 15/0072414
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "**Junho de 2018**"
 output:
   html_document:
     code_folding: show

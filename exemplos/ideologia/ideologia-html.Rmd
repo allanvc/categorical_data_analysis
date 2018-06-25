@@ -6,7 +6,7 @@ author:
 - Caio Balena - 13/0104566
 - Frederico de Lucca - 15/0072139
 - José Cezário - 15/0072414
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "**Junho de 2018**"
 output:
   html_document:
     code_folding: show
@@ -43,7 +43,7 @@ text-align: justify}
 
 **Carregamento de pacotes:**
 
-Neste exemplo são utilizados os seguintes pacotes: *vcd*, *VGAM* e *lmtest*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+Neste exemplo são utilizados os seguintes pacotes: *vcd*, *VGAM*, *lmtest* e *knitr*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
 
 ```{r, message=FALSE, warning=FALSE}
 # VGAM -- para trabalhar com Regresão Logística Politômica
@@ -54,6 +54,9 @@ if (!require('vcd')) install.packages('vcd'); library('vcd')
 
 # lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
 if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+# knitr -- para trabalhar com tabelas no markdown
+if (!require('knitr')) install.packages('knitr'); library('knitr')
 
 ```
 
@@ -107,7 +110,7 @@ tabideo <- vcd::structable(cbind(dadosideo[1:2], #Tabela de contingência
                                                           levels=c("Democratic", "Republican"))), 
                                                      split_vertical = c(T,F,F))
 
-# stargazer::stargazer(format(as.matrix(tabideo), quote=FALSE, justify="right"), type="latex", dep.var.labels = "Ideologia", title="Tabela de Contingência - Ideologia x Partido e Gênero")
+knitr::kable(as.matrix(tabideo))
 ```
 
 

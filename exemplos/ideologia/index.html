@@ -14,7 +14,6 @@
 <meta name="author" content="Frederico de Lucca - 15/0072139" />
 <meta name="author" content="José Cezário - 15/0072414" />
 
-<meta name="date" content="2018-06-25" />
 
 <title>Ideologia</title>
 
@@ -147,7 +146,7 @@ $(document).ready(function () {
 <h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
 <h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
 <h4 class="author"><em>José Cezário - 15/0072414</em></h4>
-<h4 class="date"><em>25 June 2018</em></h4>
+<h4 class="date"><em><strong>Junho de 2018</strong></em></h4>
 
 </div>
 
@@ -171,7 +170,7 @@ text-align: justify}
 <hr />
 <hr />
 <p><strong>Carregamento de pacotes:</strong></p>
-<p>Neste exemplo são utilizados os seguintes pacotes: <em>vcd</em>, <em>VGAM</em> e <em>lmtest</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<p>Neste exemplo são utilizados os seguintes pacotes: <em>vcd</em>, <em>VGAM</em>, <em>lmtest</em> e <em>knitr</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
 <pre class="r"><code># VGAM -- para trabalhar com Regresão Logística Politômica
 if (!require(&#39;VGAM&#39;)) install.packages(&#39;VGAM&#39;); library(&#39;VGAM&#39;)
 
@@ -179,7 +178,10 @@ if (!require(&#39;VGAM&#39;)) install.packages(&#39;VGAM&#39;); library(&#39;VGA
 if (!require(&#39;vcd&#39;)) install.packages(&#39;vcd&#39;); library(&#39;vcd&#39;)
 
 # lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
-if (!require(&#39;lmtest&#39;)) install.packages(&#39;lmtest&#39;); library(&#39;lmtest&#39;)</code></pre>
+if (!require(&#39;lmtest&#39;)) install.packages(&#39;lmtest&#39;); library(&#39;lmtest&#39;)
+
+# knitr -- para trabalhar com tabelas no markdown
+if (!require(&#39;knitr&#39;)) install.packages(&#39;knitr&#39;); library(&#39;knitr&#39;)</code></pre>
 <p><strong>Carregamento dos dados:</strong></p>
 <p>A variável resposta corresponde a ideologia do entrevistado, segundo graus de liberalismo e conservadorismo. Os níveis são, em ordem: “Very Liberal” (Muito Liberal), “Slightly Liberal” (Levemente Liberal), “Moderate” (Moderado), “Slightly Conservative” (Levemente Conservador) e “Very Conservative” (Muito Conservador). As variáveis explicativas são o partido ao qual o entrevistado pertence, cujos níveis são “Republicanos” e “Democratas”. Padronizou-se o valor 0 e 1 respectivamente para o partido. A outra variável explicativa é o gênero, separado em “Female” (Feminino) e “Male” (Masculino). Embora tal variável tenha sido inserida, não foi considerada para a modelagem dos dados.</p>
 <pre class="r"><code>ideologia &lt;- factor(c(rep(&quot;Very Liberal&quot;, 44+18+36+12), rep(&quot;Slightly Liberal&quot;, 47+28+34+18),
@@ -219,7 +221,53 @@ dadosideo &lt;- data.frame(ideologia, genero, partido_politico) #Consolidação 
                                                           levels=c(&quot;Democratic&quot;, &quot;Republican&quot;))), 
                                                      split_vertical = c(T,F,F))
 
-# stargazer::stargazer(format(as.matrix(tabideo), quote=FALSE, justify=&quot;right&quot;), type=&quot;latex&quot;, dep.var.labels = &quot;Ideologia&quot;, title=&quot;Tabela de Contingência - Ideologia x Partido e Gênero&quot;)</code></pre>
+knitr::kable(as.matrix(tabideo))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Very Liberal</th>
+<th align="right">Slightly Liberal</th>
+<th align="right">Moderate</th>
+<th align="right">Slightly Conservative</th>
+<th align="right">Very Conservative</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Female_Democratic</td>
+<td align="right">44</td>
+<td align="right">47</td>
+<td align="right">118</td>
+<td align="right">23</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td>Female_Republican</td>
+<td align="right">18</td>
+<td align="right">28</td>
+<td align="right">86</td>
+<td align="right">39</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td>Male_Democratic</td>
+<td align="right">36</td>
+<td align="right">34</td>
+<td align="right">53</td>
+<td align="right">18</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td>Male_Republican</td>
+<td align="right">12</td>
+<td align="right">18</td>
+<td align="right">62</td>
+<td align="right">45</td>
+<td align="right">51</td>
+</tr>
+</tbody>
+</table>
 <p><strong>Ajuste do Modelo:</strong></p>
 <p>Utilizou-se o pacote VGAM (<a href="https://cran.r-project.org/web/packages/VGAM/index.html" class="uri">https://cran.r-project.org/web/packages/VGAM/index.html</a>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função “<em>glm</em>”, nativa do R, não possui suporte à Regressão Logística Politômica.</p>
 <pre class="r"><code>modideo &lt;- VGAM::vglm(formula=ideologia~partido_politico, #Ajuste do modelo
