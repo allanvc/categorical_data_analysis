@@ -1,0 +1,250 @@
+---
+title: "**Alligator** "
+subtitle: "Modelos Logito Multicategorizados - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *tibble*, *ggplot2*, *plotly*, *VGAM* e *lmtest*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# tibble -- para facilitar manipulacao de dados
+if (!require('tibble')) install.packages('tibble'); library('tibble')
+
+# VGAM -- para trabalhar com Regresão Logística Politômica
+if (!require('VGAM')) install.packages('VGAM'); library('VGAM')
+
+# ggplot2 -- para os plots
+if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
+
+# plotly -- para os plots
+if (!require('plotly')) install.packages('plotly'); library('plotly')
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+```
+
+
+**Carregamento dos dados:**
+
+
+A variável *comp* corresponde ao comprimento do aligator, a variável *comida* o tipo de comida que ele ingere. A primeira é variável explicativa, a segunda resposta. A respeito da comida, "I" significa invertebrado, "F" peixe, (do inglês "Fish") e "O" significa outros, (do inglês "Other").
+```{r entrada}
+comp <- c(1.24,1.45,1.63,1.78,1.98,2.36,2.79,3.68,
+          1.30,1.45,1.65,1.78,2.03,2.39,2.84,3.71,
+          1.30,1.47,1.65,1.78,2.03,2.41,3.25,3.89,
+          1.32,1.47,1.65,1.80,2.16,2.44,3.28,
+          1.32,1.50,1.65,1.80,2.26,2.46,3.33,
+          1.40,1.52,1.68,1.85,2.31,2.56,3.56,
+          1.42,1.55,1.70,1.88,2.31,2.67,3.58,
+          1.42,1.60,1.73,1.93,2.36,2.72,3.66)
+comida <- as.factor(c("I","I","I","I","I","F","F","O",
+            "I","O","O","I","F","F","F","F",
+            "I","I","I","O","F","F","O","F",
+            "F","F","F","I","F","F","O",
+            "F","I","F","F","F","F","F",
+            "F","I","F","F","F","O","F",
+            "I","I","I","I","F","F","F",
+            "F","I","O","I","F","I","F"))
+alligator <- data.frame(comida, comp)
+tibble::as.tibble(alligator)
+```
+
+
+**Ajuste do Modelo:**
+
+Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica.
+
+```{r modelo}
+modall <- VGAM::vglm(comida~comp,VGAM::multinomial,alligator)
+VGAM::summary(modall) 
+VGAM::AIC(modall) #AIC
+-2*logLik(modall) #-2*loglik
+```
+
+
+**Preparação dos dados para plotagem:**
+
+A fim de propiciar a plotagem do gráfico das probabilidades x comprimento por meio do pacote ggplot2 (<https://cran.r-project.org/web/packages/ggplot2/index.html>), obteve-se os valores dos coeficientes do modelo ajustado a fim de que se pudesse calcular as probabilidades em um espectro com maior quantidade de valores para a variável explicativa, o que será importante para suavizar o gráfico.
+
+```{r preparacao}
+#Preparação dos dados - Amigável pro ggplot2
+xx <- 1.24 + (0:249)*(3.89-1.24)/249
+coeficientes <- c(VGAM::coefvgam(modall),VGAM::coefvgam(modall)[1]-VGAM::coefvgam(modall)[2],
+                  VGAM::coefvgam(modall)[3]-VGAM::coefvgam(modall)[4])
+preditores1 <- coeficientes[1]+coeficientes[3]*xx
+preditores2 <- coeficientes[2]+coeficientes[4]*xx
+preditores3 <- coeficientes[5]+coeficientes[6]*xx
+
+# probabilidades e proporções (para o plot)
+prob1=exp(preditores1)/(1+exp(preditores1)+exp(preditores2))
+prob2=exp(preditores2)/(1+exp(preditores1)+exp(preditores2))
+prob3=1/(1+exp(preditores1)+exp(preditores2))
+
+#Consolidação dos dados
+dados <- data.frame(prob=c(prob1,prob2,prob3),rep(xx,3),tipo=rep(c("F","I","O"),each=length(xx)))
+names(dados) <- c("prob", "x", "Alimento")
+```
+
+
+**Plotagem dos gráficos:**
+
+```{r grafico_prob, fig.align="center", fig.width=9}
+plotly_pallette <- c('#1F77B4', '#FF7F0E', '#2CA02C', '#D62728')
+
+#Plotagem dos gráficos
+library(ggplot2)
+p <- ggplot(dados,ggplot2::aes(x=dados$x, y=dados$prob, colour=Alimento)) + 
+  geom_line(size=0.75)+
+  ggtitle("Curvas Logísticas Ajustadas - Peixe, Invertebrados e Outros")+
+  xlab("Comprimento") + ylab("Probabilidade") +
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  # guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+
+  theme(plot.title = element_text(hjust=0.5))
+  
+plotly::ggplotly(p)
+
+
+```
+
+\s\s
+
+**Intervalos de confiança e testes de hipóteses:**
+
+Seguem, respectivamente, testes de hipóteses para testar se $\beta = 0$ e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.
+
+```{r testes}
+#Testes para beta
+VGAM::lrtest(modall) #Razão de verossimilhanças
+lmtest::waldtest(modall) #Wald.
+
+#Intervalos de confiança
+confint.default(modall) #Para os parâmetros
+exp(confint.default(modall)) #Para a chance
+```
+
+
+**Análise de resíduos:**
+
+Calculou-se os resíduos padronizados a fim de observar o comportamento destes e realizar conjecturas acerca da qualidade do ajuste do modelo.
+
+```{r residuos, fig.align="center", fig.width=5, fig.height = 3.5}
+#Calculo dos resíduos padronizados para log(pi1/pi3)
+resnorm1 <- VGAM::residuals(modall)[,1]/sd(VGAM::residuals(modall)[,1])
+
+#Calculo dos resíduos padronizados para log(pi2/pi3)
+resnorm2 <- VGAM::residuals(modall)[,2]/sd(VGAM::residuals(modall)[,2]) 
+
+#Calculo dos resíduos padronizados para log(pi1/pi2)
+pi1pi2 <- VGAM::residuals(modall)[,1]-VGAM::residuals(modall)[,2]
+resnorm3 <- pi1pi2/sd(pi1pi2)
+
+#Gráficos
+p1 <- ggplot(as.data.frame(resnorm1), aes(y=resnorm1, x=alligator$comp)) + 
+  geom_point(colour=plotly_pallette[1], alpha=0.7) +
+  geom_hline(yintercept = 0, size=0.4, alpha=0.5)+
+  ggtitle("Resíduos Padronizados - log[pi1/pi3]")+
+  xlab("Comprimento") + ggplot2::ylab("Valor") + 
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  # guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+
+  theme(plot.title = element_text(hjust=0.5))
+  
+plotly::ggplotly(p1)
+
+p2 <- ggplot(as.data.frame(resnorm2), aes(y=resnorm2, x=alligator$comp)) + 
+  geom_point(colour=plotly_pallette[4], alpha=0.7) +
+  geom_hline(yintercept = 0, size=0.4, alpha=0.5)+
+  ggtitle("Resíduos Padronizados - log[pi2/pi3]")+
+  xlab("Comprimento") + ggplot2::ylab("Valor") + 
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  # guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+
+  theme(plot.title = element_text(hjust=0.5))
+
+plotly::ggplotly(p2)
+
+p3 <- ggplot(as.data.frame(pi1pi2), aes(y=pi1pi2, x=alligator$comp))+
+  geom_point(colour=plotly_pallette[3], alpha=0.7) +
+  geom_hline(yintercept = 0, size=0.4, alpha=0.5)+
+  ggtitle("Resíduos Padronizados - log[pi1/pi2]")+
+  xlab("Comprimento") + ggplot2::ylab("Valor") + 
+  theme_bw()+
+  theme(panel.border = element_blank())+ # para ficar igual o plotly
+  # guides(color=guide_legend(title=NULL))+
+  scale_color_manual(values=plotly_pallette)+
+  theme(plot.title = element_text(hjust=0.5))
+  
+plotly::ggplotly(p3)
+```
+
+
+
+\s\s
+
+\s\s
+
+
+
+
+---
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---

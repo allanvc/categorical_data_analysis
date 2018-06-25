@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira - 14/0128492" />
+<meta name="author" content="Caio Balena - 13/0104566" />
+<meta name="author" content="Frederico de Lucca - 15/0072139" />
+<meta name="author" content="José Cezário - 15/0072414" />
+
+<meta name="date" content="2018-06-25" />
+
+<title>Mental Impairment</title>
+
+<script src="mental-html_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="mental-html_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="mental-html_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="mental-html_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="mental-html_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="mental-html_files/navigation-1.1/tabsets.js"></script>
+<script src="mental-html_files/navigation-1.1/codefolding.js"></script>
+<link href="mental-html_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="mental-html_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="mental-html_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="mental-html_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore"><strong>Mental Impairment</strong></h1>
+<h3 class="subtitle"><em>Modelos Logito Multicategorizados - Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira - 14/0128492</em></h4>
+<h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
+<h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
+<h4 class="author"><em>José Cezário - 15/0072414</em></h4>
+<h4 class="date"><em>25 June 2018</em></h4>
+
+</div>
+
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+<hr />
+<hr />
+<p><strong>Carregamento de pacotes:</strong></p>
+<p>Neste exemplo são utilizados os seguintes pacotes: <em>tibble</em>, <em>VGAM</em> e <em>lmtest</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<pre class="r"><code># tibble -- para facilitar manipulacao de dados
+if (!require(&#39;tibble&#39;)) install.packages(&#39;tibble&#39;); library(&#39;tibble&#39;)
+
+# VGAM -- para trabalhar com Regresão Logística Politômica
+if (!require(&#39;VGAM&#39;)) install.packages(&#39;VGAM&#39;); library(&#39;VGAM&#39;)
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require(&#39;lmtest&#39;)) install.packages(&#39;lmtest&#39;); library(&#39;lmtest&#39;)</code></pre>
+<p><strong>Carregamento dos dados:</strong></p>
+<p>A variável resposta corresponde a deterioração mental do paciente, com graus variando da seguinte forma: “Well” (Bom), “Mild” (Ameno), “Moderate” (Moderado) e “Impaired” (Deteriorado). As variáveis explicativas são: “SES”, que corresponde ao nível social do paciente e “life events”, que corresponde à contagem dos eventos importantes na vida do paciente.</p>
+<pre class="r"><code>#Entrada de dados
+mental &lt;- c(rep(&quot;Well&quot;, 12), rep(&quot;Mild&quot;, 12), rep(&quot;Moderate&quot;, 7),
+            rep(&quot;Impaired&quot;, 9))
+
+mental &lt;- ordered(mental, levels=c(&quot;Well&quot;, &quot;Mild&quot;, &quot;Moderate&quot;, &quot;Impaired&quot;))
+
+SES &lt;- as.integer(c(1,1,1,1,0,1,0,1,1,1,0,0,1,0,1,0,1,1,0,1,1,0,1,1,0,
+         1,0,0,1,0,0,1,1,1,0,0,0,1,0,0))
+
+life_events &lt;- as.integer(c(1,9,4,3,2,0,1,3,3,7,1,2,5,6,3,1,8,2,5,5,9,
+                 3,3,1,0,4,3,9,6,4,3,8,2,7,5,4,4,8,8,9))
+
+dadosmental &lt;- data.frame(mental, SES, life_events)
+
+tibble::as.tibble(dadosmental)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["mental"],"name":[1],"type":["ord"],"align":["right"]},{"label":["SES"],"name":[2],"type":["int"],"align":["right"]},{"label":["life_events"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"Well","2":"1","3":"1"},{"1":"Well","2":"1","3":"9"},{"1":"Well","2":"1","3":"4"},{"1":"Well","2":"1","3":"3"},{"1":"Well","2":"0","3":"2"},{"1":"Well","2":"1","3":"0"},{"1":"Well","2":"0","3":"1"},{"1":"Well","2":"1","3":"3"},{"1":"Well","2":"1","3":"3"},{"1":"Well","2":"1","3":"7"},{"1":"Well","2":"0","3":"1"},{"1":"Well","2":"0","3":"2"},{"1":"Mild","2":"1","3":"5"},{"1":"Mild","2":"0","3":"6"},{"1":"Mild","2":"1","3":"3"},{"1":"Mild","2":"0","3":"1"},{"1":"Mild","2":"1","3":"8"},{"1":"Mild","2":"1","3":"2"},{"1":"Mild","2":"0","3":"5"},{"1":"Mild","2":"1","3":"5"},{"1":"Mild","2":"1","3":"9"},{"1":"Mild","2":"0","3":"3"},{"1":"Mild","2":"1","3":"3"},{"1":"Mild","2":"1","3":"1"},{"1":"Moderate","2":"0","3":"0"},{"1":"Moderate","2":"1","3":"4"},{"1":"Moderate","2":"0","3":"3"},{"1":"Moderate","2":"0","3":"9"},{"1":"Moderate","2":"1","3":"6"},{"1":"Moderate","2":"0","3":"4"},{"1":"Moderate","2":"0","3":"3"},{"1":"Impaired","2":"1","3":"8"},{"1":"Impaired","2":"1","3":"2"},{"1":"Impaired","2":"1","3":"7"},{"1":"Impaired","2":"0","3":"5"},{"1":"Impaired","2":"0","3":"4"},{"1":"Impaired","2":"0","3":"4"},{"1":"Impaired","2":"1","3":"8"},{"1":"Impaired","2":"0","3":"8"},{"1":"Impaired","2":"0","3":"9"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Ajuste do Modelo:</strong></p>
+<p>Utilizou-se o pacote VGAM (<a href="https://cran.r-project.org/web/packages/VGAM/index.html" class="uri">https://cran.r-project.org/web/packages/VGAM/index.html</a>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função “<em>glm</em>”, nativa do R, não possui suporte à Regressão Logística Politômica.</p>
+<pre class="r"><code>modmental &lt;- VGAM::vglm(formula=mental~SES+life_events,
+                      family=VGAM::cumulative(link=&quot;logit&quot;, parallel=T, reverse=F),data=dadosmental)
+
+VGAM::summary(modmental)</code></pre>
+<pre><code>## 
+## Call:
+## VGAM::vglm(formula = mental ~ SES + life_events, family = VGAM::cumulative(link = &quot;logit&quot;, 
+##     parallel = T, reverse = F), data = dadosmental)
+## 
+## 
+## Pearson residuals:
+##                   Min      1Q  Median     3Q   Max
+## logit(P[Y&lt;=1]) -1.568 -0.7048 -0.2102 0.8070 2.713
+## logit(P[Y&lt;=2]) -2.328 -0.4666  0.2657 0.6904 1.615
+## logit(P[Y&lt;=3]) -3.688  0.1198  0.2039 0.4194 1.892
+## 
+## Coefficients: 
+##               Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept):1  -0.2819     0.6231  -0.452  0.65096   
+## (Intercept):2   1.2128     0.6511   1.863  0.06251 . 
+## (Intercept):3   2.2094     0.7171   3.081  0.00206 **
+## SES             1.1112     0.6143   1.809  0.07045 . 
+## life_events    -0.3189     0.1194  -2.670  0.00759 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Number of linear predictors:  3 
+## 
+## Names of linear predictors: 
+## logit(P[Y&lt;=1]), logit(P[Y&lt;=2]), logit(P[Y&lt;=3])
+## 
+## Residual deviance: 99.0979 on 115 degrees of freedom
+## 
+## Log-likelihood: -49.5489 on 115 degrees of freedom
+## 
+## Number of iterations: 5 
+## 
+## No Hauck-Donner effect found in any of the estimates
+## 
+## Exponentiated coefficients:
+##         SES life_events 
+##   3.0380707   0.7269742</code></pre>
+<pre class="r"><code>VGAM::AIC(modmental) #AIC</code></pre>
+<pre><code>## [1] 109.0979</code></pre>
+<pre class="r"><code>-2*logLik(modmental) #-2*loglik</code></pre>
+<pre><code>## [1] 99.0979</code></pre>
+<p><strong>Intervalos de confiança e testes de hipóteses:</strong></p>
+<p>Seguem, respectivamente, testes de hipóteses para testar se <span class="math inline">\(\beta = 0\)</span> e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.</p>
+<pre class="r"><code>#Testes para beta
+VGAM::lrtest(modmental) #Razão de verossimilhanças</code></pre>
+<pre><code>## Likelihood ratio test
+## 
+## Model 1: mental ~ SES + life_events
+## Model 2: mental ~ 1
+##   #Df  LogLik Df  Chisq Pr(&gt;Chisq)   
+## 1 115 -49.549                        
+## 2 117 -54.521  2 9.9442   0.006929 **
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>lmtest::waldtest(modmental) #Wald.</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"115","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"117","2":"-2","3":"8.50148","4":"0.01425368","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>#Intervalos de confiança
+confint.default(modmental) #Para os parâmetros</code></pre>
+<pre><code>##                     2.5 %      97.5 %
+## (Intercept):1 -1.50305171  0.93927761
+## (Intercept):2 -0.06336929  2.48897799
+## (Intercept):3  0.80388808  3.61487537
+## SES           -0.09272235  2.31516768
+## life_events   -0.55293773 -0.08479079</code></pre>
+<pre class="r"><code>exp(confint.default(modmental)) #Para a chance</code></pre>
+<pre><code>##                   2.5 %     97.5 %
+## (Intercept):1 0.2224503  2.5581328
+## (Intercept):2 0.9385968 12.0489557
+## (Intercept):3 2.2342109 37.1467162
+## SES           0.9114465 10.1266209
+## life_events   0.5752574  0.9187045</code></pre>
+<p><strong>Qualidade do ajuste:</strong></p>
+<p>O pacote <em>VGAM</em> não apresenta em sua saída padrão o teste score para “odds” proporcionais como ocorre no SAS. Sendo assim, procedeu-se ao cálculo “manual” deste.</p>
+<pre class="r"><code>#Ajustamento - Pelo teste score para chances proporcionais
+modmental2 &lt;- VGAM::vglm(formula=mental~SES+life_events, 
+                         family=VGAM::cumulative(link=&quot;logit&quot;, parallel=F, reverse=F),data=dadosmental)
+
+pchisq(deviance(modmental)-deviance(modmental2),
+       df=df.residual(modmental)-df.residual(modmental2),lower.tail=FALSE)</code></pre>
+<pre><code>## [1] 0.6718069</code></pre>
+<pre class="r"><code>#O modelo mais complexo não se ajusta melhor, devendo o mais simples ser preferido.</code></pre>
+<hr />
+<hr />
+<div id="referencias-bibliograficas" class="section level3">
+<h3>Referências Bibliográficas</h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+---
+title: "**Ideologia** "
+subtitle: "Modelos Logito Multicategorizados - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *vcd*, *VGAM* e *lmtest*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# VGAM -- para trabalhar com Regresão Logística Politômica
+if (!require('VGAM')) install.packages('VGAM'); library('VGAM')
+
+# vcd -- para trabalhar com tabelas de contingencia
+if (!require('vcd')) install.packages('vcd'); library('vcd')
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+```
+
+
+**Carregamento dos dados:**
+
+
+A variável resposta corresponde a ideologia do entrevistado, segundo graus de liberalismo e conservadorismo. Os níveis são, em ordem: "Very Liberal" (Muito Liberal), "Slightly Liberal" (Levemente Liberal), "Moderate" (Moderado), "Slightly Conservative" (Levemente Conservador) e "Very Conservative" (Muito Conservador). As variáveis explicativas são o partido ao qual o entrevistado pertence, cujos níveis são "Republicanos" e "Democratas". Padronizou-se o valor 0 e 1 respectivamente para o partido. A outra variável explicativa é o gênero, separado em "Female" (Feminino) e "Male" (Masculino). Embora tal variável tenha sido inserida, não foi considerada para a modelagem dos dados.
+
+```{r entrada}
+ideologia <- factor(c(rep("Very Liberal", 44+18+36+12), rep("Slightly Liberal", 47+28+34+18),
+               rep("Moderate", 118+86++53+62), rep("Slightly Conservative", 23+39+18+45),
+               rep("Very Conservative", 32+48+23+51)), ord=T)
+
+ideologia <- ordered(ideologia, levels=c("Very Liberal", #Ordenamento dos fatores
+                            "Slightly Liberal", 
+                            "Moderate", "Slightly Conservative", 
+                            "Very Conservative"))
+
+genero <- as.factor(c(rep("Female", 44+18), rep("Male", 36+12),
+                      rep("Female", 47+28), rep("Male", 34+18), 
+                      rep("Female", 118+86), rep("Male", 53+62), 
+                      rep("Female", 23+39), rep("Male", 18+45), 
+                      rep("Female", 32+48), rep("Male", 23+51)))
+
+partido_politico <- as.factor(c(rep("Democratic", 44), rep("Republican", 18),
+                                rep("Democratic", 36), rep("Republican", 12),
+                                rep("Democratic", 47), rep("Republican", 28),
+                                rep("Democratic", 34), rep("Republican", 18),
+                                rep("Democratic", 118), rep("Republican", 86),
+                                rep("Democratic", 53), rep("Republican", 62),
+                                rep("Democratic", 23), rep("Republican", 39),
+                                rep("Democratic", 18), rep("Republican", 45),
+                                rep("Democratic", 32), rep("Republican", 48),
+                                rep("Democratic", 23), rep("Republican", 51)))
+
+partido_politico <- factor(partido_politico, levels=c("Republican", "Democratic")) #Ordenamento dos fatores
+#para ajuste conforme o exemplo do livro.
+
+dadosideo <- data.frame(ideologia, genero, partido_politico) #Consolidação dos dados
+```
+
+
+**Tabela de Contingência:**
+
+Utilizou-se o pacote *vcd* (<https://cran.r-project.org/web/packages/vcd/index.html>) para a criação da tabela de contingência.
+
+```{r tabela, results="asis"}
+tabideo <- vcd::structable(cbind(dadosideo[1:2], #Tabela de contingência
+                                 partido_politico=ordered(partido_politico, 
+                                                          levels=c("Democratic", "Republican"))), 
+                                                     split_vertical = c(T,F,F))
+
+# stargazer::stargazer(format(as.matrix(tabideo), quote=FALSE, justify="right"), type="latex", dep.var.labels = "Ideologia", title="Tabela de Contingência - Ideologia x Partido e Gênero")
+```
+
+
+**Ajuste do Modelo:**
+
+Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica.
+
+```{r modelo}
+modideo <- VGAM::vglm(formula=ideologia~partido_politico, #Ajuste do modelo
+                      family=VGAM::cumulative(link="logit", parallel=T, reverse=F),data=dadosideo)
+
+
+VGAM::summary(modideo) #Principais resultados
+
+VGAM::AIC(modideo) #AIC
+-2*logLik(modideo) #-2*loglik
+```
+
+
+**Intervalos de confiança e testes de hipóteses:**
+
+Seguem, respectivamente, testes de hipóteses para testar se $\beta = 0$ e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.
+
+```{r testes}
+#Testes para beta
+VGAM::lrtest(modideo) #Razão de verossimilhanças
+lmtest::waldtest(modideo) #Wald.
+
+#Intervalos de confiança
+confint.default(modideo) #Para os parâmetros
+exp(confint.default(modideo)) #Para a chance
+```
+
+
+**Qualidade do ajuste:**
+
+Por todas as variável se tratarem de dados categóricos, é possível calcular-se os resíduos de Pearson e resíduos Deviance, para realizar teste de hipótese para a qualidade do ajustamento. Não se encontrou nos pacotes utilizados função para a realização direta destes testes. Sendo assim, procedeu-se ao cálculo dos coeficientes e probabilidades acumuladas e em cada nível segundo o modelo ajustado. Com isto, foi possível calcular os resíduos de Pearson e Deviance, realizando-se em seguida um teste qui-quadrado para qualidade do ajustamento.
+
+```{r ajustamento}
+#Coeficientes
+alfa1 <- VGAM::coefvgam(modideo)[1]
+alfa2 <- VGAM::coefvgam(modideo)[2]
+alfa3 <- VGAM::coefvgam(modideo)[3]
+alfa4 <- VGAM::coefvgam(modideo)[4]
+beta <- VGAM::coefvgam(modideo)[5]
+
+#Probabilidades acumuladas - Democratas (1)
+dpmenorq1 <- exp(alfa1+beta)/(1+exp(alfa1+beta)) #P(Y <= 1)
+dpmenorq2 <- exp(alfa2+beta)/(1+exp(alfa2+beta)) #P(Y <= 2)
+dpmenorq3 <- exp(alfa3+beta)/(1+exp(alfa3+beta)) #P(Y <= 3)
+dpmenorq4 <- exp(alfa4+beta)/(1+exp(alfa4+beta)) #P(Y <= 4)
+
+#Probabilidades - Democratas(1)
+dpigual1 <- dpmenorq1 #P(Y = 1)
+dpigual2 <- dpmenorq2-dpmenorq1 #P(Y = 2)
+dpigual3 <- dpmenorq3-dpmenorq2 #P(Y = 3)
+dpigual4 <- dpmenorq4-dpmenorq3 #P(Y = 4)
+dpigual5 <- 1-dpmenorq4 #P(Y = 5)
+
+probd <- c(dpigual1,dpigual2,dpigual3,dpigual4,dpigual5)
+sum(c(dpigual1,dpigual2,dpigual3,dpigual4,dpigual5)) #OK - Soma das prob. = 1
+
+
+#Probabilidades acumuladas - Republicanos (0)
+rpmenorq1 <- exp(alfa1)/(1+exp(alfa1)) #P(Y <= 1)
+rpmenorq2 <- exp(alfa2)/(1+exp(alfa2)) #P(Y <= 2)
+rpmenorq3 <- exp(alfa3)/(1+exp(alfa3)) #P(Y <= 3)
+rpmenorq4 <- exp(alfa4)/(1+exp(alfa4)) #P(Y <= 4)
+
+#Probabilidades - Republicanos(0)
+rpigual1 <- rpmenorq1 #P(Y = 1)
+rpigual2 <- rpmenorq2-rpmenorq1 #P(Y = 2)
+rpigual3 <- rpmenorq3-rpmenorq2 #P(Y = 3)
+rpigual4 <- rpmenorq4-rpmenorq3 #P(Y = 4)
+rpigual5 <- 1-rpmenorq4 #P(Y = 5)
+
+probr <- c(rpigual1,rpigual2,rpigual3,rpigual4,rpigual5)
+sum(c(rpigual1,rpigual2,rpigual3,rpigual4,rpigual5)) #OK - Soma das prob. = 1
+
+#Ajustamento
+
+#Valor esperado e residuo de Pearson - Democratas
+observadosd <- apply(as.matrix(tabideo)[c(1,3),], 2, sum)
+esperadosd <- sum(observadosd)*probd
+pearsond <- sum((observadosd-esperadosd)^2/esperadosd)
+
+#Valor esperado e residuo de Pearson - Republicanos
+observadosr <- apply(as.matrix(tabideo)[c(2,4),], 2, sum)
+esperadosr <- sum(observadosr)*probr
+pearsonr <- sum((observadosr-esperadosr)^2/esperadosr)
+
+#Residuo de Pearson e teste para o ajuste
+pearson <- pearsond+pearsonr
+1-pchisq(pearson, df=3) #Bom ajuste pelos residuos de Pearson
+
+#Residuos Deviance e teste para o ajuste
+devianced <- 2*sum(observadosd*log(observadosd/esperadosd))
+deviancer <- 2*sum(observadosr*log(observadosr/esperadosr))
+deviance <- devianced+deviancer
+
+1-pchisq(deviance, df=3) #Bom ajuste pelos residuos Deviance
+```
+
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---

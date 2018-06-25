@@ -42,7 +42,7 @@ text-align: justify}
 
 **Carregamento de pacotes:**
 
-Neste exemplo são utilizados os seguintes pacotes: *readr*, *dplyr*, *magrittr*, *tibble*, *broom*, *reshape2*, *plotly*, *lmtest* e *pROC*. Para a confecção do documento html, é necessário o pacote *rmarkdown*.
+Neste exemplo são utilizados os seguintes pacotes: *readr*, *dplyr*, *magrittr*, *tibble*, *broom*, *reshape2*, *ggplot2*, *plotly*, *lmtest* e *pROC*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
 
 ```{r, message=FALSE, warning=FALSE}
 # readr -- para leitura de dados
@@ -62,6 +62,9 @@ if (!require('reshape2')) install.packages('reshape2'); library('reshape2')
 
 # broom -- para facilitar manipulacao de dados
 if (!require('broom')) install.packages('broom'); library('broom')
+
+# ggplot2 -- para os plots
+if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
 
 # plotly -- para os plots
 if (!require('plotly')) install.packages('plotly'); library('plotly')

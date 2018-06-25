@@ -203,7 +203,7 @@ dados.df</code></pre>
 ## 6 Others     No   22</code></pre>
 <hr />
 <div id="modelo-de-independencia" class="section level3">
-<h3>Modelo de Independência</h3>
+<h3><strong>Modelo de Independência</strong></h3>
 <hr />
 <p>Construindo o modelo log-linear de independência da forma <span class="math inline">\(log(\mu_{ij}) = \lambda + \lambda_i^X + \lambda_j^Y \quad i = 1,2,3 \quad j = 1,2\)</span>, com <span class="math inline">\(\lambda\)</span>: efeito geral, <span class="math inline">\(\lambda_i^X\)</span>: efeito marginal da raça (1: White, 2: Black, 3: Others) e <span class="math inline">\(\lambda_j^Y\)</span>: efeito marginal da crença (1: Yes, 2: No), tem-se:</p>
 <pre class="r"><code>mod.ind &lt;- glm(Freq ~ Race + Belief, data = dados.df, family = poisson(link = &#39;log&#39;))

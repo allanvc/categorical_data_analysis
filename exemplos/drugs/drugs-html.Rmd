@@ -33,6 +33,8 @@ body{
 
 ---
 
+Não foram utilizados pacotes adicionais na análise. Para a confecção do documento, é necessário o pacote *rmarkdown*. 
+
 **Carregamento dos dados:**
 
 ```{r, message=FALSE, warning=FALSE}

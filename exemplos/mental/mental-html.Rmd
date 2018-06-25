@@ -1,0 +1,143 @@
+---
+title: "**Mental Impairment** "
+subtitle: "Modelos Logito Multicategorizados - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  html_document:
+    code_folding: show
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *tibble*, *VGAM* e *lmtest*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# tibble -- para facilitar manipulacao de dados
+if (!require('tibble')) install.packages('tibble'); library('tibble')
+
+# VGAM -- para trabalhar com Regresão Logística Politômica
+if (!require('VGAM')) install.packages('VGAM'); library('VGAM')
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+```
+
+
+**Carregamento dos dados:**
+
+A variável resposta corresponde a deterioração mental do paciente, com graus variando da seguinte forma: "Well" (Bom), "Mild" (Ameno), "Moderate" (Moderado) e "Impaired" (Deteriorado).  As variáveis explicativas são: "SES", que corresponde ao nível social do paciente e "life events", que corresponde à contagem dos eventos importantes na vida do paciente. 
+
+```{r entrada}
+#Entrada de dados
+mental <- c(rep("Well", 12), rep("Mild", 12), rep("Moderate", 7),
+            rep("Impaired", 9))
+
+mental <- ordered(mental, levels=c("Well", "Mild", "Moderate", "Impaired"))
+
+SES <- as.integer(c(1,1,1,1,0,1,0,1,1,1,0,0,1,0,1,0,1,1,0,1,1,0,1,1,0,
+         1,0,0,1,0,0,1,1,1,0,0,0,1,0,0))
+
+life_events <- as.integer(c(1,9,4,3,2,0,1,3,3,7,1,2,5,6,3,1,8,2,5,5,9,
+                 3,3,1,0,4,3,9,6,4,3,8,2,7,5,4,4,8,8,9))
+
+dadosmental <- data.frame(mental, SES, life_events)
+
+tibble::as.tibble(dadosmental)
+```
+
+**Ajuste do Modelo:**
+
+Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica.
+
+```{r modelo}
+modmental <- VGAM::vglm(formula=mental~SES+life_events,
+                      family=VGAM::cumulative(link="logit", parallel=T, reverse=F),data=dadosmental)
+
+VGAM::summary(modmental)
+
+VGAM::AIC(modmental) #AIC
+-2*logLik(modmental) #-2*loglik
+```
+
+
+**Intervalos de confiança e testes de hipóteses:**
+
+Seguem, respectivamente, testes de hipóteses para testar se $\beta = 0$ e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.
+
+```{r testes}
+#Testes para beta
+VGAM::lrtest(modmental) #Razão de verossimilhanças
+lmtest::waldtest(modmental) #Wald.
+
+#Intervalos de confiança
+confint.default(modmental) #Para os parâmetros
+exp(confint.default(modmental)) #Para a chance
+```
+
+
+**Qualidade do ajuste:**
+
+O pacote *VGAM* não apresenta em sua saída padrão o teste score para "odds" proporcionais como ocorre no SAS. Sendo assim, procedeu-se ao cálculo "manual" deste.  
+
+```{r ajustamento}
+#Ajustamento - Pelo teste score para chances proporcionais
+modmental2 <- VGAM::vglm(formula=mental~SES+life_events, 
+                         family=VGAM::cumulative(link="logit", parallel=F, reverse=F),data=dadosmental)
+
+pchisq(deviance(modmental)-deviance(modmental2),
+       df=df.residual(modmental)-df.residual(modmental2),lower.tail=FALSE)
+
+#O modelo mais complexo não se ajusta melhor, devendo o mais simples ser preferido.
+```
+
+---
+
+---
+
+### Referências Bibliográficas
+
+---
+
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---
