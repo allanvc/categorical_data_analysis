@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira - 14/0128492" />
+<meta name="author" content="Caio Balena - 13/0104566" />
+<meta name="author" content="Frederico de Lucca - 15/0072139" />
+<meta name="author" content="José Cezário - 15/0072414" />
+
+
+<title>Avaliação de Político</title>
+
+<script src="politico-html_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="politico-html_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="politico-html_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="politico-html_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="politico-html_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="politico-html_files/navigation-1.1/tabsets.js"></script>
+<script src="politico-html_files/navigation-1.1/codefolding.js"></script>
+<link href="politico-html_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="politico-html_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="politico-html_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="politico-html_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore"><strong>Avaliação de Político</strong></h1>
+<h3 class="subtitle"><em>Modelos para Dados Pareados - Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira - 14/0128492</em></h4>
+<h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
+<h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
+<h4 class="author"><em>José Cezário - 15/0072414</em></h4>
+<h4 class="date"><em><strong>Junho de 2018</strong></em></h4>
+
+</div>
+
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+<hr />
+<hr />
+<p><strong>Carregamento de pacotes:</strong></p>
+<p>Neste exemplo são utilizados os seguintes pacotes: <em>magrittr</em>, <em>knitr</em>, <em>kableExtra</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<pre class="r"><code># magrittr -- para facilitar manipulacao de dados
+if (!require(&#39;magrittr&#39;)) install.packages(&#39;magrittr&#39;); library(&#39;magrittr&#39;)
+
+# knitr -- para tabelas
+if (!require(&#39;knitr&#39;)) install.packages(&#39;knitr&#39;); library(&#39;knitr&#39;)
+
+# kableExtra -- para tabelas
+if (!require(&#39;kableExtra&#39;)) install.packages(&#39;kableExtra&#39;); library(&#39;kableExtra&#39;)</code></pre>
+<hr />
+<p><strong>Problema:</strong> Em uma pesquisa com 1600 cidadãos britânicos em idade para votar, 944 indicaram a aprovação do desempenho do primeiro-ministro no cargo. Seis meses depois, dessas mesmas 1600 pessoas, 880 indicaram aprovação. A diagonal principal é composta pela quantidade de pessoas que manteram a mesma opinião nas duas pesquisas.</p>
+<pre class="r"><code>db &lt;- matrix(c(794,150,944,86,570,656,880,720,1600),nrow = 3,byrow = T)
+dimnames(db) &lt;- list(c(&quot;APROVA&quot;,&quot;DESAPROVA&quot;,&quot;TOTAL&quot;),c(&quot;APROVA&quot;,&quot;DESAPROVA&quot;,&quot;TOTAL&quot;))
+
+
+kable(db, booktabs = T) %&gt;%
+  kable_styling(full_width = F) %&gt;%
+  add_header_above(c(&quot; &quot; = 1, &quot;Segunda pesquisa&quot; = 2, &quot; &quot; = 1)) %&gt;%
+  add_indent(3) %&gt;%
+  group_rows(&quot;Primeira pesquisa&quot;, 1,3)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">APROVA</th>
+<th align="right">DESAPROVA</th>
+<th align="right">TOTAL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>APROVA</td>
+<td align="right">794</td>
+<td align="right">150</td>
+<td align="right">944</td>
+</tr>
+<tr class="even">
+<td>DESAPROVA</td>
+<td align="right">86</td>
+<td align="right">570</td>
+<td align="right">656</td>
+</tr>
+<tr class="odd">
+<td>TOTAL</td>
+<td align="right">880</td>
+<td align="right">720</td>
+<td align="right">1600</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Seja <span class="math inline">\(\pi_{ij}\)</span> a probabilidade de um sujeito responder i na primeira pesquisa e j na segunda;</p></li>
+<li><p>Então, <span class="math inline">\(\pi_{1+}\)</span> e <span class="math inline">\(\pi_{+1}\)</span> são as probabilidades de aprovação nas pesquisas 1 e 2, respectivamente.</p></li>
+<li><p>Hipótese de interesse: <span class="math inline">\(H_{0}\)</span>: <span class="math inline">\(\pi_{1+} = \pi_{+1}\)</span></p></li>
+<li><p>Sob <span class="math inline">\(H_{0}\)</span> temos:</p></li>
+</ul>
+<p><span class="math display">\[ \pi_{1+} - \pi_{+1} = \pi_{12} - \pi_{21}\]</span> e o teste de homogeneidade marginal equivale a testar:<span class="math inline">\(H_{0}\)</span>: <span class="math inline">\(\pi_{12} = \pi_{21}\)</span></p>
+<ul>
+<li><p>Seja <span class="math inline">\(n^{*} = \pi_{12} + \pi_{21}\)</span>;</p></li>
+<li><p>Quando <span class="math inline">\(n^{*} &gt; 10\)</span>, utilizamos a estatística de McNemar.</p></li>
+</ul>
+<pre class="r"><code>db1 &lt;- db[1:2,1:2]
+mcnemar.test(db1)</code></pre>
+<pre><code>## 
+##  McNemar&#39;s Chi-squared test with continuity correction
+## 
+## data:  db1
+## McNemar&#39;s chi-squared = 16.818, df = 1, p-value = 4.115e-05</code></pre>
+<hr />
+<hr />
+<div id="referencias-bibliograficas" class="section level3">
+<h3><strong>Referências Bibliográficas</strong></h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

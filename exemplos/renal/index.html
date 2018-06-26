@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Allan Vieira - 14/0128492" />
+<meta name="author" content="Caio Balena - 13/0104566" />
+<meta name="author" content="Frederico de Lucca - 15/0072139" />
+<meta name="author" content="José Cezário - 15/0072414" />
+
+
+<title>Reação Alérgica</title>
+
+<script src="renal-html_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="renal-html_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="renal-html_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="renal-html_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="renal-html_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="renal-html_files/navigation-1.1/tabsets.js"></script>
+<script src="renal-html_files/navigation-1.1/codefolding.js"></script>
+<link href="renal-html_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="renal-html_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="renal-html_files/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="renal-html_files/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore"><strong>Reação Alérgica</strong></h1>
+<h3 class="subtitle"><em>Regressão Logística - Análise de Dados Categorizados - Prova 3</em></h3>
+<h4 class="author"><em>Allan Vieira - 14/0128492</em></h4>
+<h4 class="author"><em>Caio Balena - 13/0104566</em></h4>
+<h4 class="author"><em>Frederico de Lucca - 15/0072139</em></h4>
+<h4 class="author"><em>José Cezário - 15/0072414</em></h4>
+<h4 class="date"><em><strong>Junho de 2018</strong></em></h4>
+
+</div>
+
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+<hr />
+<hr />
+<p><strong>Carregamento de pacotes:</strong></p>
+<p>Neste exemplo são utilizados os seguintes pacotes: <em>magrittr</em>, <em>knitr</em>, <em>kableExtra</em>, <em>lmtest</em> e <em>vcdExtra</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<pre class="r"><code># magrittr -- para facilitar manipulacao de dados
+if (!require(&#39;magrittr&#39;)) install.packages(&#39;magrittr&#39;); library(&#39;magrittr&#39;)
+
+# knitr -- para tabelas
+if (!require(&#39;knitr&#39;)) install.packages(&#39;knitr&#39;); library(&#39;knitr&#39;)
+
+# kableExtra -- para tabelas
+if (!require(&#39;kableExtra&#39;)) install.packages(&#39;kableExtra&#39;); library(&#39;kableExtra&#39;)
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require(&#39;lmtest&#39;)) install.packages(&#39;lmtest&#39;); library(&#39;lmtest&#39;)
+
+# modEVA -- para compelemntar a funcao alternativa do teste de Hosmer Lemeshow
+if (!require(&#39;vcdExtra&#39;)) install.packages(&#39;vcdExtra&#39;); library(&#39;vcdExtra&#39;)</code></pre>
+<hr />
+<div id="exemplo-de-aplicacao-de-modelo-logito-com-insercao-de-variavel-dummy." class="section level2">
+<h2>Exemplo de aplicação de modelo logito com inserção de variável “dummy”.</h2>
+<hr />
+<p><strong>Problema:</strong> Um antibiótico para pneumonia foi injetado em 100 pacientes com problemas renais e 100 pacientes normais. Alguns pacientes desenvolveram reações alérgicas, sendo 38 dos doentes e 21 dos normais.</p>
+<pre class="r"><code>freq &lt;- c(38,62,100,21,79,100)
+db2 &lt;- matrix(freq,nrow = 2,byrow = T)
+dimnames(db2) &lt;- list(c(&quot;RENAL&quot;,&quot;NORMAL&quot;),c(&quot;SIM&quot;,&quot;NÃO&quot;,&quot;TOTAL&quot;))
+
+
+kable(db2, booktabs = T) %&gt;% 
+  kable_styling(full_width = F) %&gt;%
+  add_header_above(c(&quot; &quot; = 1, &quot;Reação alérgica&quot; = 2, &quot; &quot; = 1))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">SIM</th>
+<th align="right">NÃO</th>
+<th align="right">TOTAL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RENAL</td>
+<td align="right">38</td>
+<td align="right">62</td>
+<td align="right">100</td>
+</tr>
+<tr class="even">
+<td>NORMAL</td>
+<td align="right">21</td>
+<td align="right">79</td>
+<td align="right">100</td>
+</tr>
+</tbody>
+</table>
+<p>A seguir temos algumas estatísticas calculadas a partir da tabela acima.</p>
+<pre class="r"><code>CMHtest(db2[,-3]) # Mantel Haenzel Statistics</code></pre>
+<pre><code>## Cochran-Mantel-Haenszel Statistics 
+## 
+##                  AltHypothesis  Chisq Df      Prob
+## cor        Nonzero correlation 6.9132  1 0.0085561
+## rmeans  Row mean scores differ 6.9132  1 0.0085561
+## cmeans  Col mean scores differ 6.9132  1 0.0085561
+## general    General association 6.9132  1 0.0085561</code></pre>
+<pre class="r"><code>fisher.test(db2[,-3], alternative = &quot;two.sided&quot;) # Fisher&#39;s Exact Test</code></pre>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  db2[, -3]
+## p-value = 0.01275
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  1.178639 4.565483
+## sample estimates:
+## odds ratio 
+##   2.295953</code></pre>
+<p><strong>Risco relativo e razão de chances:</strong></p>
+<p>Obteve-se as seguintes estimativas com os respectivos intervalos de confiança, considerando um nível de confiança de 95%.</p>
+<pre class="r"><code>freq &lt;- c(38,62,21,79)
+grupo &lt;- rep(c(&quot;RENAL&quot;,&quot;NORMAL&quot;),each = 2)
+reage &lt;- rep(c(&quot;SIM&quot;,&quot;NÃO&quot;),2)
+db1 &lt;- data.frame(freq,grupo,reage)
+db2 &lt;- matrix(freq,nrow = 2,byrow = T)
+rownames(db2) &lt;- c(&quot;RENAL&quot;,&quot;NORMAL&quot;)
+colnames(db2) &lt;- c(&quot;SIM&quot;,&quot;NÃO&quot;)
+
+### Função para calcular razão de chances e risco relativo
+
+tab2x2 &lt;- function(dados,conf.level = 0.95){
+  # Soma em cada linha
+  n1 &lt;- sum(dados[1,])
+  n2 &lt;- sum(dados[2,])
+  
+  # Frequência em cada casela
+  n11 &lt;- dados[1,1]
+  n12 &lt;- dados[1,2]
+  n21 &lt;- dados[2,1]
+  n22 &lt;- dados[2,2]
+  
+  # Proporções
+  p11 &lt;- dados[1,1]/n1
+  p12 &lt;- dados[1,2]/n1
+  p21 &lt;- dados[2,1]/n2
+  p22 &lt;- dados[2,1]/n2
+  
+  # Auxílio IC
+  conf.level = conf.level
+  cfl &lt;- 1-(1-conf.level)/2
+  
+  # Risco relativo
+  RR &lt;- p11/p21
+  
+  # intervalo de confiança para o risco relativo
+  sigmaRR &lt;- sqrt(((1-p11)/(p11*n1))+((1-p21)/(p21*n2)))
+  ICLR &lt;- exp(log(RR) - qnorm(cfl)*sigmaRR)
+  ICUR &lt;- exp(log(RR) + qnorm(cfl)*sigmaRR)
+  
+  ## Razão de chances
+  OR &lt;- (n11*n22)/(n12*n21)
+  
+  ## intervalo de confiança para razão de chances
+  sigmaOR &lt;- sqrt((1/n11)+(1/n21)+(1/n12)+(1/n22))
+  ICLO &lt;- exp(log(OR) - qnorm(cfl)*sigmaOR)
+  ICUO &lt;- exp(log(OR) + qnorm(cfl)*sigmaOR)
+  
+  ## Organização dos dados em tabela
+  mat1 &lt;- matrix(round(c(OR,ICLO,ICUO,RR,ICLR,ICUR),4), nrow = 2, byrow = T)
+  rownames(mat1) &lt;- c(&quot;Razão de chances&quot;,&quot;Risco relativo&quot;)
+  colnames(mat1) &lt;- c(&quot;Estimativa&quot;, &quot;LI&quot;, &quot;LS&quot;)
+  
+  lista &lt;- list(&#39;Estimativas&#39; = mat1,&#39;Nível de confiança&#39; = conf.level)
+  return(lista)
+}
+
+tab2x2(db2)</code></pre>
+<pre><code>## $Estimativas
+##                  Estimativa     LI     LS
+## Razão de chances     2.3057 1.2302 4.3213
+## Risco relativo       1.8095 1.1478 2.8526
+## 
+## $`Nível de confiança`
+## [1] 0.95</code></pre>
+<p><strong>Preparação dos dados para aplicação dos modelos de regressão logística:</strong></p>
+<pre class="r"><code>GRUPO &lt;- c(rep(&quot;RENAL&quot;,100),rep(&quot;NORMAL&quot;,100))
+#REAGE &lt;- c(rep(&quot;SIM&quot;,38),rep(&quot;NÃO&quot;,62),rep(&quot;SIM&quot;,21),rep(&quot;NÃO&quot;,79))
+REAGE &lt;- c(rep(1,38),rep(0,62),rep(1,21),rep(0,79))
+DUMMY &lt;- c(rep(1,100),rep(0,100))
+CODE &lt;- c(rep(2,100),rep(1,100))
+DEV &lt;- c(rep(-1,100),rep(1,100))
+
+db3 &lt;- data.frame(GRUPO,REAGE,DUMMY,CODE,DEV)
+
+db3</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["GRUPO"],"name":[1],"type":["fctr"],"align":["left"]},{"label":["REAGE"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["DUMMY"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["CODE"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["DEV"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"1","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"RENAL","2":"0","3":"1","4":"2","5":"-1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"1","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"},{"1":"NORMAL","2":"0","3":"0","4":"1","5":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Codificações utilizadas para as variáveis:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>GRUPO</th>
+<th align="center">DUMMY</th>
+<th align="center">CODE</th>
+<th align="center">DEV</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RENAL</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">-1</td>
+</tr>
+<tr class="even">
+<td>NORMAL</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<p>A variável resposta, sob a denominação REAGE, assume o valor 1 para resposta SIM e 0 para NÃO.</p>
+<hr />
+<div id="modelo-com-codificacao-deviation-from-the-mean" class="section level3">
+<h3><strong>1) Modelo com Codificação <em>Deviation from the mean</em> </strong></h3>
+<hr />
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code>m3 &lt;- glm(REAGE ~ DEV, family = binomial, data = db3)
+summary(m3)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = REAGE ~ DEV, family = binomial, data = db3)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9778  -0.9778  -0.6866   1.3911   1.7667  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -0.9072     0.1603  -5.661  1.5e-08 ***
+## DEV          -0.4177     0.1603  -2.606  0.00915 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 242.63  on 199  degrees of freedom
+## Residual deviance: 235.60  on 198  degrees of freedom
+## AIC: 239.6
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p><strong>-2logLik:</strong></p>
+<pre class="r"><code># -2logLik
+-2*logLik(m3)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 235.6042 (df=2)</code></pre>
+<p><strong>Testes de hipóteses para <span class="math inline">\(\beta\)</span> = 0:</strong></p>
+<pre class="r"><code># Razão de verossimilhanças
+lmtest::lrtest(m3)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-117.8021","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-121.3136","3":"-1","4":"7.02308","5":"0.008046572","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Teste de Wald
+lmtest::waldtest(m3)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"198","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"199","2":"-1","3":"6.793625","4":"0.00984419","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Score
+anova(m3,test = &quot;Rao&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["Deviance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Resid. Df"],"name":[3],"type":["int"],"align":["right"]},{"label":["Resid. Dev"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Rao"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"NA","2":"NA","3":"199","4":"242.6272","5":"NA","6":"NA","_rn_":"NULL"},{"1":"1","2":"7.02308","3":"198","4":"235.6042","5":"6.947958","6":"0.008391497","_rn_":"DEV"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<ul>
+<li>Razão de chances (OR) e intervalo de confiança:</li>
+</ul>
+<p>O parâmetro <span class="math inline">\(\beta\)</span> representa o log da razão de chances, logo, para obter a estimativa da OR, deve-se exponenciar <span class="math inline">\(\beta\)</span>.</p>
+<pre class="r"><code># estimativa de Beta
+beta3 &lt;- m3$coefficients[2]
+
+# ASE
+sigma3 &lt;- summary(m3)[[12]][2,2]
+
+# Razão de chances
+OR3 &lt;- round(exp(2*beta3),3)
+
+# Intervalo de confiança
+LI3 &lt;- round(exp(2*beta3 - 2*1.96*sigma3),3)
+LS3 &lt;- round(exp(2*beta3 + 2*1.96*sigma3),3)
+
+or3 &lt;- data.frame(Estimativa = OR3, LI = LI3, LS = LS3)
+row.names(or3) &lt;- &quot;OR&quot;
+
+or3</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimativa"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LI"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["LS"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.434","2":"0.231","3":"0.813","_rn_":"OR"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+</div>
+<div id="modelo-com-codificacao-x-1-para-renal-e-x-0-para-normal" class="section level3">
+<h3><strong>2) Modelo com codificação X = 1 para RENAL e X = 0 para NORMAL</strong></h3>
+<hr />
+<p>O modelo será estimado utilizando a codificação “DUMMY”, X = 1 para pacientes com problemas renais (RENAL) e X = 0 para pacientes normais (NORMAL).</p>
+<pre class="r"><code>m1 &lt;- glm(REAGE ~ DUMMY, family = binomial, data = db3)
+summary(m1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = REAGE ~ DUMMY, family = binomial, data = db3)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9778  -0.9778  -0.6866   1.3911   1.7667  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -1.3249     0.2455  -5.397 6.79e-08 ***
+## DUMMY         0.8354     0.3205   2.606  0.00915 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 242.63  on 199  degrees of freedom
+## Residual deviance: 235.60  on 198  degrees of freedom
+## AIC: 239.6
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p><strong>-2logLik:</strong></p>
+<pre class="r"><code># -2logLik
+-2*logLik(m1)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 235.6042 (df=2)</code></pre>
+<p><strong>Testes de hipóteses para <span class="math inline">\(\beta\)</span> = 0:</strong></p>
+<pre class="r"><code># Razão de verossimilhanças
+lmtest::lrtest(m1)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-117.8021","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-121.3136","3":"-1","4":"7.02308","5":"0.008046572","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Teste de Wald
+lmtest::waldtest(m1)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"198","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"199","2":"-1","3":"6.793625","4":"0.00984419","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Score
+anova(m1,test = &quot;Rao&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["Deviance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Resid. Df"],"name":[3],"type":["int"],"align":["right"]},{"label":["Resid. Dev"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Rao"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"NA","2":"NA","3":"199","4":"242.6272","5":"NA","6":"NA","_rn_":"NULL"},{"1":"1","2":"7.02308","3":"198","4":"235.6042","5":"6.947958","6":"0.008391497","_rn_":"DUMMY"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Razão de chances (OR) e intervalo de confiança:</strong></p>
+<p>O parâmetro <span class="math inline">\(\beta\)</span> representa o log da razão de chances, logo, para obter a estimativa da OR, deve-se exponenciar <span class="math inline">\(\beta\)</span>.</p>
+<pre class="r"><code># estimativa de Beta
+beta1 &lt;- m1$coefficients[2]
+
+# ASE
+sigma1 &lt;- summary(m1)[[12]][2,2]
+
+# Razão de chances
+OR1 &lt;- round(exp(beta1),3)
+
+# Intervalo de confiança
+LI1 &lt;- round(exp(beta1 - 1.96*sigma1),3)
+LS1 &lt;- round(exp(beta1 + 1.96*sigma1),3)
+
+or1 &lt;- data.frame(Estimativa = OR1, LI = LI1, LS = LS1)
+row.names(or1) &lt;- &quot;OR&quot;
+
+or1</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimativa"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LI"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["LS"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"2.306","2":"1.23","3":"4.321","_rn_":"OR"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Verifica-se que o intercepto, <span class="math inline">\(\hat{\alpha}\)</span>, é o log da chance para X = 0 (Grupo de referência);</p>
+<p><span class="math inline">\(\hat{\beta}\)</span> é o log da razão de chances para X = 1 relativo a X = 0.</p>
+<hr />
+</div>
+<div id="modelo-com-codificacao-x-2-para-renal-e-x-1-para-normal" class="section level3">
+<h3><strong>3) Modelo com codificação X = 2 para RENAL e X = 1 para NORMAL</strong></h3>
+<hr />
+<p>O modelo seguinte considera uma codificação alternativa para as variáveis, X = 2 para RENAL e X = 1 para NORMAL.</p>
+<p><strong>Ajuste do modelo:</strong></p>
+<pre class="r"><code>m2 &lt;- glm(REAGE ~ CODE, family = binomial, data = db3)
+summary(m2)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = REAGE ~ CODE, family = binomial, data = db3)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.9778  -0.9778  -0.6866   1.3911   1.7667  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.1603     0.5325  -4.057 4.97e-05 ***
+## CODE          0.8354     0.3205   2.606  0.00915 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 242.63  on 199  degrees of freedom
+## Residual deviance: 235.60  on 198  degrees of freedom
+## AIC: 239.6
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p><strong>-2logLik:</strong></p>
+<pre class="r"><code># -2logLik
+-2*logLik(m2)</code></pre>
+<pre><code>## &#39;log Lik.&#39; 235.6042 (df=2)</code></pre>
+<p><strong>Testes de hipóteses para <span class="math inline">\(\beta\)</span> = 0:</strong></p>
+<pre class="r"><code># Razão de verossimilhanças
+lmtest::lrtest(m2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["#Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LogLik"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"2","2":"-117.8021","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"1","2":"-121.3136","3":"-1","4":"7.02308","5":"0.008046572","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Teste de Wald
+lmtest::waldtest(m2)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["F"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"198","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"199","2":"-1","3":"6.793625","4":"0.00984419","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code># Score
+anova(m2,test = &quot;Rao&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["Deviance"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Resid. Df"],"name":[3],"type":["int"],"align":["right"]},{"label":["Resid. Dev"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Rao"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"NA","2":"NA","3":"199","4":"242.6272","5":"NA","6":"NA","_rn_":"NULL"},{"1":"1","2":"7.02308","3":"198","4":"235.6042","5":"6.947958","6":"0.008391497","_rn_":"CODE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><strong>Razão de chances (OR) e intervalo de confiança:</strong></p>
+<pre class="r"><code># estimativa de Beta
+beta2 &lt;- m2$coefficients[2]
+
+# ASE
+sigma2 &lt;- summary(m2)[[12]][2,2]
+
+# Razão de chances
+OR2 &lt;- round(exp(beta2),3)
+
+# Intervalo de confiança
+LI2 &lt;- round(exp(beta2 - 1.96*sigma2),3)
+LS2 &lt;- round(exp(beta2 + 1.96*sigma2),3)
+
+or2 &lt;- data.frame(Estimativa = OR2, LI = LI2, LS = LS2)
+row.names(or2) &lt;- &quot;OR&quot;
+
+or2</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Estimativa"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["LI"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["LS"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"2.306","2":"1.23","3":"4.321","_rn_":"OR"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>Em relação à codificação anterior, as novas estimativas, <span class="math inline">\(\hat\alpha^{*}\)</span> e <span class="math inline">\(\hat\beta^{*}\)</span>, possuem a seguinte relação com as estimativas anteriores:</p>
+<ul>
+<li><span class="math inline">\(\hat\beta^{*}\)</span> = <span class="math inline">\(\hat\beta\)</span>; e</li>
+<li><span class="math inline">\(\hat\alpha^{*}\)</span> = <span class="math inline">\(\hat\alpha^{*}\)</span> - <span class="math inline">\(\hat{\beta}\)</span></li>
+</ul>
+<hr />
+<hr />
+</div>
+<div id="referencias-bibliograficas" class="section level3">
+<h3><strong>Referências Bibliográficas</strong></h3>
+<hr />
+<p>AGRESTI, ALAN. <em>An Introduction to Categorical Data Analysis</em>. John Wiley &amp; Sons, second edition, 2007.</p>
+<p>NOTAS DE AULA. <em>Análise de Dados Categorizados</em>. Curso de Graduação em Estatística, UnB, 2018.</p>
+<p>R CORE TEAM. <em>R: A language and environment for statistical computing</em>. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<hr />
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

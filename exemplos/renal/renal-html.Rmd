@@ -1,0 +1,401 @@
+---
+title: "**Reação Alérgica** "
+subtitle: "Regressão Logística - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "**Junho de 2018**"
+output:
+  html_document:
+    code_folding: show
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *magrittr*, *knitr*, *kableExtra*, *lmtest* e *vcdExtra*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# magrittr -- para facilitar manipulacao de dados
+if (!require('magrittr')) install.packages('magrittr'); library('magrittr')
+
+# knitr -- para tabelas
+if (!require('knitr')) install.packages('knitr'); library('knitr')
+
+# kableExtra -- para tabelas
+if (!require('kableExtra')) install.packages('kableExtra'); library('kableExtra')
+
+# lmtest -- para os testes de razao de verossimilhancas e para o teste de wald
+if (!require('lmtest')) install.packages('lmtest'); library('lmtest')
+
+# modEVA -- para compelemntar a funcao alternativa do teste de Hosmer Lemeshow
+if (!require('vcdExtra')) install.packages('vcdExtra'); library('vcdExtra')
+
+```
+
+---
+
+## Exemplo de aplicação de modelo logito com inserção de variável "dummy".
+
+---
+
+**Problema:** Um antibiótico para pneumonia foi injetado em 100 pacientes com problemas renais e 100 pacientes normais. Alguns pacientes desenvolveram reações alérgicas, sendo 38 dos doentes e 21 dos normais.
+
+```{r tab1, results='asis', warning=FALSE, message=FALSE}
+freq <- c(38,62,100,21,79,100)
+db2 <- matrix(freq,nrow = 2,byrow = T)
+dimnames(db2) <- list(c("RENAL","NORMAL"),c("SIM","NÃO","TOTAL"))
+
+
+kable(db2, booktabs = T) %>% 
+  kable_styling(full_width = F) %>%
+  add_header_above(c(" " = 1, "Reação alérgica" = 2, " " = 1))
+```
+
+A seguir temos algumas estatísticas calculadas a partir da tabela acima.
+
+```{r}
+CMHtest(db2[,-3]) # Mantel Haenzel Statistics
+
+fisher.test(db2[,-3], alternative = "two.sided") # Fisher's Exact Test
+
+```
+
+
+
+**Risco relativo e razão de chances:**
+
+Obteve-se as seguintes estimativas com os respectivos intervalos de confiança, considerando um nível de confiança de 95%.
+
+```{r func1}
+
+freq <- c(38,62,21,79)
+grupo <- rep(c("RENAL","NORMAL"),each = 2)
+reage <- rep(c("SIM","NÃO"),2)
+db1 <- data.frame(freq,grupo,reage)
+db2 <- matrix(freq,nrow = 2,byrow = T)
+rownames(db2) <- c("RENAL","NORMAL")
+colnames(db2) <- c("SIM","NÃO")
+
+### Função para calcular razão de chances e risco relativo
+
+tab2x2 <- function(dados,conf.level = 0.95){
+  # Soma em cada linha
+  n1 <- sum(dados[1,])
+  n2 <- sum(dados[2,])
+  
+  # Frequência em cada casela
+  n11 <- dados[1,1]
+  n12 <- dados[1,2]
+  n21 <- dados[2,1]
+  n22 <- dados[2,2]
+  
+  # Proporções
+  p11 <- dados[1,1]/n1
+  p12 <- dados[1,2]/n1
+  p21 <- dados[2,1]/n2
+  p22 <- dados[2,1]/n2
+  
+  # Auxílio IC
+  conf.level = conf.level
+  cfl <- 1-(1-conf.level)/2
+  
+  # Risco relativo
+  RR <- p11/p21
+  
+  # intervalo de confiança para o risco relativo
+  sigmaRR <- sqrt(((1-p11)/(p11*n1))+((1-p21)/(p21*n2)))
+  ICLR <- exp(log(RR) - qnorm(cfl)*sigmaRR)
+  ICUR <- exp(log(RR) + qnorm(cfl)*sigmaRR)
+  
+  ## Razão de chances
+  OR <- (n11*n22)/(n12*n21)
+  
+  ## intervalo de confiança para razão de chances
+  sigmaOR <- sqrt((1/n11)+(1/n21)+(1/n12)+(1/n22))
+  ICLO <- exp(log(OR) - qnorm(cfl)*sigmaOR)
+  ICUO <- exp(log(OR) + qnorm(cfl)*sigmaOR)
+  
+  ## Organização dos dados em tabela
+  mat1 <- matrix(round(c(OR,ICLO,ICUO,RR,ICLR,ICUR),4), nrow = 2, byrow = T)
+  rownames(mat1) <- c("Razão de chances","Risco relativo")
+  colnames(mat1) <- c("Estimativa", "LI", "LS")
+  
+  lista <- list('Estimativas' = mat1,'Nível de confiança' = conf.level)
+  return(lista)
+}
+
+tab2x2(db2)
+
+
+```
+
+
+**Preparação dos dados para aplicação dos modelos de regressão logística:**
+
+```{r}
+GRUPO <- c(rep("RENAL",100),rep("NORMAL",100))
+#REAGE <- c(rep("SIM",38),rep("NÃO",62),rep("SIM",21),rep("NÃO",79))
+REAGE <- c(rep(1,38),rep(0,62),rep(1,21),rep(0,79))
+DUMMY <- c(rep(1,100),rep(0,100))
+CODE <- c(rep(2,100),rep(1,100))
+DEV <- c(rep(-1,100),rep(1,100))
+
+db3 <- data.frame(GRUPO,REAGE,DUMMY,CODE,DEV)
+
+db3
+```
+
+
+**Codificações utilizadas para as variáveis:**
+
+
+|GRUPO | DUMMY | CODE | DEV  |
+|------|:-----:|:----:|:----:|
+|RENAL |   1   |   2  |  -1  |
+|NORMAL|   0   |   1  |   1  |
+
+
+A variável resposta, sob a denominação REAGE, assume o valor 1 para resposta SIM e 0 para NÃO.
+
+
+---
+
+### **1) Modelo com Codificação *Deviation from the mean* **
+
+---
+
+
+**Ajuste do modelo:**
+
+```{r modelo3}
+m3 <- glm(REAGE ~ DEV, family = binomial, data = db3)
+summary(m3)
+```
+
+**-2logLik:**
+
+```{r, message=FALSE, warning=FALSE}
+# -2logLik
+-2*logLik(m3)
+```
+
+**Testes de hipóteses para $\beta$ = 0:**
+
+```{r teste_m3}
+# Razão de verossimilhanças
+lmtest::lrtest(m3)
+
+# Teste de Wald
+lmtest::waldtest(m3)
+
+# Score
+anova(m3,test = "Rao")
+```
+
+* Razão de chances (OR) e intervalo de confiança:
+
+O parâmetro $\beta$ representa o log da razão de chances, logo, para obter a estimativa da OR, deve-se exponenciar $\beta$.
+
+```{r OR3}
+# estimativa de Beta
+beta3 <- m3$coefficients[2]
+
+# ASE
+sigma3 <- summary(m3)[[12]][2,2]
+
+# Razão de chances
+OR3 <- round(exp(2*beta3),3)
+
+# Intervalo de confiança
+LI3 <- round(exp(2*beta3 - 2*1.96*sigma3),3)
+LS3 <- round(exp(2*beta3 + 2*1.96*sigma3),3)
+
+or3 <- data.frame(Estimativa = OR3, LI = LI3, LS = LS3)
+row.names(or3) <- "OR"
+
+or3
+```
+
+
+
+---
+
+### **2) Modelo com codificação X = 1 para RENAL e X = 0 para NORMAL**
+
+---
+
+
+O modelo será estimado utilizando a codificação "DUMMY", X = 1 para pacientes com problemas renais (RENAL) e X = 0 para pacientes normais (NORMAL).
+
+```{r modelo1}
+m1 <- glm(REAGE ~ DUMMY, family = binomial, data = db3)
+summary(m1)
+```
+
+
+**-2logLik:**
+
+```{r, message=FALSE, warning=FALSE}
+# -2logLik
+-2*logLik(m1)
+```
+
+
+**Testes de hipóteses para $\beta$ = 0:**
+
+```{r teste_m1}
+# Razão de verossimilhanças
+lmtest::lrtest(m1)
+
+# Teste de Wald
+lmtest::waldtest(m1)
+
+# Score
+anova(m1,test = "Rao")
+```
+
+
+**Razão de chances (OR) e intervalo de confiança:**
+
+O parâmetro $\beta$ representa o log da razão de chances, logo, para obter a estimativa da OR, deve-se exponenciar $\beta$.
+
+```{r OR1}
+# estimativa de Beta
+beta1 <- m1$coefficients[2]
+
+# ASE
+sigma1 <- summary(m1)[[12]][2,2]
+
+# Razão de chances
+OR1 <- round(exp(beta1),3)
+
+# Intervalo de confiança
+LI1 <- round(exp(beta1 - 1.96*sigma1),3)
+LS1 <- round(exp(beta1 + 1.96*sigma1),3)
+
+or1 <- data.frame(Estimativa = OR1, LI = LI1, LS = LS1)
+row.names(or1) <- "OR"
+
+or1
+```
+
+
+
+Verifica-se que o intercepto, $\hat{\alpha}$, é o log da chance para X = 0 (Grupo de referência);
+
+$\hat{\beta}$ é o log da razão de chances para X = 1 relativo a X = 0.
+
+
+---
+
+### **3) Modelo com codificação X = 2 para RENAL e X = 1 para NORMAL**
+
+---
+
+O modelo seguinte considera uma codificação alternativa para as variáveis, X = 2 para RENAL e X = 1 para NORMAL.
+
+**Ajuste do modelo:**
+
+```{r modelo2}
+m2 <- glm(REAGE ~ CODE, family = binomial, data = db3)
+summary(m2)
+```
+
+
+**-2logLik:**
+
+```{r, message=FALSE, warning=FALSE}
+# -2logLik
+-2*logLik(m2)
+```
+
+
+**Testes de hipóteses para $\beta$ = 0:**
+
+```{r teste_m2}
+# Razão de verossimilhanças
+lmtest::lrtest(m2)
+
+# Teste de Wald
+lmtest::waldtest(m2)
+
+# Score
+anova(m2,test = "Rao")
+```
+
+**Razão de chances (OR) e intervalo de confiança:**
+
+```{r OR2}
+# estimativa de Beta
+beta2 <- m2$coefficients[2]
+
+# ASE
+sigma2 <- summary(m2)[[12]][2,2]
+
+# Razão de chances
+OR2 <- round(exp(beta2),3)
+
+# Intervalo de confiança
+LI2 <- round(exp(beta2 - 1.96*sigma2),3)
+LS2 <- round(exp(beta2 + 1.96*sigma2),3)
+
+or2 <- data.frame(Estimativa = OR2, LI = LI2, LS = LS2)
+row.names(or2) <- "OR"
+
+or2
+```
+
+
+Em relação à codificação anterior, as novas estimativas, $\hat\alpha^{*}$ e $\hat\beta^{*}$, possuem a seguinte relação com as estimativas anteriores:
+
+* $\hat\beta^{*}$ = $\hat\beta$; e
+* $\hat\alpha^{*}$ = $\hat\alpha^{*}$ - $\hat{\beta}$
+
+
+
+---
+
+---
+
+### **Referências Bibliográficas**
+
+---
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---

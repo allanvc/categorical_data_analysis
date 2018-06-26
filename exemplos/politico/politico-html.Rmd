@@ -1,0 +1,114 @@
+---
+title: "**Avaliação de Político** "
+subtitle: "Modelos para Dados Pareados - Análise de Dados Categorizados - Prova 3"
+author: 
+- Allan Vieira - 14/0128492
+- Caio Balena - 13/0104566
+- Frederico de Lucca - 15/0072139
+- José Cezário - 15/0072414
+date: "**Junho de 2018**"
+output:
+  html_document:
+    code_folding: show
+    self_contained: false
+    df_print: paged
+---
+
+<!-- self_contained: false --- para nao dar pau do plotly com firefox -->
+<!-- df_print para as formas de imprimir data frames e tibbles -->
+<!-- ver https://rmarkdown.rstudio.com/html_document_format.html -->
+
+
+<!-- para justificar texto no markdown -->
+<!-- https://stackoverflow.com/questions/43222169/how-to-justify-the-text-to-both-sides-when-knitting-html-in-rmarkdown -->
+<style>
+body {
+text-align: justify}
+</style>
+
+
+
+<!-- para acrescentar logo da unb no cabeçalho -->
+<script>
+   $(document).ready(function() {
+     $head = $('#header');
+     $head.prepend('<img src=\"unb3.png\" style=\"float: right;width: 150px;\"/>')
+   });
+</script>
+
+---
+
+---
+
+
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *magrittr*, *knitr*, *kableExtra*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# magrittr -- para facilitar manipulacao de dados
+if (!require('magrittr')) install.packages('magrittr'); library('magrittr')
+
+# knitr -- para tabelas
+if (!require('knitr')) install.packages('knitr'); library('knitr')
+
+# kableExtra -- para tabelas
+if (!require('kableExtra')) install.packages('kableExtra'); library('kableExtra')
+
+```
+
+---
+
+**Problema:** Em uma pesquisa com 1600 cidadãos britânicos em idade para votar, 944 indicaram a aprovação do desempenho do primeiro-ministro no cargo. Seis meses depois, dessas mesmas 1600 pessoas, 880 indicaram aprovação. A diagonal principal é composta pela quantidade de pessoas que manteram a mesma opinião nas duas pesquisas.
+
+```{r table, results='asis', warning=FALSE, message=FALSE}
+
+db <- matrix(c(794,150,944,86,570,656,880,720,1600),nrow = 3,byrow = T)
+dimnames(db) <- list(c("APROVA","DESAPROVA","TOTAL"),c("APROVA","DESAPROVA","TOTAL"))
+
+
+kable(db, booktabs = T) %>%
+  kable_styling(full_width = F) %>%
+  add_header_above(c(" " = 1, "Segunda pesquisa" = 2, " " = 1)) %>%
+  add_indent(3) %>%
+  group_rows("Primeira pesquisa", 1,3)
+
+
+```
+
+* Seja $\pi_{ij}$ a probabilidade de um sujeito responder i na primeira pesquisa e j na segunda;
+
+* Então, $\pi_{1+}$ e $\pi_{+1}$ são as probabilidades de aprovação nas pesquisas 1 e 2, respectivamente.
+
+* Hipótese de interesse: $H_{0}$: $\pi_{1+} = \pi_{+1}$
+
+* Sob $H_{0}$ temos: 
+
+$$ \pi_{1+} - \pi_{+1} = \pi_{12} - \pi_{21}$$
+e o teste de homogeneidade marginal equivale a testar:$H_{0}$: $\pi_{12} = \pi_{21}$
+
+* Seja $n^{*} = \pi_{12} + \pi_{21}$;
+
+* Quando $n^{*} > 10$, utilizamos a estatística de McNemar.
+
+```{r teste}
+db1 <- db[1:2,1:2]
+mcnemar.test(db1)
+```
+
+
+---
+
+---
+
+### **Referências Bibliográficas**
+
+---
+
+AGRESTI, ALAN. *An Introduction to Categorical Data Analysis*. John Wiley & Sons, second edition, 2007.
+
+NOTAS DE AULA. *Análise de Dados Categorizados*. Curso de Graduação em Estatística, UnB, 2018.
+
+R CORE TEAM. *R: A language and environment for statistical computing*. R Foundation for Statistical Computing, Vienna, Austria. URL https://www.R-project.org/.
+
+---
