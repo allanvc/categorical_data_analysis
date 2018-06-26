@@ -379,8 +379,8 @@ or2
 
 Em relação à codificação anterior, as novas estimativas, $\hat\alpha^{*}$ e $\hat\beta^{*}$, possuem a seguinte relação com as estimativas anteriores:
 
-* $\hat\beta^{*}$ = $\hat\beta$; e
-* $\hat\alpha^{*}$ = $\hat\alpha^{*}$ - $\hat{\beta}$
+* $\hat\beta^{*}$ = $\hat\beta$
+* $\hat\alpha^{*}$ = $\hat\alpha$ - $\hat{\beta}$
 
 
 
