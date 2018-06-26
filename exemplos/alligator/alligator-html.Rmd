@@ -92,9 +92,11 @@ tibble::as.tibble(alligator)
 
 **Ajuste do Modelo:**
 
-Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica.
+Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica. Como a saída do SAS utiliza como base a categoria *"O"*, utilizamos a função `relevel(comida, ref="O")` para que o modelo no *R* também tenha como base a mesma categoria para a variável comida.
 
 ```{r modelo}
+alligator <- data.frame(relevel(comida, ref="O"), comp)
+
 modall <- VGAM::vglm(comida~comp,VGAM::multinomial,alligator)
 VGAM::summary(modall) 
 VGAM::AIC(modall) #AIC

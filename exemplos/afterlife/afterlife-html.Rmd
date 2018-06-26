@@ -32,7 +32,16 @@ body{
 
 ---
 
-Não foram utilizados pacotes adicionais na análise. Para a confecção do documento, é necessário o pacote *rmarkdown*. 
+**Carregamento de pacotes:**
+
+Neste exemplo são utilizados os seguintes pacotes: *vcdExtra*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+
+```{r, message=FALSE, warning=FALSE}
+# vcdExtra -- para o Teste de Mantel Haenzel
+if (!require('vcdExtra')) install.packages('vcdExtra'); library('vcdExtra')
+
+```
+
 
 **Carregamento dos dados:**
 
@@ -53,6 +62,12 @@ Verificando as proporções ao longo das linhas:
 ```{r, message=FALSE, warning=FALSE}
 prop.table(dados, margin = 1)
 ```
+
+Algumas estatísticas para a tabela Bidimensional:
+```{r}
+vcdExtra::CMHtest(dados)
+```
+
 
 Convertendo para o formato *data.frame* para usar a função *glm* e definindo o último nível como nível de referência:
 ```{r, message=FALSE, warning=FALSE}

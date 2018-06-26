@@ -42,7 +42,7 @@ Nos links abaixo você encontrará exemplos com aplicações dos conceitos traba
 
 - [**Horseshoe Crabs**](https://allanvc.github.io/categorical_data_analysis/exemplos/crabs/){target="_blank"}
 
-- [**Renal**](https://allanvc.github.io/categorical_data_analysis/exemplos/renal/){target="_blank"}
+- [**Reação Alérgica**](https://allanvc.github.io/categorical_data_analysis/exemplos/renal/){target="_blank"}
 
 ---
 

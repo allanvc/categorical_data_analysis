@@ -85,7 +85,7 @@ tibble::as.tibble(dadosmental)
 Utilizou-se o pacote VGAM (<https://cran.r-project.org/web/packages/VGAM/index.html>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função "*glm*", nativa do R, não possui suporte à Regressão Logística Politômica.
 
 ```{r modelo}
-modmental <- VGAM::vglm(formula=mental~SES+life_events,
+modmental <- VGAM::vglm(formula=mental~life_events+SES,
                       family=VGAM::cumulative(link="logit", parallel=T, reverse=F),data=dadosmental)
 
 VGAM::summary(modmental)
@@ -116,14 +116,47 @@ O pacote *VGAM* não apresenta em sua saída padrão o teste score para "odds" p
 
 ```{r ajustamento}
 #Ajustamento - Pelo teste score para chances proporcionais
-modmental2 <- VGAM::vglm(formula=mental~SES+life_events, 
+modmental2 <- VGAM::vglm(formula=mental~life_events+SES, 
                          family=VGAM::cumulative(link="logit", parallel=F, reverse=F),data=dadosmental)
+# alteramos o parametro parallel para FALSE
 
 pchisq(deviance(modmental)-deviance(modmental2),
        df=df.residual(modmental)-df.residual(modmental2),lower.tail=FALSE)
 
 #O modelo mais complexo não se ajusta melhor, devendo o mais simples ser preferido.
 ```
+
+
+---
+
+### **Modelo com Interação**
+
+---
+
+**Ajuste do Modelo:**
+
+```{r modelo_int}
+modmental_int <- VGAM::vglm(formula=mental~life_events*SES,
+                      family=VGAM::cumulative(link="logit", parallel=T, reverse=F),data=dadosmental)
+
+VGAM::summary(modmental_int)
+
+VGAM::AIC(modmental_int) #AIC
+-2*logLik(modmental_int) #-2*loglik
+```
+
+
+**Testes de hipóteses:**
+
+Seguem, respectivamente, testes de hipóteses para testar se $\beta = 0$ e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.
+
+```{r testes_int}
+#Testes para beta
+VGAM::lrtest(modmental_int) #Razão de verossimilhanças
+lmtest::waldtest(modmental_int) #Wald.
+
+```
+
 
 ---
 

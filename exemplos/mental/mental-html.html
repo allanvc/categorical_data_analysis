@@ -203,13 +203,13 @@ tibble::as.tibble(dadosmental)</code></pre>
 </div>
 <p><strong>Ajuste do Modelo:</strong></p>
 <p>Utilizou-se o pacote VGAM (<a href="https://cran.r-project.org/web/packages/VGAM/index.html" class="uri">https://cran.r-project.org/web/packages/VGAM/index.html</a>) para modelagem dos dados. Tal utilização se fez necessária tendo em vista que a função “<em>glm</em>”, nativa do R, não possui suporte à Regressão Logística Politômica.</p>
-<pre class="r"><code>modmental &lt;- VGAM::vglm(formula=mental~SES+life_events,
+<pre class="r"><code>modmental &lt;- VGAM::vglm(formula=mental~life_events+SES,
                       family=VGAM::cumulative(link=&quot;logit&quot;, parallel=T, reverse=F),data=dadosmental)
 
 VGAM::summary(modmental)</code></pre>
 <pre><code>## 
 ## Call:
-## VGAM::vglm(formula = mental ~ SES + life_events, family = VGAM::cumulative(link = &quot;logit&quot;, 
+## VGAM::vglm(formula = mental ~ life_events + SES, family = VGAM::cumulative(link = &quot;logit&quot;, 
 ##     parallel = T, reverse = F), data = dadosmental)
 ## 
 ## 
@@ -224,8 +224,8 @@ VGAM::summary(modmental)</code></pre>
 ## (Intercept):1  -0.2819     0.6231  -0.452  0.65096   
 ## (Intercept):2   1.2128     0.6511   1.863  0.06251 . 
 ## (Intercept):3   2.2094     0.7171   3.081  0.00206 **
-## SES             1.1112     0.6143   1.809  0.07045 . 
 ## life_events    -0.3189     0.1194  -2.670  0.00759 **
+## SES             1.1112     0.6143   1.809  0.07045 . 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
@@ -243,8 +243,8 @@ VGAM::summary(modmental)</code></pre>
 ## No Hauck-Donner effect found in any of the estimates
 ## 
 ## Exponentiated coefficients:
-##         SES life_events 
-##   3.0380707   0.7269742</code></pre>
+## life_events         SES 
+##   0.7269742   3.0380707</code></pre>
 <pre class="r"><code>VGAM::AIC(modmental) #AIC</code></pre>
 <pre><code>## [1] 109.0979</code></pre>
 <pre class="r"><code>-2*logLik(modmental) #-2*loglik</code></pre>
@@ -255,7 +255,7 @@ VGAM::summary(modmental)</code></pre>
 VGAM::lrtest(modmental) #Razão de verossimilhanças</code></pre>
 <pre><code>## Likelihood ratio test
 ## 
-## Model 1: mental ~ SES + life_events
+## Model 1: mental ~ life_events + SES
 ## Model 2: mental ~ 1
 ##   #Df  LogLik Df  Chisq Pr(&gt;Chisq)   
 ## 1 115 -49.549                        
@@ -274,27 +274,100 @@ confint.default(modmental) #Para os parâmetros</code></pre>
 ## (Intercept):1 -1.50305171  0.93927761
 ## (Intercept):2 -0.06336929  2.48897799
 ## (Intercept):3  0.80388808  3.61487537
-## SES           -0.09272235  2.31516768
-## life_events   -0.55293773 -0.08479079</code></pre>
+## life_events   -0.55293773 -0.08479079
+## SES           -0.09272235  2.31516768</code></pre>
 <pre class="r"><code>exp(confint.default(modmental)) #Para a chance</code></pre>
 <pre><code>##                   2.5 %     97.5 %
 ## (Intercept):1 0.2224503  2.5581328
 ## (Intercept):2 0.9385968 12.0489557
 ## (Intercept):3 2.2342109 37.1467162
-## SES           0.9114465 10.1266209
-## life_events   0.5752574  0.9187045</code></pre>
+## life_events   0.5752574  0.9187045
+## SES           0.9114465 10.1266209</code></pre>
 <p><strong>Qualidade do ajuste:</strong></p>
 <p>O pacote <em>VGAM</em> não apresenta em sua saída padrão o teste score para “odds” proporcionais como ocorre no SAS. Sendo assim, procedeu-se ao cálculo “manual” deste.</p>
 <pre class="r"><code>#Ajustamento - Pelo teste score para chances proporcionais
-modmental2 &lt;- VGAM::vglm(formula=mental~SES+life_events, 
+modmental2 &lt;- VGAM::vglm(formula=mental~life_events+SES, 
                          family=VGAM::cumulative(link=&quot;logit&quot;, parallel=F, reverse=F),data=dadosmental)
+# alteramos o parametro parallel para FALSE
 
 pchisq(deviance(modmental)-deviance(modmental2),
        df=df.residual(modmental)-df.residual(modmental2),lower.tail=FALSE)</code></pre>
 <pre><code>## [1] 0.6718069</code></pre>
 <pre class="r"><code>#O modelo mais complexo não se ajusta melhor, devendo o mais simples ser preferido.</code></pre>
 <hr />
+<div id="modelo-com-interacao" class="section level3">
+<h3><strong>Modelo com Interação</strong></h3>
 <hr />
+<p><strong>Ajuste do Modelo:</strong></p>
+<pre class="r"><code>modmental_int &lt;- VGAM::vglm(formula=mental~life_events*SES,
+                      family=VGAM::cumulative(link=&quot;logit&quot;, parallel=T, reverse=F),data=dadosmental)
+
+VGAM::summary(modmental_int)</code></pre>
+<pre><code>## 
+## Call:
+## VGAM::vglm(formula = mental ~ life_events * SES, family = VGAM::cumulative(link = &quot;logit&quot;, 
+##     parallel = T, reverse = F), data = dadosmental)
+## 
+## 
+## Pearson residuals:
+##                   Min      1Q  Median     3Q   Max
+## logit(P[Y&lt;=1]) -1.393 -0.7139 -0.2172 0.9084 2.262
+## logit(P[Y&lt;=2]) -2.758 -0.4862  0.2781 0.7218 1.797
+## logit(P[Y&lt;=3]) -3.364  0.1347  0.2062 0.3795 2.344
+## 
+## Coefficients: 
+##                 Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept):1    0.09807    0.81102   0.121  0.90375   
+## (Intercept):2    1.59248    0.83717   1.902  0.05714 . 
+## (Intercept):3    2.60660    0.90966   2.865  0.00416 **
+## life_events     -0.42045    0.19031  -2.209  0.02715 * 
+## SES              0.37090    1.13022   0.328  0.74279   
+## life_events:SES  0.18131    0.23611   0.768  0.44255   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Number of linear predictors:  3 
+## 
+## Names of linear predictors: 
+## logit(P[Y&lt;=1]), logit(P[Y&lt;=2]), logit(P[Y&lt;=3])
+## 
+## Residual deviance: 98.5044 on 114 degrees of freedom
+## 
+## Log-likelihood: -49.2522 on 114 degrees of freedom
+## 
+## Number of iterations: 5 
+## 
+## No Hauck-Donner effect found in any of the estimates
+## 
+## Exponentiated coefficients:
+##     life_events             SES life_events:SES 
+##       0.6567529       1.4490350       1.1987822</code></pre>
+<pre class="r"><code>VGAM::AIC(modmental_int) #AIC</code></pre>
+<pre><code>## [1] 110.5044</code></pre>
+<pre class="r"><code>-2*logLik(modmental_int) #-2*loglik</code></pre>
+<pre><code>## [1] 98.50444</code></pre>
+<p><strong>Testes de hipóteses:</strong></p>
+<p>Seguem, respectivamente, testes de hipóteses para testar se <span class="math inline">\(\beta = 0\)</span> e os intervalos de confiança dos coeficientes ajustados. Procedeu-se aos testes de Razão de Verossimilhança e Wald.</p>
+<pre class="r"><code>#Testes para beta
+VGAM::lrtest(modmental_int) #Razão de verossimilhanças</code></pre>
+<pre><code>## Likelihood ratio test
+## 
+## Model 1: mental ~ life_events * SES
+## Model 2: mental ~ 1
+##   #Df  LogLik Df  Chisq Pr(&gt;Chisq)  
+## 1 114 -49.252                       
+## 2 117 -54.521  3 10.538    0.01451 *
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>lmtest::waldtest(modmental_int) #Wald.</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Res.Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Chisq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chisq)"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"114","2":"NA","3":"NA","4":"NA","_rn_":"1"},{"1":"117","2":"-3","3":"8.421448","4":"0.03805919","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<hr />
+<hr />
+</div>
 <div id="referencias-bibliograficas" class="section level3">
 <h3>Referências Bibliográficas</h3>
 <hr />
