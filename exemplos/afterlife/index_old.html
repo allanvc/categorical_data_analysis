@@ -163,7 +163,10 @@ body{
 </script>
 <hr />
 <hr />
-<p>Não foram utilizados pacotes adicionais na análise. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<p><strong>Carregamento de pacotes:</strong></p>
+<p>Neste exemplo são utilizados os seguintes pacotes: <em>vcdExtra</em>. Para a confecção do documento, é necessário o pacote <em>rmarkdown</em>.</p>
+<pre class="r"><code># vcdExtra -- para o Teste de Mantel Haenzel
+if (!require(&#39;vcdExtra&#39;)) install.packages(&#39;vcdExtra&#39;); library(&#39;vcdExtra&#39;)</code></pre>
 <p><strong>Carregamento dos dados:</strong></p>
 <pre class="r"><code>dados &lt;- array(data = c(1339, 260, 88, 300, 55, 22),
                dim = c(3, 2),
@@ -190,6 +193,15 @@ dados</code></pre>
 ##   White  0.8169616 0.1830384
 ##   Black  0.8253968 0.1746032
 ##   Others 0.8000000 0.2000000</code></pre>
+<p>Algumas estatísticas para a tabela Bidimensional:</p>
+<pre class="r"><code>vcdExtra::CMHtest(dados)</code></pre>
+<pre><code>## Cochran-Mantel-Haenszel Statistics for Race by Belief 
+## 
+##                  AltHypothesis    Chisq Df    Prob
+## cor        Nonzero correlation 0.017785  1 0.89391
+## rmeans  Row mean scores differ 0.359901  2 0.83531
+## cmeans  Col mean scores differ 0.017785  1 0.89391
+## general    General association 0.359901  2 0.83531</code></pre>
 <p>Convertendo para o formato <em>data.frame</em> para usar a função <em>glm</em> e definindo o último nível como nível de referência:</p>
 <pre class="r"><code>dados.df &lt;- as.data.frame(as.table(dados))
 dados.df$Race &lt;- relevel(dados.df$Race, ref = &#39;Others&#39;)

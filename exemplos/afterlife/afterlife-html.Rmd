@@ -1,5 +1,5 @@
 ---
-title: '**Tabelas Bidimensionais - Credo na vida após a morte**'
+title: '**Credo em vida após a morte - Tabelas Bidimensionais**'
 subtitle: 'Modelos Log-Lineares - Análise de Dados Categorizados - Prova 3'
 author:
 - Allan Vieira - 14/0128492
@@ -34,7 +34,7 @@ body{
 
 **Carregamento de pacotes:**
 
-Neste exemplo são utilizados os seguintes pacotes: *vcdExtra*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
+Neste exemplo é utilizado o pacote: *vcdExtra*. Para a confecção do documento, é necessário o pacote *rmarkdown*.
 
 ```{r, message=FALSE, warning=FALSE}
 # vcdExtra -- para o Teste de Mantel Haenzel

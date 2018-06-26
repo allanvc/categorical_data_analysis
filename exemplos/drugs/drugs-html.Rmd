@@ -1,5 +1,5 @@
 ---
-title: '**Tabelas Tridimensionais - Uso de Álcool, Cigarro e Maconha**'
+title: '**Uso de Álcool, Cigarro e Maconha - Tabelas Tridimensionais**'
 subtitle: 'Modelos Log-Lineares - Análise de Dados Categorizados - Prova 3'
 author:
 - Allan Vieira - 14/0128492
